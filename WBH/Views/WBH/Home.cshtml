@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<main>
+    <section class="slides">
+        <img src="~/Img/Slides.png" alt="Banner quảng cáo" class="slide" style="width: 100%;" />
+        <img src="~/Img/Slides1.png" alt="Banner quảng cáo" class="slide" style="width: 100%;" />
+    </section>
+
+    <section class="sale-products">
+        <div class="container">
+            <h1>
+            </h1>
+        </div>
+    </section>
+    <section class="section-home">
+        <div class="container">
+            <h1>Tất cả sản phẩm</h1>
+            <div class="sortby">
+                <label for="SortBy">Sắp xếp:</label>
+                <select>
+                    <option>Sản phẩm nổi bật</option>
+                    <option>Giá: Tăng dần</option>
+                    <option>Giá: Giảm dần</option>
+                    <option>Bán chạy nhất</option>
+                </select>
+            </div>
+            <div class="product">
+                <div class="product-list">
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

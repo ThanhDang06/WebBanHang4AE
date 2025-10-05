@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="vi">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F4AE STORE</title>
+    <link rel="stylesheet" href="~/Content/remixicon.css" />
+    <link rel="stylesheet" href="~/Content/WBH.css" />
+</head>
+<body>
+    <!-- header -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <!-- logo -->
+                <div class="header-logo">
+                    <a href="Home"><img src="~/Img/Logo1.png" alt="Logo Thương Hiệu" /></a>
+                </div>
+                <!-- bảng sản phẩm -->
+                <div class="header-nav">
+                    <nav class="navbar">
+                        <ul>
+                            <li><a href="Home">Trang chủ</a></li>
+                            <li>
+                                <a href="Sanpham">Sản phẩm</a>
+                                <ul>
+                                    <li><a href="#">Áo</a></li>
+                                    <li><a href="#">Quần</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="Phukien">Phụ kiện</a>
+                                <ul>
+                                    <li><a href="#">Nón</a></li>
+                                    <li><a href="#">Vớ</a></li>
+                                    <li><a href="#">Trang Sức</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="Sale">Sale</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- thanh tìm kiếm -->
+                <div class="header-search">
+                    <input type="text" placeholder="Tìm Kiếm" />
+                    <i class="ri-search-line"></i>
+                </div>
+                <!--icon login + giỏ hàng-->
+                <div class="header-icons">
+                    <div class="header-login">
+                        <a href="Login" class="tooltip">
+                            <i class="ri-user-fill icon"></i>
+                            <span class="tooltip-text">Đăng nhập</span>
+                        </a>
+                    </div>
+                    <div class="header-giohang">
+                        <a href="Giohang" class="tooltip">
+                            <i class="ri-shopping-cart-2-fill icon" number="0"></i>
+                            <span class="tooltip-text">Giỏ hàng</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    @RenderBody()
+    <main>
+    </main>
+    <footer>
+        <div class="footer-container">
+            <!-- Giới thiệu -->
+            <div class="footer-about">
+                <h3>Giới thiệu</h3>
+                <p>F4AE Store bán quần áo, phụ kiện giá rẻ.</p>
+            </div>
+            <!-- Liên hệ -->
+            <div class="footer-contact">
+                <h3>Liên Hệ</h3>
+                <p><a href="mailto:maithanhdang060106@gmail.com">Email: maithanhdang060106@gmail.com</a></p>
+                <p><a href="">Điện thoại: 0374482316</a></p>
+                <p>Địa chỉ: 81/3 Nguyễn Hồng Đào, Phường 14,Quận Tân Bình, TP.Hồ Chí Minh</p>
+            </div>
+            <!--Trang mạng xã hội-->
+            <div class="footer-social">
+                <a href="https://www.facebook.com/share/15pSjqhc9J/" target="_blank"><i class="ri-facebook-fill"></i></a>
+                <a href="#"><i class="ri-instagram-line"></i></a>
+                <a href="#"><i class="ri-tiktok-fill"></i></a>
+                <a href="#"><i class="ri-youtube-fill"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/Scripts/WBH.js"></script>
+</body>
+</html>
