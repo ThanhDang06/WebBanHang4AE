@@ -10,24 +10,15 @@
     --main-color: whitesmoke;
 }
 
-li {
-    cursor: pointer;    
-    list-style: none;
-}
-
-a {
-    text-decoration: none;
-    color: unset;
-}
-
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-}
-
-input {
     outline: none;
+    text-decoration: none;
+    color: unset;
+    cursor: pointer;
+    list-style: none;
 }
 
 .container {

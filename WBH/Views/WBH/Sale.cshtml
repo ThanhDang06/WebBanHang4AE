@@ -3,6 +3,146 @@
     ViewBag.Title = "Sale";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+<style>
+    .new-price {
+        color: #0048ff;
+        font-weight: bold;
+    }
 
-<h2>Sale</h2>
+    .old-price {
+        text-decoration: line-through;
+        color: gray;
+        font-size: 13px;
+    }
 
+    .sale-badge {
+        top: 10px;
+        right: 10px;
+        background: red;
+        color: white;
+        font-size: 13px;
+        padding: 4px 6px;
+        border-radius: 10px;
+    }
+
+    .product-sale {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: red;
+        color: white;
+        font-size: 12px;
+        padding: 3px 6px;
+        border-radius: 4px;
+    }
+</style>
+<section>
+    <div class="container">
+        <div class="producy">
+            <div class="product-list">
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="#">
+                                <img src="~/Img/AoThun/Áo_ThunĐ.jpg" alt="Áo Thun Nam">
+                            </a>
+                            <span class="product-sale">Sale</span>
+                            <div class="product-actions">
+                                <a class="ri-eye-fill" href="#"></a>
+                                <a class="ri-shopping-cart-2-fill" href="#"></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Áo Thun Nam Đỏ</h3>
+                            <div class="prices">
+                                <span class="new-price">110,000đ</span>
+                                <span class="old-price">180,000đ</span>
+                                <span class="sale-badge">-30%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="#">
+                                <img src="~/Img/QuanJean/JeanX.jpg" alt="Quần Jean Ống Suông">
+                            </a>
+                            <span class="product-sale">Sale</span>
+                            <div class="product-actions">
+                                <a class="ri-eye-fill" href="#"></a>
+                                <a class="ri-shopping-cart-2-fill" href="#"></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Quần Jean Ống Suông Nam</h3>
+                            <div class="prices">
+                                <span class="new-price">175,000đ</span>
+                                <span class="old-price">350,000đ</span>
+                                <span class="sale-badge">-50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="#">
+                                <img src="~/Img/QuanJean/JeanHH.jpg" alt="Quần Jean Hip Hop">
+                            </a>
+                            <span class="product-sale">Sale</span>
+                            <div class="product-actions">
+                                <a class="ri-eye-fill" href="#"></a>
+                                <a class="ri-shopping-cart-2-fill" href="#"></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Quần Jean Hip Hop Nam</h3>
+                            <div class="prices">
+                                <span class="new-price">150,000đ</span>
+                                <span class="old-price">300,000đ</span>
+                                <span class="sale-badge">-50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="#">
+                                <img src="~/Img/Aosomi/Ao_SomiXTD.jpg" alt="Áo Sơmi Xanh Tay Dài">
+                            </a>
+                            <span class="product-sale">Sale</span>
+                            <div class="product-actions">
+                                <a class="ri-eye-fill" href="#"></a>
+                                <a class="ri-shopping-cart-2-fill" href="#"></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Áo Sơmi Nam Xanh Tay Dài</h3>
+                            <div class="prices">
+                                <span class="new-price">90,000đ</span>
+                                <span class="old-price">180,000đ</span>
+                                <span class="sale-badge">-50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="#">
+                                <img src="~/Img/Aosomi/Ao_SomiXTN.jpg" alt="Áo Sơmi Xanh Tay Ngắn">
+                            </a>
+                            <span class="product-sale">Sale</span>
+                            <div class="product-actions">
+                                <a class="ri-eye-fill" href="#"></a>
+                                <a class="ri-shopping-cart-2-fill" href="#"></a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Áo Sơmi Nam Xanh Tay Ngắn</h3>
+                            <div class="prices">
+                                <span class="new-price">75,000đ</span>
+                                <span class="old-price">150,000đ</span>
+                                <span class="sale-badge">-50%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+</section>
