@@ -174,9 +174,8 @@
     <Content Include="Img\QuanJean\JeanHH.jpg" />
     <Content Include="Img\QuanJean\JeanR.jpg" />
     <Content Include="Img\QuanJean\JeanX.jpg" />
-    <Content Include="Img\Slides1.png" />
-    <Content Include="Img\Slides.png" />
-    <Content Include="Img\Logo.png" />
+    <Content Include="Img\BannerHome1.png" />
+    <Content Include="Img\BannerHome.png" />
     <Content Include="Img\AoPolo\Áo_PoloBe.jpg" />
     <Content Include="Img\AoPolo\Áo_Polo2.jpg" />
     <Content Include="Img\AoPolo\Áo_Polo3.jpg" />
@@ -196,6 +195,7 @@
     <Content Include="Img\TrangSuc\VongTay7.jpg" />
     <Content Include="Img\TrangSuc\VongTay8.jpg" />
     <Content Include="Img\TrangSuc\VongTay9.jpg" />
+    <Content Include="Img\BannerSanPham.png" />
     <Content Include="Img\Vo\VoT.jpg" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />

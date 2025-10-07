@@ -9,20 +9,26 @@
     --main-transition: all 0.3s ease;
     --main-color: whitesmoke;
 }
-
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    outline: none;
-    text-decoration: none;
-    color: unset;
-    cursor: pointer;
+}
+
+li {
     list-style: none;
 }
 
+a {
+    text-decoration: none;
+    color: unset;
+}
+
+input {
+    outline: none;
+}
 .container {
-    max-width: 1240px;
+    max-width: 1260px;
     margin: auto;
 }
 
@@ -90,10 +96,19 @@ header .row {
         display: block;
 
     }
+  /*Sale*/
+    .header-nav nav ul li a span {
+        color: red;
+    }
+.header-sale .discount {
+    color: red;
+    font-size: 15px;
+}
 
 /* thanh tìm kiếm*/
 .header-search {
     position: relative;
+    cursor: text;
 }
 
     .header-search i {
@@ -101,7 +116,6 @@ header .row {
         left: 6px;
         top: 50%;
         transform: translateY(-50%);
-        cursor: pointer;
     }
 
     .header-search input {
@@ -142,7 +156,6 @@ header .row {
     transition: opacity 0.3s;
 }
 
-    /* Mũi tên nhỏ */
     .tooltip-text::after {
         content: "";
         position: absolute;
