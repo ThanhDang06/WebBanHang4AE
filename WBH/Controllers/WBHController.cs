@@ -33,5 +33,9 @@ namespace WBH.Controllers
         {
             return View();
         }
+        public ActionResult Chitietsp()
+        {
+            return View();
+        }
     }
 }
