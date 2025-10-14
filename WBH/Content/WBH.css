@@ -2,13 +2,6 @@
     margin: 0;
     padding-top: 100px;
 }
-
-:root {
-    --header-height: 80px;
-    --main-bg: #808080;
-    --main-transition: all 0.3s ease;
-    --main-color: whitesmoke;
-}
 * {
     padding: 0;
     margin: 0;
@@ -27,8 +20,9 @@ a {
 input {
     outline: none;
 }
+
 .container {
-    max-width: 1260px;
+    max-width: 90%;
     margin: auto;
 }
 
@@ -94,12 +88,12 @@ header .row {
     /* Khi rê chuột thì hiện dropdown */
     .header-nav nav ul li:hover ul {
         display: block;
-
     }
-  /*Sale*/
+    /*Sale*/
     .header-nav nav ul li a span {
         color: red;
     }
+
 .header-sale .discount {
     color: red;
     font-size: 15px;
@@ -136,9 +130,11 @@ header .row {
     text-decoration: none;
     color: black;
 }
-.header-icons a i{
+
+.header-icons a i {
     font-size: 30px;
 }
+
 .tooltip-text {
     visibility: hidden;
     width: max-content;
@@ -171,163 +167,27 @@ header .row {
     visibility: visible;
     opacity: 1;
 }
-.header-giohang i::after {
-    content: attr(number);
-    position: absolute;
-    top: 0px; /* Lên trên */
-    right: -5px; /* Sang phải */
-    width: 15px;
-    height: 15px;
-    background: red; /* Badge màu đỏ */
-    color: white; /* Số màu trắng */
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 50%; /* Thành hình tròn */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-/*Main*/
-
-/*Home and SanPham*/
-
-.slides {
-    width: 1000px;
-    height: 500px;
-    margin: auto;
+.header-giohang {
     position: relative;
-    overflow: hidden;
-    border-radius: 15px;
 }
 
-.slide {
-    width: 100%;
-    height: 100%;
+.cart-count {
     position: absolute;
-    opacity: 0;
-    animation: slideShow 10s infinite;
-}
-
-    .slide:nth-child(1) {
-        animation-delay: 0s;
-    }
-
-    .slide:nth-child(2) {
-        animation-delay: 5s;
-    }
-
-@keyframes slideShow {
-    0% {
-        opacity: 0; /*độ trong suốt 0*/
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    40% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-/*Home*/
-.section-home h1 {
-    text-align: center;
-    padding: 20px;
-}
-
-.sortby {
-    text-align: right;
-}
-/*SanPham*/
-/*grid tổng*/
-.product-grid{
-    display: grid; /* Dùng grid để chia layout */
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px; /* Khoảng cách giữa các sản phẩm */
-    padding: 20px;
-}
-
-/* CARD sản phẩm */
-.product-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #fff;
-    transition: 0.3s;
-
-}
-
-    .product-card:hover {
-        transform: translateY(-8px) scale(1.03); /* nhấc lên + phóng to nhẹ */
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2); /* đổ bóng đậm hơn */
-    }
-/* Ảnh */
-.product-image {
-    position: relative;
-    cursor: pointer;
-}
-
-    .product-image img {
-        width: 100%;
-        display: block;
-    }
-    /* Nút khi hover */
-    .product-actions {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        background-color: white;
-        cursor: pointer;
-        border-radius: 10px;
-        font-size: 25px;
-    }
-
-.product-card:hover .product-actions {
-    opacity: 1;
-}
-/* Nhãn Hàng mới */
-.badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: royalblue;
+    top: -8px;
+    right: -10px;
+    background-color: red;
     color: white;
     font-size: 12px;
-    padding: 3px 6px;
-    border-radius: 4px;
-}
-
-/* Thông tin sản phẩm */
-.product-info {
-    padding: 10px;
-}
-
-    .product-info h3 {
-        font-size: 15px;
-        margin: 5px 0;
-    }
-
-.price {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     font-weight: bold;
-    color: blue;
-    font-size: 20px;
 }
-
-/*Footer*/
+/* Trang Footer*/
 footer {
     background-color: black;
     color: var(--main-color);

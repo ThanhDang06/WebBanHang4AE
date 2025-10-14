@@ -1,0 +1,105 @@
+﻿body {
+    margin: 0;
+    padding-top: 100px;
+}
+/* Tổng thể form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh;
+    background: linear-gradient(135deg, #74ABE2, #5563DE);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Form */
+form {
+    background: #fff;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 400px;
+    text-align: center;
+}
+
+    form h2 {
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+/* Ô input + label */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+    .input-group input {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 16px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+        background: none;
+        transition: 0.3s;
+    }
+
+    /* Label nằm trong input */
+    .input-group label {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777;
+        font-size: 16px;
+        pointer-events: none;
+        transition: 0.3s ease;
+    }
+
+    /* Khi input có focus hoặc có giá trị → label bay lên */
+    .input-group input:focus ~ label,
+    .input-group input:valid ~ label {
+        top: -8px;
+        left: 8px;
+        font-size: 13px;
+        background: white;
+        padding: 0 4px;
+        color: #5563DE;
+    }
+
+    /* Hiệu ứng hover */
+    .input-group input:hover {
+        border-color: #5563DE;
+    }
+
+/* Nút đăng nhập */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #5563DE;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    button:hover {
+        background: #3943b7;
+    }
+
+/* Text dưới cùng */
+.signup-text {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+    .signup-text a {
+        color: #5563DE;
+        text-decoration: none;
+    }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }

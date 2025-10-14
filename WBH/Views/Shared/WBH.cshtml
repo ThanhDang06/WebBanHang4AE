@@ -4,8 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F4HCM STORE</title>
-    <link rel="stylesheet" href="~/Content/remixicon.css" />
-    <link rel="stylesheet" href="~/Content/WBH.css" />
+    <!--Css dùng chung toàn site-->
+    <link href="~/Content/remixicon.css" rel="stylesheet" />
+    <link href="~/Content/Variables.css" rel="stylesheet" />>
+    <link href="~/Content/WBH.css" rel="stylesheet" />
+    <link href="~/Content/Responsive.css" rel="stylesheet" />
+    <link href="~/Content/Main.css" rel="stylesheet" />
+    <link href="~/Content/Admin.css" rel="stylesheet" />
+    
+
+    @RenderSection("styles", required: false)
 </head>
 <body>
     <!-- header -->
@@ -24,16 +32,16 @@
                             <li>
                                 <a href="Sanpham">Sản phẩm</a>
                                 <ul>
-                                    <li><a href="#">Áo</a></li>
-                                    <li><a href="#">Quần</a></li>
+                                    <li><a href="#" data-category="ao">Áo</a></li>
+                                    <li><a href="#" data-category="quan">Quần</a></li>
                                 </ul>
                             </li>
                             <li>
                                 <a href="Phukien">Phụ kiện</a>
                                 <ul>
-                                    <li><a href="#">Nón</a></li>
-                                    <li><a href="#">Vớ</a></li>
-                                    <li><a href="#">Trang Sức</a></li>
+                                    <li><a href="#" data-category="non">Nón</a></li>
+                                    <li><a href="#" data-category="vo">Vớ</a></li>
+                                    <li><a href="#" data-category="trangsuc">Trang Sức</a></li>
                                 </ul>
                             </li>
                             <li class="header-sale">
@@ -60,10 +68,12 @@
                     </div>
                     <div class="header-giohang">
                         <a href="Giohang" class="tooltip">
-                            <i class="ri-shopping-cart-2-fill icon" number="0"></i>
+                            <i class="ri-shopping-cart-2-fill icon"></i>
+                            <span id="cart-count" class="cart-count">0</span>
                             <span class="tooltip-text">Giỏ hàng</span>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>

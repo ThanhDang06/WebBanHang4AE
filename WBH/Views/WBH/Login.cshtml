@@ -3,35 +3,25 @@
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-<style>
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
+@section styles {
+    <link rel="stylesheet" href="~/Content/Login.css" />
+}
+<div class="login-container">
+    <form id="loginForm">
+        <h2>Đăng nhập</h2>
 
-    form {
-        text-align: center;
-    }
-</style>
-<div class="container">
-    <h2>ĐĂNG NHẬP TÀI KHOẢN</h2>
-    <div>
-        <form>
-            <div>
-                <div>
-                    <input class="" type="text" id="username" placeholder="Số điện thoạigit /Email/Tên đăng nhập" autocomplete="on" name="loginkey" maxlength="128"/>
-                </div>
+        <div class="input-group">
+            <input type="text" id="username" required>
+            <label for="username">Tên đăng nhập</label>
+        </div>
 
-            </div>
-            <div>
-                <div>
-                    <input class="" type="password" id="password" placeholder="Mật khẩu" autocomplete="current-password" name="password" maxlength="16"/>
-                </div>
-            </div>
-            <button onclick="login()">Đăng nhập</button>
-        </form>
-    </div>
+        <div class="input-group">
+            <input type="password" id="password" required>
+            <label for="password">Mật khẩu</label>
+        </div>
+
+        <button type="submit">Đăng nhập</button>
+
+        <p class="signup-text">Chưa có tài khoản? <a href="#">Đăng ký</a></p>
+    </form>
 </div>
-
-
