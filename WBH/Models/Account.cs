@@ -18,5 +18,7 @@ namespace WBH.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
+        public int IDCus { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

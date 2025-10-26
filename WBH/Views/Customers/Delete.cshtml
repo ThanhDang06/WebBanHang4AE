@@ -1,0 +1,23 @@
+﻿@model WBH.Models.Customer
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Xóa khách hàng</h2>
+
+<h4>Bạn có chắc muốn xóa khách hàng này?</h4>
+<div>
+    <p><strong>Họ tên:</strong> @Model.FullName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Phone:</strong> @Model.Phone</p>
+    <p><strong>Địa chỉ:</strong> @Model.Address</p>
+</div>
+
+@using (Html.BeginForm("DeleteConfirmed", "Customers", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.IDCus)
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary" })
+}

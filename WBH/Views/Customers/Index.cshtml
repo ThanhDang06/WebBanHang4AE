@@ -1,0 +1,57 @@
+﻿@model IEnumerable<WBH.Models.Customer>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+@section styles {
+    <link href="~/Content/Customer.css" rel="stylesheet" />
+}
+<h2>THÔNG TIN KHÁCH HÀNG</h2>
+
+<p style="margin-bottom: 20px; color: #555;">
+    Đây là thông tin tài khoản của bạn trong hệ thống.
+    Nếu có thay đổi, bạn có thể chỉnh sửa thông tin cá nhân.
+</p>
+
+<table class="customer-table">
+    <thead>
+        <tr>
+            <th>Họ và tên</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FullName</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Address</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Customers", new { id = item.IDCus })" class="btn-edit">Cập nhật</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="no-data">Không có thông tin khách hàng nào</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    // JS chỉ dùng để báo khi cập nhật thành công hoặc lỗi
+    function showMessage(msg) {
+        alert(msg);
+    }
+</script>

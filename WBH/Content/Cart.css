@@ -1,0 +1,153 @@
+﻿/* ======= GIỎ HÀNG - PHONG CÁCH GỌN GÀNG ======= */
+.cart-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 30px auto;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Cột trái: Thông tin khách hàng */
+.order-info {
+    flex: 1;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+    .order-info input,
+    .order-info select,
+    .order-info textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+
+.payment {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+    .payment img {
+        vertical-align: middle;
+    }
+
+/* Cột phải: Giỏ hàng */
+.cart-summary {
+    flex: 1;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ======= SẢN PHẨM TRONG GIỎ HÀNG ======= */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+    .cart-item img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .cart-item .info {
+        flex: 1;
+    }
+
+    .cart-item h4 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .cart-item p {
+        margin: 4px 0;
+        color: #555;
+    }
+
+    .cart-item .quantity {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cart-item button {
+        border: none;
+        background: #f2f2f2;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .cart-item button:hover {
+            background: #ddd;
+        }
+
+.remove {
+    background: none !important;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Giỏ hàng trống */
+.empty-cart {
+    text-align: center;
+    color: #777;
+}
+
+/* Voucher */
+.voucher-section {
+    margin-top: 20px;
+}
+
+.voucher-list {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.voucher {
+    flex: 1;
+    background: #f8f8f8;
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px;
+    border: 1px dashed #ccc;
+}
+
+/* Tổng tiền */
+.cart-total {
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+    .cart-total p {
+        margin: 6px 0;
+    }
+
+.checkout-btn {
+    width: 100%;
+    background: #ff4d00;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    .checkout-btn:hover {
+        background: #ff6a33;
+    }

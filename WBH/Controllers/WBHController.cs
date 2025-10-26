@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WBH.Models;
 
 namespace WBH.Controllers
 {
     public class WBHController : Controller
     {
+        private DBFashionStoreEntities db = new DBFashionStoreEntities();
         // GET: WBH
         public ActionResult Home()
         {
@@ -35,6 +37,17 @@ namespace WBH.Controllers
         }
         public ActionResult Chitietsp()
         {
+            return View();
+        }
+        public ActionResult Thanhtoan()
+        {
+            return View();
+        }
+        public ActionResult DangNhap()
+        {
+            if (Session["AccountId"] == null)
+                return RedirectToAction("Index", "Login"); // chưa login → chuyển về login
+
             return View();
         }
     }

@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F4HCM STORE</title>
     <!--Css dùng chung toàn site-->
-    <link href="~/Content/remixicon.css" rel="stylesheet" />
-    <link href="~/Content/Variables.css" rel="stylesheet" />>
-    <link href="~/Content/WBH.css" rel="stylesheet" />
-    <link href="~/Content/Responsive.css" rel="stylesheet" />
-    <link href="~/Content/Main.css" rel="stylesheet" />
-    <link href="~/Content/Admin.css" rel="stylesheet" />
-    
-
+    <link href="@Url.Content("~/Content/remixicon.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Variables.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/WBH.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Main.css")" rel="stylesheet" />
     @RenderSection("styles", required: false)
 </head>
 <body>
@@ -22,22 +18,24 @@
             <div class="row">
                 <!-- logo -->
                 <div class="header-logo">
-                    <a href="Home"><img src="~/Img/Logo1.png" alt="Logo Thương Hiệu" /></a>
+                    <a href="@Url.Action("Home","WBH")">
+                        <img src="@Url.Content("~/Content/Img/Logo1.png")" alt="Logo Thương Hiệu" />
+                    </a>
                 </div>
                 <!-- bảng sản phẩm -->
                 <div class="header-nav">
                     <nav class="navbar">
                         <ul>
-                            <li><a href="Home">Trang chủ</a></li>
+                            <li><a href="@Url.Action("Home","WBH")">Trang chủ</a></li>
                             <li>
-                                <a href="Sanpham">Sản phẩm</a>
+                                <a href="@Url.Action("Sanpham","WBH")">Sản phẩm</a>
                                 <ul>
                                     <li><a href="#" data-category="ao">Áo</a></li>
                                     <li><a href="#" data-category="quan">Quần</a></li>
                                 </ul>
                             </li>
                             <li>
-                                <a href="Phukien">Phụ kiện</a>
+                                <a href="@Url.Action("Phukien","WBH")">Phụ kiện</a>
                                 <ul>
                                     <li><a href="#" data-category="non">Nón</a></li>
                                     <li><a href="#" data-category="vo">Vớ</a></li>
@@ -45,7 +43,7 @@
                                 </ul>
                             </li>
                             <li class="header-sale">
-                                <a href="Sale">
+                                <a href="@Url.Action("Sale","WBH")">
                                     <span class="sale-text">SALE</span>
                                     <span class="discount">-50%</span>
                                 </a>
@@ -61,23 +59,46 @@
                 <!--icon login + giỏ hàng-->
                 <div class="header-icons">
                     <div class="header-login">
-                        <a href="Login" class="tooltip">
-                            <i class="ri-user-fill icon"></i>
-                            <span class="tooltip-text">Đăng nhập</span>
-                        </a>
+                        @if (Session["AccountId"] != null)
+                        {
+                            <a href="@Url.Action("Logout","Login")" class="tooltip">
+                                <i class="ri-user-fill icon"></i>
+                                <span class="tooltip-text">Đăng xuất</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("DangNhap","Login")" class="tooltip">
+                                <i class="ri-user-fill icon"></i>
+                                <span class="tooltip-text">Đăng nhập</span>
+                            </a>
+                        }
                     </div>
                     <div class="header-giohang">
-                        <a href="Giohang" class="tooltip">
+                        <a href="@Url.Action("Giohang","WBH")" class="tooltip">
                             <i class="ri-shopping-cart-2-fill icon"></i>
                             <span id="cart-count" class="cart-count">0</span>
                             <span class="tooltip-text">Giỏ hàng</span>
                         </a>
+                        <!-- POPUP GIỎ HÀNG -->
+                        <div class="cart-popup" id="cart-popup">
+                            <h4>Giỏ hàng của bạn</h4>
+                            <ul class="cart-items"></ul>
+                            <div class="cart-total">
+                                <strong>Tổng:</strong> <span id="total-price">0đ</span>
+                            </div>
+                            <div class="cart-buttons">
+                                <button class="checkout">Thanh toán</button>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
+
             </div>
         </div>
+
     </header>
+
     <main>
         @RenderBody()
     </main>
@@ -105,6 +126,6 @@
             </div>
         </div>
     </footer>
-    <script src="~/Scripts/WBH.js"></script>
+    <script src="@Url.Content("~/Scripts/WBH.js")"></script>
 </body>
 </html>

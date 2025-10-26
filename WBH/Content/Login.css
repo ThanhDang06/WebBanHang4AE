@@ -2,104 +2,56 @@
     margin: 0;
     padding-top: 100px;
 }
-/* Tổng thể form */
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 75vh;
-    background: linear-gradient(135deg, #74ABE2, #5563DE);
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Form */
-form {
+.login-page {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
     background: #fff;
-    padding: 40px 50px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    width: 400px;
-    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
 }
 
-    form h2 {
-        margin-bottom: 30px;
-        color: #333;
+    .login-page h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: bold;
     }
 
-/* Ô input + label */
-.input-group {
-    position: relative;
-    margin-bottom: 25px;
-}
+    .login-page .form-group {
+        margin-bottom: 15px;
+    }
 
-    .input-group input {
+    .login-page label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .login-page .form-control {
         width: 100%;
-        padding: 12px 10px;
-        font-size: 16px;
-        border: 1.5px solid #ccc;
+        padding: 10px;
         border-radius: 8px;
-        outline: none;
-        background: none;
+        border: 1px solid #ccc;
         transition: 0.3s;
     }
 
-    /* Label nằm trong input */
-    .input-group label {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #777;
-        font-size: 16px;
-        pointer-events: none;
-        transition: 0.3s ease;
-    }
-
-    /* Khi input có focus hoặc có giá trị → label bay lên */
-    .input-group input:focus ~ label,
-    .input-group input:valid ~ label {
-        top: -8px;
-        left: 8px;
-        font-size: 13px;
-        background: white;
-        padding: 0 4px;
-        color: #5563DE;
-    }
-
-    /* Hiệu ứng hover */
-    .input-group input:hover {
-        border-color: #5563DE;
-    }
-
-/* Nút đăng nhập */
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: #5563DE;
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-    button:hover {
-        background: #3943b7;
-    }
-
-/* Text dưới cùng */
-.signup-text {
-    margin-top: 20px;
-    font-size: 14px;
-}
-
-    .signup-text a {
-        color: #5563DE;
-        text-decoration: none;
-    }
-
-        .signup-text a:hover {
-            text-decoration: underline;
+        .login-page .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,123,255,0.4);
         }
+
+    .login-page .btn-success {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .login-page .btn-success:hover {
+            transform: scale(1.02);
+        }
+

@@ -2,18 +2,291 @@
     ViewBag.Title = "Giohang";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-<h2>Giỏ hàng của bạn</h2>
-<table id="cart-table" border="1" cellpadding="8">
-    <thead>
-        <tr>
-            <th>Ảnh</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
-            <th>Tổng</th>
-            <th>Xóa</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-<h3 id="total">Tổng cộng: 0đ</h3>
+@section styles {
+    <link rel="stylesheet" href="~/Content/Cart.css" />
+}
+
+<div class="cart-container">
+    <!-- CỘT TRÁI: Thông tin đơn hàng -->
+    <div class="order-info">
+        <h2>Thông tin đơn hàng</h2>
+        <input type="text" id="fullname" placeholder="Họ và tên">
+        <input type="text" id="phone" placeholder="Số điện thoại">
+        <input type="text" id="address" placeholder="Địa chỉ">
+
+        <select id="city">
+            <option value="">Tỉnh/thành phố</option>
+        </select>
+
+        <select id="district" disabled>
+            <option value="">Quận/huyện</option>
+        </select>
+
+        <select id="ward" disabled>
+            <option value="">Phường/xã</option>
+        </select>
+
+        <textarea id="note" placeholder="Ghi chú thêm"></textarea>
+
+        <h3>Hình thức thanh toán</h3>
+        <label class="payment">
+            <input type="radio" name="pay" value="COD" checked>
+            <span>Thanh toán khi giao hàng (COD)</span>
+        </label>
+
+        <label class="payment">
+            <input type="radio" name="pay" value="VNPAY">
+            <img src="~/Content/Img/AnhVNPAY.jpg" alt="VNPAY" width="40">
+            <span>Ví điện tử VNPAY</span>
+        </label>
+
+        <label class="payment">
+            <input type="radio" name="pay" value="MOMO">
+            <img src="~/Content/Img/AnhMOMO.png" alt="MoMo" width="40">
+            <span>Thanh toán MoMo</span>
+        </label>
+    </div>
+
+    <!-- CỘT PHẢI: Giỏ hàng -->
+    <div class="cart-summary">
+        <h2>Giỏ hàng của bạn</h2>
+        <div id="cart-items"></div>
+
+        <div class="voucher-section">
+            <h3>Ưu Đãi Dành Cho Bạn</h3>
+            <div class="voucher-list">
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher1" value="GIAM10K">
+                    <label for="voucher1">
+                        <strong>GIAM10K</strong> - Giảm 10,000đ cho đơn từ 199,000đ
+                    </label>
+                </div>
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher2" value="FREESHIP">
+                    <label for="voucher2">
+                        <strong>FREESHIP</strong> - Miễn phí vận chuyển cho đơn từ 399,000đ
+                    </label>
+                </div>
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher3" value="GIAM20K">
+                    <label for="voucher3">
+                        <strong>GIAM20K</strong> - Giảm 20,000đ cho đơn từ 499,000đ
+                    </label>
+                </div>
+            </div>
+
+            <input type="text" id="customVoucher" placeholder="Nhập mã giảm giá">
+            <button id="applyVoucher">Áp dụng Voucher</button>
+        </div>
+
+        <div class="cart-total">
+            <p>Tạm tính: <span id="subtotal">0đ</span></p>
+            <p>Phí vận chuyển: <strong>Miễn phí</strong></p>
+            <p>Voucher giảm giá: <span id="voucherDiscount">0đ</span></p>
+            <hr>
+            <p><strong>Tổng: <span id="total">0đ</span></strong></p>
+            <button id="checkoutBtn" class="checkout-btn">Thanh toán</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const citySelect = document.getElementById("city");
+    const districtSelect = document.getElementById("district");
+    const wardSelect = document.getElementById("ward");
+
+    // Lấy danh sách Tỉnh / Thành phố
+    fetch("https://provinces.open-api.vn/api/p/")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(city => {
+                const option = document.createElement("option");
+                option.value = city.code;
+                option.textContent = city.name;
+                citySelect.appendChild(option);
+            });
+        });
+
+    // Khi chọn Tỉnh → hiển thị danh sách Quận / Huyện
+    citySelect.addEventListener("change", () => {
+        const cityCode = citySelect.value;
+        districtSelect.innerHTML = '<option value="">Quận/huyện</option>';
+        wardSelect.innerHTML = '<option value="">Phường/xã</option>';
+        wardSelect.disabled = true;
+
+        if (cityCode) {
+            fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+                .then(res => res.json())
+                .then(data => {
+                    data.districts.forEach(district => {
+                        const option = document.createElement("option");
+                        option.value = district.code;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+                    districtSelect.disabled = false;
+                });
+        } else {
+            districtSelect.disabled = true;
+            wardSelect.disabled = true;
+        }
+    });
+
+    // Khi chọn Quận / Huyện → hiển thị danh sách Phường / Xã
+    districtSelect.addEventListener("change", () => {
+        const districtCode = districtSelect.value;
+        wardSelect.innerHTML = '<option value="">Phường/xã</option>';
+
+        if (districtCode) {
+            fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+                .then(res => res.json())
+                .then(data => {
+                    data.wards.forEach(ward => {
+                        const option = document.createElement("option");
+                        option.value = ward.code;
+                        option.textContent = ward.name;
+                        wardSelect.appendChild(option);
+                    });
+                    wardSelect.disabled = false;
+                });
+        } else {
+            wardSelect.disabled = true;
+        }
+    });
+
+    // ======== GIỎ HÀNG ========
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsDiv = document.getElementById('cart-items');
+    const subtotalDisplay = document.getElementById('subtotal');
+    const totalDisplay = document.getElementById('total');
+    const voucherDiscountDisplay = document.getElementById('voucherDiscount');
+
+    let currentVoucherDiscount = 0;
+
+    function renderCart() {
+        cartItemsDiv.innerHTML = '';
+        let subtotal = 0;
+
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = `
+        <div class="empty-cart">
+            <img src="empty-cart.png" width="150">
+            <p>Hiện giỏ hàng của bạn không có sản phẩm nào.</p>
+            <a href="index.html" class="shop-now">Mua sắm ngay</a>
+        </div>`;
+            subtotalDisplay.textContent = "0đ";
+            totalDisplay.textContent = "0đ";
+            voucherDiscountDisplay.textContent = "0đ";
+            document.querySelector(".cart-total p:nth-child(2) strong").textContent = "0đ";
+            return;
+        }
+
+        // Tạo danh sách sản phẩm
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            const div = document.createElement('div');
+            div.classList.add('cart-item');
+            div.innerHTML = `
+                        <img src="${item.img}" width="70" alt="${item.name}">
+            <div class="info">
+                <h4>${item.name}</h4>
+                <p>Giá: ${item.price.toLocaleString()}đ</p>
+                <div class="quantity">
+                    <button onclick="updateQuantity(${index}, -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="updateQuantity(${index}, 1)">+</button>
+                </div>
+                <p>Thành tiền: ${itemTotal.toLocaleString()}đ</p>
+            </div>
+            <button class="remove" onclick="removeItem(${index})">Xóa</button>
+        `;
+            cartItemsDiv.appendChild(div);
+        });
+
+        // ===== Tính phí vận chuyển =====
+        let shippingFee = 30000; // phí mặc định 30,000đ
+        let currentShippingFee = subtotal >= 399000 ? 0 : shippingFee; // miễn phí nếu subtotal >= 399k
+        // Nếu voucher FREESHIP được chọn
+        const selectedVoucher = document.querySelector('input[name="voucher"]:checked')?.value
+            || document.getElementById("customVoucher").value.trim().toUpperCase();
+        if (selectedVoucher === "FREESHIP") currentShippingFee = 0;
+
+        // Cập nhật hiển thị subtotal, voucher, phí vận chuyển và tổng
+        subtotalDisplay.textContent = subtotal.toLocaleString() + 'đ';
+        voucherDiscountDisplay.textContent = currentVoucherDiscount.toLocaleString() + 'đ';
+        document.querySelector(".cart-total p:nth-child(2) strong").textContent =
+            currentShippingFee === 0 ? "Miễn phí" : currentShippingFee.toLocaleString() + "đ";
+
+        totalDisplay.textContent = (subtotal + currentShippingFee - currentVoucherDiscount).toLocaleString() + 'đ';
+
+        // Lưu giỏ hàng vào localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function updateQuantity(index, change) {
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+        renderCart();
+    }
+
+    function removeItem(index) {
+        if (confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+    }
+
+    // ======== ÁP DỤNG VOUCHER ========
+    document.getElementById("applyVoucher").addEventListener("click", () => {
+        const selectedVoucher = document.querySelector('input[name="voucher"]:checked')?.value
+            || document.getElementById("customVoucher").value.trim().toUpperCase();
+
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        currentVoucherDiscount = 0;
+
+        if (selectedVoucher === "GIAM10K" && subtotal >= 199000) currentVoucherDiscount = 10000;
+        if (selectedVoucher === "GIAM20K" && subtotal >= 499000) currentVoucherDiscount = 20000;
+        if (selectedVoucher === "FREESHIP" && subtotal >= 399000) currentVoucherDiscount = 0; // Miễn phí vận chuyển (nếu tính phí sau)
+
+        renderCart();
+    });
+
+    // ======== THANH TOÁN ========
+    document.getElementById("checkoutBtn").addEventListener("click", () => {
+        if (cart.length === 0) {
+            alert("Giỏ hàng của bạn đang trống!");
+            return;
+        }
+
+        const fullname = document.getElementById("fullname").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const city = citySelect.options[citySelect.selectedIndex].text;
+        const district = districtSelect.options[districtSelect.selectedIndex].text;
+        const ward = wardSelect.options[wardSelect.selectedIndex].text;
+        const note = document.getElementById("note").value.trim();
+        const paymentMethod = document.querySelector('input[name="pay"]:checked').value;
+
+        if (!fullname || !phone || !address || !city || !district || !ward) {
+            alert("Vui lòng điền đầy đủ thông tin giao hàng!");
+            return;
+        }
+
+        const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0) - currentVoucherDiscount;
+
+        alert(`Cảm ơn ${fullname}!\nTổng tiền: ${totalAmount.toLocaleString()} VNĐ\nPhương thức thanh toán: ${paymentMethod}`);
+
+        // Xóa giỏ hàng
+        localStorage.removeItem("cart");
+        cart = [];
+        renderCart();
+
+        // Chuyển sang trang cảm ơn
+        window.location.href = "thankyou.html";
+    });
+
+    // Hiển thị giỏ hàng khi load trang
+    renderCart();
+</script>
