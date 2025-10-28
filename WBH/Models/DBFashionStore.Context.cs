@@ -13,10 +13,10 @@ namespace WBH.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class DBFashionStoreEntities : DbContext
+    public partial class DBFashionStoreEntities01 : DbContext
     {
-        public DBFashionStoreEntities()
-            : base("name=DBFashionStoreEntities")
+        public DBFashionStoreEntities01()
+            : base("name=DBFashionStoreEntities01")
         {
         }
     
@@ -29,6 +29,11 @@ namespace WBH.Models
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<ProductColor> ProductColors { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductSize> ProductSizes { get; set; }
+        public virtual DbSet<ProductVariant> ProductVariants { get; set; }
+        public virtual DbSet<Sale> Sales { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
     }
 }

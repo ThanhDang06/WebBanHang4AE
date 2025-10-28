@@ -1,0 +1,30 @@
+﻿@model WBH.Models.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<div class="login-container">
+    <h2>Đăng nhập</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <p style="color:red">@ViewBag.Error</p>
+    }
+
+    @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+    {
+        <div>
+            <label>Email</label>
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email)
+        </div>
+
+        <div>
+            <label>Mật khẩu</label>
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Password)
+        </div>
+
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+    }
+</div>>

@@ -26,24 +26,24 @@
                 <div class="header-nav">
                     <nav class="navbar">
                         <ul>
-                            <li><a href="@Url.Action("Home","WBH")">Trang chủ</a></li>
+                            <li><a href="@Url.Action("ProductList","Products")">Trang chủ</a></li>
                             <li>
                                 <a href="@Url.Action("Sanpham","WBH")">Sản phẩm</a>
-                                <ul>
-                                    <li><a href="#" data-category="ao">Áo</a></li>
-                                    <li><a href="#" data-category="quan">Quần</a></li>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@Url.Action("CategoryProducts", "Products", new { category = "ao" })">Áo</a></li>
+                                    <li><a href="@Url.Action("CategoryProducts", "Products", new { category = "quan" })">Quần</a></li>
                                 </ul>
                             </li>
                             <li>
                                 <a href="@Url.Action("Phukien","WBH")">Phụ kiện</a>
-                                <ul>
-                                    <li><a href="#" data-category="non">Nón</a></li>
-                                    <li><a href="#" data-category="vo">Vớ</a></li>
-                                    <li><a href="#" data-category="trangsuc">Trang Sức</a></li>
+                                <ul class="dropdown-menu">
+                                    <li><a href="@Url.Action("CategoryProducts", "Products", new { category = "vo" })">Vớ</a></li>
+                                    <li><a href="@Url.Action("CategoryProducts", "Products", new { category = "non" })">Nón</a></li>
+                                    <li><a href="@Url.Action("CategoryProducts", "Products", new { category = "trangsuc" })">Trang sức</a></li>
                                 </ul>
                             </li>
                             <li class="header-sale">
-                                <a href="@Url.Action("Sale","WBH")">
+                                <a href="@Url.Action("Sale","Products")">
                                     <span class="sale-text">SALE</span>
                                     <span class="discount">-50%</span>
                                 </a>

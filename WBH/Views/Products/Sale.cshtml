@@ -1,0 +1,56 @@
+﻿@model IEnumerable<WBH.Models.Product>
+@{
+    ViewBag.Title = "Sale";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<section>
+    <div class="container">
+        <div class="producy">
+            <div class="product-list">
+                <div class="product-grid">
+                    @foreach (var item in Model)
+                    {
+                        <div class="product-card" data-id="@item.IDProduct" data-price="@item.Price ?? 0" data-oldprice="@item.OldPrice ?? 0">
+                            <div class="product-image">
+                                <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
+                                    <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
+                                </a>
+                                @if (item.OldPrice.HasValue && item.OldPrice.Value > 0)
+                                {
+                                    <span class="product-sale">Sale</span>
+                                }
+                                <div class="product-actions">
+                                    <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
+                                    <button class="add-to-cart">
+                                        <i class="ri-shopping-cart-2-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3>@item.ProductName</h3>
+                                <div class="prices">
+                                    <span class="new-price">@String.Format("{0:N0}đ", item.Price ?? 0)</span>
+
+                                    @if (item.OldPrice.HasValue && item.OldPrice.Value > 0)
+                                    {
+                                        int discount = 0;
+
+                                        if (item.Price.HasValue)
+                                        {
+                                            discount = (int)Math.Round(
+                                                (double)((item.OldPrice.Value - item.Price.Value) / item.OldPrice.Value * 100)
+                                            );
+                                        }
+
+                                        <span class="old-price">@String.Format("{0:N0}đ", item.OldPrice.Value)</span>
+                                        <span class="sale-badge">-@discount%</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

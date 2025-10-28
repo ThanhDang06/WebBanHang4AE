@@ -18,15 +18,15 @@
     <section class="section-home">
         <div class="container">
             <h1>Tất cả sản phẩm</h1>
-            <div class="sortby">
-                <label for="SortBy">Sắp xếp:</label>
-                <select>
-                    <option>Sản phẩm nổi bật</option>
-                    <option>Giá: Tăng dần</option>
-                    <option>Giá: Giảm dần</option>
-                    <option>Bán chạy nhất</option>
+            <form method="get" action="@Url.Action("ProductList", "Products")">
+                <label>Sắp xếp:</label>
+                <select name="sortOrder" onchange="this.form.submit()">
+                    <option value="price_asc">Giá tăng dần</option>
+                    <option value="price_desc">Giá giảm dần</option>
+                    <option value="name_asc">Tên A → Z</option>
+                    <option value="name_desc">Tên Z → A</option>
                 </select>
-            </div>
+            </form>
             <div class="product">
                 <div class="product-list">
                     <div class="product-grid">

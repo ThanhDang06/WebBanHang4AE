@@ -12,11 +12,15 @@ namespace WBH.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Account
+    public partial class Cart
     {
-        public int IDAcc { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public int IDCart { get; set; }
+        public int IDCus { get; set; }
+        public int IDProduct { get; set; }
+        public int Quantity { get; set; }
+        public Nullable<System.DateTime> DateAdded { get; set; }
+    
+        public virtual Customer Customer { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

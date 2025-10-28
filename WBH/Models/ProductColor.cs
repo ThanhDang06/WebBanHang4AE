@@ -12,27 +12,20 @@ namespace WBH.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Order
+    public partial class ProductColor
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Order()
+        public ProductColor()
         {
-            this.OrderDetails = new HashSet<OrderDetail>();
+            this.ProductVariants = new HashSet<ProductVariant>();
         }
     
-        public int IDOrder { get; set; }
-        public Nullable<int> IDCus { get; set; }
-        public Nullable<System.DateTime> DateOrder { get; set; }
-        public string AddressDelivery { get; set; }
-        public string FullName { get; set; }
-        public string Phone { get; set; }
-        public string PaymentMethod { get; set; }
-        public string Note { get; set; }
-        public string Status { get; set; }
-        public Nullable<decimal> Total { get; set; }
+        public int IDColor { get; set; }
+        public string ColorName { get; set; }
+        public int IDProduct { get; set; }
     
-        public virtual Customer Customer { get; set; }
+        public virtual Product Product { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<ProductVariant> ProductVariants { get; set; }
     }
 }

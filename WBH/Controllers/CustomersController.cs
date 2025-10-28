@@ -7,19 +7,26 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WBH.Models;
+using WBH.Filters;
 
 namespace WBH.Controllers
 {
+    [AuthorizeUser]
     public class CustomersController : Controller
     {
-        private DBFashionStoreEntities db = new DBFashionStoreEntities();
+        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
 
         // GET: Customers
         public ActionResult Index()
         {
             return View(db.Customers.ToList());
         }
-
+        public ActionResult ProductList()
+        {
+            var products = db.Products.ToList();
+            ViewBag.IsAdmin = false;
+            return View(products);
+        }
         // GET: Customers/Details/5
         public ActionResult Details(int? id)
         {
@@ -123,5 +130,6 @@ namespace WBH.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

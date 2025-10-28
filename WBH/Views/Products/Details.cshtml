@@ -1,0 +1,179 @@
+﻿@model WBH.Models.Product
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<style>
+    .product-page {
+        max-width: 1280px;
+        margin: auto;
+        padding: 40px;
+        font-family: sans-serif;
+        color: #222
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #777;
+        margin-bottom: 24px
+    }
+
+        .breadcrumb span {
+            color: #000;
+            font-weight: 600
+        }
+
+    .product-wrapper {
+        display: flex;
+        gap: 60px;
+        align-items: flex-start
+    }
+
+    .product-image img {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 16px;
+        transition: .3s
+    }
+
+        .product-image img:hover {
+            transform: scale(1.03)
+        }
+
+    .product-info h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 16px
+    }
+
+    .desc {
+        font-size: 17px;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 24px
+    }
+
+    .price {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 32px;
+        color: #e60023
+    }
+
+    .actions {
+        display: flex;
+        gap: 16px
+    }
+
+    .add-cart {
+        padding: 14px 28px;
+        background: #111;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 12px;
+        font-size: 17px;
+        transition: .3s
+    }
+
+        .add-cart:hover {
+            opacity: .85
+        }
+
+    .back {
+        padding: 14px 28px;
+        border: 1px solid #aaa;
+        text-decoration: none;
+        color: #333;
+        border-radius: 12px;
+        font-size: 17px;
+        transition: .3s
+    }
+
+        .back:hover {
+            background: #f5f5f5
+        }
+
+    .product-options {
+        margin-bottom: 32px
+    }
+
+    .option-label {
+        display: block;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px
+    }
+
+    .option-group {
+        display: flex;
+        gap: 12px
+    }
+
+    .opt-btn {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 15px;
+        transition: .2s
+    }
+
+        .opt-btn:hover {
+            border-color: #000
+        }
+
+    .color-btn {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: .2s
+    }
+
+        .color-btn:hover {
+            border-color: #000
+        }
+</style>
+<div class="product-page">
+    <nav class="breadcrumb">
+        <a href="@Url.Action("ProductList", "Products")">Trang chủ</a> /
+        <a href="@Url.Action("CategoryProducts", "Products", new { category = HttpUtility.UrlEncode(Model.Category) })">
+            @Model.Category
+        </a>/
+        <span>@Model.ProductName</span>
+    </nav>
+    <div class="product-wrapper">
+        <div class="product-image">
+            <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" />
+        </div>
+        <div class="product-info">
+            <h1>@Model.ProductName</h1>
+            <p class="desc">@Model.Description</p>
+            <div class="price">@String.Format("{0:N0} ₫", Model.Price)</div>
+
+
+            <div class="product-options">
+                <label class="option-label">Kích thước:</label>
+                <div class="option-group">
+                    <button class="opt-btn">S</button>
+                    <button class="opt-btn">M</button>
+                    <button class="opt-btn">L</button>
+                    <button class="opt-btn">XL</button>
+                </div>
+                <label class="option-label" style="margin-top:20px;">Màu sắc:</label>
+                <div class="option-group">
+                    <button class="color-btn" style="background:#000"></button>
+                    <button class="color-btn" style="background:#888"></button>
+                    <button class="color-btn" style="background:#c00"></button>
+                </div>
+            </div>
+            <div class="actions">
+                <a href="@Url.Action("AddToCart", "Customer", new { id = Model.IDProduct })" class="add-cart add-cart">🛒 Thêm vào giỏ hàng</a>
+                <a href="@Url.Action("ProductList", "Products")" class="back">← Quay lại cửa hàng</a>
+            </div>
+        </div>
+    </div>
+</div>

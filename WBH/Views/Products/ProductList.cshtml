@@ -1,0 +1,63 @@
+﻿@model IEnumerable <WBH.Models.Product>
+
+@{
+    ViewBag.Title = "ProductList";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<link href="@Url.Content("~/Content/Main.css")" rel="stylesheet" />
+<main>
+    <section class="slides">
+        <img src="~/Content/Img/BannerHome.png" alt="Banner quảng cáo" class="slide" style="width: 100%;" />
+        <img src="~/Content/Img/BannerHome1.png" alt="Banner quảng cáo" class="slide" style="width: 100%;" />
+    </section>
+    <section class="section-home">
+        <div class="container">
+            <h1>Tất cả sản phẩm</h1>
+
+            <form method="get" action="@Url.Action("ProductList", "Products")" class="sortby">
+                <label>Sắp xếp:</label>
+                <select name="sortOrder" onchange="this.form.submit()">
+                    <option value="">-- Sắp xếp --</option>
+                    <option value="price_asc">Giá tăng dần</option>
+                    <option value="price_desc">Giá giảm dần</option>
+                    <option value="name_asc">Tên A → Z</option>
+                    <option value="name_desc">Tên Z → A</option>
+                </select>
+            </form>
+
+            <div class="product">
+                <div class="product-list">
+                    <div class="product-grid">
+                        @foreach (var item in Model)
+                        {
+                            <div class="product-card" data-category="@item.Category">
+                                <div class="product-image">
+                                    <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
+                                        <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
+                                    </a>
+                                    <span class="badge">Hàng Mới</span>
+                                    <div class="product-actions">
+                                        <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
+                                        <button class="add-to-cart">
+                                            <i class="ri-shopping-cart-2-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <!--<p class="product-id">Mã SP: @item.IDProduct</p>-->
+                                    <h3 class="product-name">@item.ProductName</h3>
+                                    <p class="product-price">@String.Format("{0:N0}đ", item.Price)</p>
+
+                                    @if (ViewBag.IsAdmin == true)
+                                    {
+                                        <p class="product-quantity">Số lượng: @item.Quantity</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

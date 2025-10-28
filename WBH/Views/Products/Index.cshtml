@@ -1,0 +1,16 @@
+﻿@model IEnumerable<WBH.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<form method="get" action="@Url.Action("Index", "Products")">
+    <label>Sắp xếp:</label>
+    <select name="sortOrder" onchange="this.form.submit()">
+        <option value="price_asc">Giá tăng dần</option>
+        <option value="price_desc">Giá giảm dần</option>
+        <option value="name_asc">Tên A → Z</option>
+        <option value="name_desc">Tên Z → A</option>
+        <option value="quantity">Số lượng nhiều nhất</option>
+    </select>
+</form>

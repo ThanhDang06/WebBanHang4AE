@@ -131,16 +131,23 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CartsController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\WBHController.cs" />
+    <Compile Include="Filters\AuthorizeUserAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Account.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Cart.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\Customer.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
@@ -159,6 +166,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DBFashionStore.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\Order.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
@@ -166,6 +174,18 @@
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Product.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductColor.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductSize.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductVariant.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Sale.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -199,55 +219,55 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\Img\AnhVNPAY.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo1.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_SomiXTD.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_SomiXTN.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_SomiTN.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_somiTNBe.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_somiTNx.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_SơmiBe.jpg" />
-    <Content Include="Content\Img\Aosomi\Ao_SơmiT.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_Thun.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_Thun1Xa.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunBe.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunH.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunN.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunX.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunXD.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunĐ.jpg" />
-    <Content Include="Content\Img\AoThun\Ao_ThunĐe.jpg" />
-    <Content Include="Content\Img\Non\NonN.jpg" />
-    <Content Include="Content\Img\Non\NonT.jpg" />
-    <Content Include="Content\Img\Non\NonX.jpg" />
-    <Content Include="Content\Img\Non\NonĐ.jpg" />
-    <Content Include="Content\Img\QuanJean\Jean.jpg" />
-    <Content Include="Content\Img\QuanJean\JeanHH.jpg" />
-    <Content Include="Content\Img\QuanJean\JeanR.jpg" />
-    <Content Include="Content\Img\QuanJean\JeanX.jpg" />
+    <Content Include="Content\Img\Ao_Polo1.jpg" />
+    <Content Include="Content\Img\Ao_SomiXTD.jpg" />
+    <Content Include="Content\Img\Ao_SomiXTN.jpg" />
+    <Content Include="Content\Img\Ao_SomiTN.jpg" />
+    <Content Include="Content\Img\Ao_somiTNBe.jpg" />
+    <Content Include="Content\Img\Ao_somiTNx.jpg" />
+    <Content Include="Content\Img\Ao_SơmiBe.jpg" />
+    <Content Include="Content\Img\Ao_SơmiT.jpg" />
+    <Content Include="Content\Img\Ao_Thun.jpg" />
+    <Content Include="Content\Img\Ao_Thun1Xa.jpg" />
+    <Content Include="Content\Img\Ao_ThunBe.jpg" />
+    <Content Include="Content\Img\Ao_ThunH.jpg" />
+    <Content Include="Content\Img\Ao_ThunN.jpg" />
+    <Content Include="Content\Img\Ao_ThunX.jpg" />
+    <Content Include="Content\Img\Ao_ThunXD.jpg" />
+    <Content Include="Content\Img\Ao_ThunĐ.jpg" />
+    <Content Include="Content\Img\Ao_ThunĐe.jpg" />
+    <Content Include="Content\Img\NonN.jpg" />
+    <Content Include="Content\Img\NonT.jpg" />
+    <Content Include="Content\Img\NonX.jpg" />
+    <Content Include="Content\Img\NonĐ.jpg" />
+    <Content Include="Content\Img\Jean.jpg" />
+    <Content Include="Content\Img\JeanHH.jpg" />
+    <Content Include="Content\Img\JeanR.jpg" />
+    <Content Include="Content\Img\JeanX.jpg" />
     <Content Include="Content\Img\BannerHome1.png" />
     <Content Include="Content\Img\BannerHome.png" />
-    <Content Include="Content\Img\AoPolo\Ao_PoloBe.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo2.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo3.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo4.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_PoloC.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo6.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo7.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo8.jpg" />
-    <Content Include="Content\Img\AoPolo\Ao_Polo9.jpg" />
+    <Content Include="Content\Img\Ao_PoloBe.jpg" />
+    <Content Include="Content\Img\Ao_Polo2.jpg" />
+    <Content Include="Content\Img\Ao_Polo3.jpg" />
+    <Content Include="Content\Img\Ao_Polo4.jpg" />
+    <Content Include="Content\Img\Ao_PoloC.jpg" />
+    <Content Include="Content\Img\Ao_Polo6.jpg" />
+    <Content Include="Content\Img\Ao_Polo7.jpg" />
+    <Content Include="Content\Img\Ao_Polo8.jpg" />
+    <Content Include="Content\Img\Ao_Polo9.jpg" />
     <Content Include="Content\Img\Logo1.png" />
     <Content Include="Content\Img\AnhMOMO.png" />
-    <Content Include="Content\Img\TrangSuc\VongTay1.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay2.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay3.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay4.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay5.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay6.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay7.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay8.jpg" />
-    <Content Include="Content\Img\TrangSuc\VongTay9.jpg" />
+    <Content Include="Content\Img\VongTay1.jpg" />
+    <Content Include="Content\Img\VongTay2.jpg" />
+    <Content Include="Content\Img\VongTay3.jpg" />
+    <Content Include="Content\Img\VongTay4.jpg" />
+    <Content Include="Content\Img\VongTay5.jpg" />
+    <Content Include="Content\Img\VongTay6.jpg" />
+    <Content Include="Content\Img\VongTay7.jpg" />
+    <Content Include="Content\Img\VongTay8.jpg" />
+    <Content Include="Content\Img\VongTay9.jpg" />
     <Content Include="Content\Img\BannerSanPham.png" />
-    <Content Include="Content\Img\Vo\VoT.jpg" />
+    <Content Include="Content\Img\VoT.jpg" />
     <Content Include="Models\DBFashionStore.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DBFashionStore.edmx</DependentUpon>
@@ -322,6 +342,21 @@
     <Content Include="Views\Customers\Details.cshtml" />
     <Content Include="Views\Customers\Edit.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
+    <Content Include="Views\Products\Create.cshtml" />
+    <Content Include="Views\Products\Delete.cshtml" />
+    <Content Include="Views\Products\Details.cshtml" />
+    <Content Include="Views\Products\Edit.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Products\ProductList.cshtml" />
+    <Content Include="Views\Products\Sale.cshtml" />
+    <Content Include="Views\Products\CategoryProducts.cshtml" />
+    <Content Include="Views\Accounts\Login.cshtml" />
+    <Content Include="Views\Carts\Create.cshtml" />
+    <Content Include="Views\Carts\Delete.cshtml" />
+    <Content Include="Views\Carts\Details.cshtml" />
+    <Content Include="Views\Carts\Edit.cshtml" />
+    <Content Include="Views\Carts\Index.cshtml" />
+    <Content Include="Views\Carts\MyCart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

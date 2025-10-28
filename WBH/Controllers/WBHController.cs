@@ -9,7 +9,7 @@ namespace WBH.Controllers
 {
     public class WBHController : Controller
     {
-        private DBFashionStoreEntities db = new DBFashionStoreEntities();
+        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
         // GET: WBH
         public ActionResult Home()
         {

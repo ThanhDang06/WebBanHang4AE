@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DBFashionStoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DBFashionStoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="IDAcc" />
@@ -14,6 +14,16 @@
           <Property Name="Password" Type="nvarchar" MaxLength="100" />
           <Property Name="Role" Type="nvarchar" MaxLength="20" />
         </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="IDCart" />
+          </Key>
+          <Property Name="IDCart" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDCus" Type="int" Nullable="false" />
+          <Property Name="IDProduct" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" />
+        </EntityType>
         <EntityType Name="Customers">
           <Key>
             <PropertyRef Name="IDCus" />
@@ -21,6 +31,7 @@
           <Property Name="IDCus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FullName" Type="nvarchar" MaxLength="100" />
           <Property Name="Email" Type="nvarchar" MaxLength="100" />
+          <Property Name="Password" Type="nvarchar" MaxLength="100" />
           <Property Name="Phone" Type="varchar" MaxLength="15" />
           <Property Name="Address" Type="nvarchar" MaxLength="200" />
         </EntityType>
@@ -32,7 +43,7 @@
           <Property Name="IDOrder" Type="int" />
           <Property Name="IDProduct" Type="int" />
           <Property Name="Quantity" Type="int" />
-          <Property Name="UnitPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -42,7 +53,20 @@
           <Property Name="IDCus" Type="int" />
           <Property Name="DateOrder" Type="date" />
           <Property Name="AddressDelivery" Type="nvarchar" MaxLength="200" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="15" />
+          <Property Name="PaymentMethod" Type="nvarchar" MaxLength="50" />
+          <Property Name="Note" Type="nvarchar" MaxLength="255" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
           <Property Name="Total" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <EntityType Name="ProductColor">
+          <Key>
+            <PropertyRef Name="IDColor" />
+          </Key>
+          <Property Name="IDColor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ColorName" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="IDProduct" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -55,8 +79,63 @@
           <Property Name="Quantity" Type="int" />
           <Property Name="Image" Type="nvarchar" MaxLength="200" />
           <Property Name="Category" Type="nvarchar" MaxLength="50" />
+          <Property Name="OldPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="IsSale" Type="bit" Nullable="false" />
         </EntityType>
-        <Association Name="FK__OrderDeta__IDOrd__2B3F6F97">
+        <EntityType Name="ProductSize">
+          <Key>
+            <PropertyRef Name="IDSize" />
+          </Key>
+          <Property Name="IDSize" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SizeName" Type="nvarchar" MaxLength="10" />
+          <Property Name="IDProduct" Type="int" />
+        </EntityType>
+        <EntityType Name="ProductVariants">
+          <Key>
+            <PropertyRef Name="IDVariant" />
+          </Key>
+          <Property Name="IDVariant" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDProduct" Type="int" Nullable="false" />
+          <Property Name="IDSize" Type="int" Nullable="false" />
+          <Property Name="IDColor" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Sales">
+          <Key>
+            <PropertyRef Name="IDSale" />
+          </Key>
+          <Property Name="IDSale" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IDProduct" Type="int" />
+          <Property Name="Category" Type="nvarchar" MaxLength="50" />
+          <Property Name="DiscountPercent" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="EndDate" Type="date" />
+        </EntityType>
+        <Association Name="FK__Cart__IDCus__6754599E">
+          <End Role="Customers" Type="Self.Customers" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="IDCus" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDCus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Cart__IDProduct__68487DD7">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OrderDeta__IDOrd__5FB337D6">
           <End Role="Orders" Type="Self.Orders" Multiplicity="0..1" />
           <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
           <ReferentialConstraint>
@@ -80,7 +159,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Orders__IDCus__286302EC">
+        <Association Name="FK__Orders__IDCus__60A75C0F">
           <End Role="Customers" Type="Self.Customers" Multiplicity="0..1" />
           <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
           <ReferentialConstraint>
@@ -92,13 +171,110 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__ProductCo__IDPro__36B12243">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductColor">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductSi__IDPro__398D8EEE">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductSize">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Sales__IDProduct__5165187F">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="Sales" Type="Self.Sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Sales">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_ProductColor">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_ProductSize">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sales_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
+          <End Role="Sales" Type="Self.Sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Sales">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="DBFashionStoreModelStoreContainer">
           <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductColor" EntityType="Self.ProductColor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__OrderDeta__IDOrd__2B3F6F97" Association="Self.FK__OrderDeta__IDOrd__2B3F6F97">
+          <EntitySet Name="ProductSize" EntityType="Self.ProductSize" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductVariants" EntityType="Self.ProductVariants" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sales" EntityType="Self.Sales" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Cart__IDCus__6754599E" Association="Self.FK__Cart__IDCus__6754599E">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Cart__IDProduct__68487DD7" Association="Self.FK__Cart__IDProduct__68487DD7">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OrderDeta__IDOrd__5FB337D6" Association="Self.FK__OrderDeta__IDOrd__5FB337D6">
             <End Role="Orders" EntitySet="Orders" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
@@ -106,13 +282,40 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
-          <AssociationSet Name="FK__Orders__IDCus__286302EC" Association="Self.FK__Orders__IDCus__286302EC">
+          <AssociationSet Name="FK__Orders__IDCus__60A75C0F" Association="Self.FK__Orders__IDCus__60A75C0F">
             <End Role="Customers" EntitySet="Customers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
+          <AssociationSet Name="FK__ProductCo__IDPro__36B12243" Association="Self.FK__ProductCo__IDPro__36B12243">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductColor" EntitySet="ProductColor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductSi__IDPro__398D8EEE" Association="Self.FK__ProductSi__IDPro__398D8EEE">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductSize" EntitySet="ProductSize" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Sales__IDProduct__5165187F" Association="Self.FK__Sales__IDProduct__5165187F">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_ProductColor" Association="Self.FK_ProductVariants_ProductColor">
+            <End Role="ProductColor" EntitySet="ProductColor" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_Products" Association="Self.FK_ProductVariants_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_ProductSize" Association="Self.FK_ProductVariants_ProductSize">
+            <End Role="ProductSize" EntitySet="ProductSize" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sales_Products" Association="Self.FK_Sales_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DBFashionStoreModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -132,9 +335,11 @@
           <Property Name="IDCus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Phone" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
           <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Orders" Relationship="Self.FK__Orders__IDCus__286302EC" FromRole="Customers" ToRole="Orders" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK__Orders__IDCus__60A75C0F" FromRole="Customers" ToRole="Orders" />
+          <NavigationProperty Name="Carts" Relationship="DBFashionStoreModel.FK__Cart__IDCus__6754599E" FromRole="Customer" ToRole="Cart" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -144,8 +349,8 @@
           <Property Name="IDOrder" Type="Int32" />
           <Property Name="IDProduct" Type="Int32" />
           <Property Name="Quantity" Type="Int32" />
-          <Property Name="UnitPrice" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Order" Relationship="Self.FK__OrderDeta__IDOrd__2B3F6F97" FromRole="OrderDetails" ToRole="Orders" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="Order" Relationship="Self.FK__OrderDeta__IDOrd__5FB337D6" FromRole="OrderDetails" ToRole="Orders" />
           <NavigationProperty Name="Product" Relationship="Self.FK__OrderDeta__IDPro__2C3393D0" FromRole="OrderDetails" ToRole="Products" />
         </EntityType>
         <EntityType Name="Order">
@@ -156,9 +361,24 @@
           <Property Name="IDCus" Type="Int32" />
           <Property Name="DateOrder" Type="DateTime" Precision="0" />
           <Property Name="AddressDelivery" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Total" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Customer" Relationship="Self.FK__Orders__IDCus__286302EC" FromRole="Orders" ToRole="Customers" />
-          <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__IDOrd__2B3F6F97" FromRole="Orders" ToRole="OrderDetails" />
+          <NavigationProperty Name="Customer" Relationship="Self.FK__Orders__IDCus__60A75C0F" FromRole="Orders" ToRole="Customers" />
+          <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__IDOrd__5FB337D6" FromRole="Orders" ToRole="OrderDetails" />
+        </EntityType>
+        <EntityType Name="ProductColor">
+          <Key>
+            <PropertyRef Name="IDColor" />
+          </Key>
+          <Property Name="IDColor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ColorName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDProduct" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__ProductCo__IDPro__36B12243" FromRole="ProductColor" ToRole="Products" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_ProductColor" FromRole="ProductColor" ToRole="ProductVariants" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -171,9 +391,53 @@
           <Property Name="Quantity" Type="Int32" />
           <Property Name="Image" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OldPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="IsSale" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__IDPro__2C3393D0" FromRole="Products" ToRole="OrderDetails" />
+          <NavigationProperty Name="ProductColors" Relationship="Self.FK__ProductCo__IDPro__36B12243" FromRole="Products" ToRole="ProductColor" />
+          <NavigationProperty Name="ProductSizes" Relationship="Self.FK__ProductSi__IDPro__398D8EEE" FromRole="Products" ToRole="ProductSize" />
+          <NavigationProperty Name="Sales" Relationship="Self.FK__Sales__IDProduct__5165187F" FromRole="Products" ToRole="Sales" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_Products" FromRole="Products" ToRole="ProductVariants" />
+          <NavigationProperty Name="Sales1" Relationship="Self.FK_Sales_Products" FromRole="Products" ToRole="Sales" />
+          <NavigationProperty Name="Carts" Relationship="DBFashionStoreModel.FK__Cart__IDProduct__68487DD7" FromRole="Product" ToRole="Cart" />
         </EntityType>
-        <Association Name="FK__Orders__IDCus__286302EC">
+        <EntityType Name="ProductSize">
+          <Key>
+            <PropertyRef Name="IDSize" />
+          </Key>
+          <Property Name="IDSize" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SizeName" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IDProduct" Type="Int32" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__ProductSi__IDPro__398D8EEE" FromRole="ProductSize" ToRole="Products" />
+          <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_ProductSize" FromRole="ProductSize" ToRole="ProductVariants" />
+        </EntityType>
+        <EntityType Name="ProductVariant">
+          <Key>
+            <PropertyRef Name="IDVariant" />
+          </Key>
+          <Property Name="IDVariant" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDProduct" Type="Int32" Nullable="false" />
+          <Property Name="IDSize" Type="Int32" Nullable="false" />
+          <Property Name="IDColor" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ProductColor" Relationship="Self.FK_ProductVariants_ProductColor" FromRole="ProductVariants" ToRole="ProductColor" />
+          <NavigationProperty Name="Product" Relationship="Self.FK_ProductVariants_Products" FromRole="ProductVariants" ToRole="Products" />
+          <NavigationProperty Name="ProductSize" Relationship="Self.FK_ProductVariants_ProductSize" FromRole="ProductVariants" ToRole="ProductSize" />
+        </EntityType>
+        <EntityType Name="Sale">
+          <Key>
+            <PropertyRef Name="IDSale" />
+          </Key>
+          <Property Name="IDSale" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDProduct" Type="Int32" />
+          <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DiscountPercent" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__Sales__IDProduct__5165187F" FromRole="Sales" ToRole="Products" />
+          <NavigationProperty Name="Product1" Relationship="Self.FK_Sales_Products" FromRole="Sales" ToRole="Products" />
+        </EntityType>
+        <Association Name="FK__Orders__IDCus__60A75C0F">
           <End Role="Customers" Type="Self.Customer" Multiplicity="0..1" />
           <End Role="Orders" Type="Self.Order" Multiplicity="*" />
           <ReferentialConstraint>
@@ -185,7 +449,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__OrderDeta__IDOrd__2B3F6F97">
+        <Association Name="FK__OrderDeta__IDOrd__5FB337D6">
           <End Role="Orders" Type="Self.Order" Multiplicity="0..1" />
           <End Role="OrderDetails" Type="Self.OrderDetail" Multiplicity="*" />
           <ReferentialConstraint>
@@ -209,17 +473,105 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="DBFashionStoreEntities" annotation:LazyLoadingEnabled="true">
+        <Association Name="FK__ProductCo__IDPro__36B12243">
+          <End Role="Products" Type="Self.Product" Multiplicity="1" />
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductColor">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_ProductColor">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductSi__IDPro__398D8EEE">
+          <End Role="Products" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductSize">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Sales__IDProduct__5165187F">
+          <End Role="Products" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="Sales" Type="Self.Sale" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Sales">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_Products">
+          <End Role="Products" Type="Self.Product" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sales_Products">
+          <End Role="Products" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="Sales" Type="Self.Sale" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Sales">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductVariants_ProductSize">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="1" />
+          <End Role="ProductVariants" Type="Self.ProductVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="ProductVariants">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DBFashionStoreEntities01" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Accounts" EntityType="Self.Account" />
           <EntitySet Name="Customers" EntityType="Self.Customer" />
           <EntitySet Name="OrderDetails" EntityType="Self.OrderDetail" />
           <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="ProductColors" EntityType="Self.ProductColor" />
           <EntitySet Name="Products" EntityType="Self.Product" />
-          <AssociationSet Name="FK__Orders__IDCus__286302EC" Association="Self.FK__Orders__IDCus__286302EC">
+          <EntitySet Name="ProductSizes" EntityType="Self.ProductSize" />
+          <EntitySet Name="ProductVariants" EntityType="Self.ProductVariant" />
+          <EntitySet Name="Sales" EntityType="Self.Sale" />
+          <AssociationSet Name="FK__Orders__IDCus__60A75C0F" Association="Self.FK__Orders__IDCus__60A75C0F">
             <End Role="Customers" EntitySet="Customers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
-          <AssociationSet Name="FK__OrderDeta__IDOrd__2B3F6F97" Association="Self.FK__OrderDeta__IDOrd__2B3F6F97">
+          <AssociationSet Name="FK__OrderDeta__IDOrd__5FB337D6" Association="Self.FK__OrderDeta__IDOrd__5FB337D6">
             <End Role="Orders" EntitySet="Orders" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
@@ -227,13 +579,86 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
+          <AssociationSet Name="FK__ProductCo__IDPro__36B12243" Association="Self.FK__ProductCo__IDPro__36B12243">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductColor" EntitySet="ProductColors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_ProductColor" Association="Self.FK_ProductVariants_ProductColor">
+            <End Role="ProductColor" EntitySet="ProductColors" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductSi__IDPro__398D8EEE" Association="Self.FK__ProductSi__IDPro__398D8EEE">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductSize" EntitySet="ProductSizes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Sales__IDProduct__5165187F" Association="Self.FK__Sales__IDProduct__5165187F">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_Products" Association="Self.FK_ProductVariants_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sales_Products" Association="Self.FK_Sales_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductVariants_ProductSize" Association="Self.FK_ProductVariants_ProductSize">
+            <End Role="ProductSize" EntitySet="ProductSizes" />
+            <End Role="ProductVariants" EntitySet="ProductVariants" />
+          </AssociationSet>
+          <EntitySet Name="Carts" EntityType="DBFashionStoreModel.Cart" />
+          <AssociationSet Name="FK__Cart__IDCus__6754599E" Association="DBFashionStoreModel.FK__Cart__IDCus__6754599E">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Cart__IDProduct__68487DD7" Association="DBFashionStoreModel.FK__Cart__IDProduct__68487DD7">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="IDCart" />
+          </Key>
+          <Property Name="IDCart" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IDCus" Type="Int32" Nullable="false" />
+          <Property Name="IDProduct" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Customer" Relationship="DBFashionStoreModel.FK__Cart__IDCus__6754599E" FromRole="Cart" ToRole="Customer" />
+          <NavigationProperty Name="Product" Relationship="DBFashionStoreModel.FK__Cart__IDProduct__68487DD7" FromRole="Cart" ToRole="Product" />
+        </EntityType>
+        <Association Name="FK__Cart__IDCus__6754599E">
+          <End Type="DBFashionStoreModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="DBFashionStoreModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="IDCus" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDCus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Cart__IDProduct__68487DD7">
+          <End Type="DBFashionStoreModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="DBFashionStoreModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="IDProduct" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DBFashionStoreModelStoreContainer" CdmEntityContainer="DBFashionStoreEntities">
+        <EntityContainerMapping StorageEntityContainer="DBFashionStoreModelStoreContainer" CdmEntityContainer="DBFashionStoreEntities01">
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="DBFashionStoreModel.Account">
               <MappingFragment StoreEntitySet="Accounts">
@@ -250,6 +675,7 @@
                 <ScalarProperty Name="IDCus" ColumnName="IDCus" />
                 <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
               </MappingFragment>
@@ -262,7 +688,7 @@
                 <ScalarProperty Name="IDOrder" ColumnName="IDOrder" />
                 <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -273,7 +699,21 @@
                 <ScalarProperty Name="IDCus" ColumnName="IDCus" />
                 <ScalarProperty Name="DateOrder" ColumnName="DateOrder" />
                 <ScalarProperty Name="AddressDelivery" ColumnName="AddressDelivery" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Total" ColumnName="Total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductColors">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.ProductColor">
+              <MappingFragment StoreEntitySet="ProductColor">
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
+                <ScalarProperty Name="ColorName" ColumnName="ColorName" />
+                <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -287,6 +727,51 @@
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="OldPrice" ColumnName="OldPrice" />
+                <ScalarProperty Name="IsSale" ColumnName="IsSale" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductSizes">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.ProductSize">
+              <MappingFragment StoreEntitySet="ProductSize">
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
+                <ScalarProperty Name="SizeName" ColumnName="SizeName" />
+                <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductVariants">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.ProductVariant">
+              <MappingFragment StoreEntitySet="ProductVariants">
+                <ScalarProperty Name="IDVariant" ColumnName="IDVariant" />
+                <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sales">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.Sale">
+              <MappingFragment StoreEntitySet="Sales">
+                <ScalarProperty Name="IDSale" ColumnName="IDSale" />
+                <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
+                <ScalarProperty Name="IDCus" ColumnName="IDCus" />
+                <ScalarProperty Name="IDCart" ColumnName="IDCart" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -12,11 +12,16 @@ namespace WBH.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Account
+    public partial class Sale
     {
-        public int IDAcc { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public int IDSale { get; set; }
+        public Nullable<int> IDProduct { get; set; }
+        public string Category { get; set; }
+        public Nullable<decimal> DiscountPercent { get; set; }
+        public Nullable<System.DateTime> StartDate { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
+    
+        public virtual Product Product { get; set; }
+        public virtual Product Product1 { get; set; }
     }
 }

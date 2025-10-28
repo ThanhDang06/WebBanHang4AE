@@ -23,7 +23,7 @@ namespace WBH
             routes.MapRoute(
                 name: "CatchAll",
                 url: "{*url}",
-                defaults: new { controller = "Home", action = "Index" }
+                defaults: new { controller = "WBH", action = "Home" }
             );
         }
     }

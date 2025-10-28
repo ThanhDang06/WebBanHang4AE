@@ -1,0 +1,81 @@
+﻿@model IEnumerable<WBH.Models.Product>
+@{
+    ViewBag.Title = "CategoryProducts";
+    Layout = "~/Views/Shared/WBH.cshtml";
+
+    string categoryName = ViewBag.CurrentCategory;
+
+    switch (categoryName)
+    {
+        case "ao":
+            categoryName = "Áo";
+            break;
+        case "quan":
+            categoryName = "Quần";
+            break;
+        case "non":
+            categoryName = "Nón";
+            break;
+        case "vo":
+            categoryName = "Vớ";
+            break;
+        case "trangsuc":
+            categoryName = "Trang sức";
+            break;
+        default:
+            categoryName = "Sản phẩm";
+            break;
+    }
+}
+<link href="@Url.Content("~/Content/Main.css")" rel="stylesheet" />
+
+<main>
+    <section class="section-home">
+        <div class="container">
+            <h1 class="text-center">@categoryName</h1>
+
+            <form method="get" action="@Url.Action("CategoryProducts", "Products")" class="sortby">
+                <input type="hidden" name="category" value="@ViewBag.CurrentCategory" />
+                <label>Sắp xếp:</label>
+                <select name="sortOrder" onchange="this.form.submit()">
+                    <option value="">-- Sắp xếp --</option>
+                    <option value="price_asc" @(ViewBag.SortOrder == "price_asc" ? "selected" : "")>Giá tăng dần</option>
+                    <option value="price_desc" @(ViewBag.SortOrder == "price_desc" ? "selected" : "")>Giá giảm dần</option>
+                    <option value="name_asc" @(ViewBag.SortOrder == "name_asc" ? "selected" : "")>Tên A → Z</option>
+                    <option value="name_desc" @(ViewBag.SortOrder == "name_desc" ? "selected" : "")>Tên Z → A</option>
+                </select>
+            </form>
+            <div class="product">
+                <div class="product-list">
+                    <div class="product-grid">
+                        @foreach (var item in Model)
+                        {
+                            <div class="product-card" data-category="@item.Category">
+                                <div class="product-image">
+                                    <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
+                                        <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
+                                    </a>
+                                    <span class="badge">Hàng Mới</span>
+                                    <div class="product-actions">
+                                        <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
+                                        <button class="add-to-cart">
+                                            <i class="ri-shopping-cart-2-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-name">@item.ProductName</h3>
+                                    <p class="product-price">@String.Format("{0:N0}đ", item.Price)</p>
+                                    @if (ViewBag.IsAdmin == true)
+                                    {
+                                        <p class="product-quantity">Số lượng: @item.Quantity</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

@@ -9,7 +9,7 @@ namespace WBH.Controllers
 {
     public class LoginController : Controller
     {
-        private DBFashionStoreEntities db = new DBFashionStoreEntities();
+        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
 
         // GET: Login
         [HttpGet]

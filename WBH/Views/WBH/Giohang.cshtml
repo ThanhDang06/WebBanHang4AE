@@ -205,6 +205,7 @@
             cartItemsDiv.appendChild(div);
         });
 
+
         // ===== Tính phí vận chuyển =====
         let shippingFee = 30000; // phí mặc định 30,000đ
         let currentShippingFee = subtotal >= 399000 ? 0 : shippingFee; // miễn phí nếu subtotal >= 399k
@@ -286,6 +287,7 @@
         // Chuyển sang trang cảm ơn
         window.location.href = "thankyou.html";
     });
+
 
     // Hiển thị giỏ hàng khi load trang
     renderCart();
