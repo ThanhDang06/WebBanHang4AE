@@ -165,9 +165,13 @@
                 </div>
                 <label class="option-label" style="margin-top:20px;">Màu sắc:</label>
                 <div class="option-group">
-                    <button class="color-btn" style="background:#000"></button>
-                    <button class="color-btn" style="background:#888"></button>
-                    <button class="color-btn" style="background:#c00"></button>
+                    @foreach (var color in Model.ProductColors)
+                    {
+                        <button class="color-btn"
+                                style="background:@color.ColorName"
+                                data-img="@Url.Content("~/Content/Img/" + color.Image)">
+                        </button>
+                    }
                 </div>
             </div>
             <div class="actions">
@@ -177,3 +181,20 @@
         </div>
     </div>
 </div>
+<script>
+    const colorButtons = document.querySelectorAll('.color-btn');
+    const mainImage = document.querySelector('.product-image img');
+
+    colorButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newImg = btn.getAttribute('data-img');
+            if (newImg) {
+                mainImage.src = newImg;
+            }
+
+            // Hiệu ứng chọn
+            colorButtons.forEach(b => b.style.border = "1px solid #ccc");
+            btn.style.border = "2px solid #000";
+        });
+    });
+</script>

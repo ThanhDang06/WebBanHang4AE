@@ -67,6 +67,7 @@
           <Property Name="IDColor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ColorName" Type="nvarchar" MaxLength="30" Nullable="false" />
           <Property Name="IDProduct" Type="int" Nullable="false" />
+          <Property Name="Image" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -379,6 +380,7 @@
           <Property Name="IDProduct" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Product" Relationship="Self.FK__ProductCo__IDPro__36B12243" FromRole="ProductColor" ToRole="Products" />
           <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_ProductColor" FromRole="ProductColor" ToRole="ProductVariants" />
+          <Property Name="Image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -711,6 +713,7 @@
           <EntitySetMapping Name="ProductColors">
             <EntityTypeMapping TypeName="DBFashionStoreModel.ProductColor">
               <MappingFragment StoreEntitySet="ProductColor">
+                <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="IDColor" ColumnName="IDColor" />
                 <ScalarProperty Name="ColorName" ColumnName="ColorName" />
                 <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />

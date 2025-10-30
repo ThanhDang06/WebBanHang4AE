@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    var chartData = ViewBag.ChartData as IEnumerable<dynamic>;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="@Url.Content("~/Content/Admin.css")" rel="stylesheet" />
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h3>👑 Admin</h3>
+        <ul>
+            <li><a href="#" class="active">Dashboard</a></li>
+            <li><a href="@Url.Action("QuanLySanPham", "Admin")">Quản lý sản phẩm</a></li>
+            <li><a href="@Url.Action("DonHang", "Admin")">Đơn hàng</a></li>
+            <li><a href="@Url.Action("KhachHang", "Admin")">Khách hàng</a></li>
+            <li><a href="@Url.Action("DangXuat", "Login")">Đăng xuất</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <h2>Chào mừng, @ViewBag.User 👋</h2>
+
+        <div class="row text-center g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h5>Doanh thu</h5>
+                    <p>@String.Format("{0:N0} ₫", ViewBag.TotalRevenue)</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h5>Đơn hàng</h5>
+                    <p>@ViewBag.TotalOrders</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h5>Khách hàng</h5>
+                    <p>@ViewBag.TotalCustomers</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <h5>Sản phẩm</h5>
+                    <p>@ViewBag.TotalProducts</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h4>📊 Biểu đồ doanh thu theo tháng</h4>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const chartData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(chartData ?? new List<object>()));
+
+    const labels = chartData.map(c => `${c.Month}/${c.Year}`);
+    const data = chartData.map(c => c.Revenue);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels.length > 0 ? labels : ['Không có dữ liệu'],
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: data.length > 0 ? data : [0],
+                borderColor: '#36d1dc',
+                backgroundColor: 'rgba(54, 209, 220, 0.2)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#36d1dc'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: { display: true },
+                tooltip: { mode: 'index', intersect: false }
+            }
+        }
+    });
+</script>

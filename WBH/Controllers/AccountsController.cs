@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using WBH.Models;
 
@@ -123,42 +119,6 @@ namespace WBH.Controllers
             }
             base.Dispose(disposing);
         }
-        // ===== HIỂN THỊ TRANG LOGIN =====
-        [HttpGet]
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        // ===== XỬ LÝ LOGIN =====
-        [HttpPost]
-        public ActionResult Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = db.Customers.FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
-                if (user != null)
-                {
-                    // Lưu thông tin đăng nhập vào Session
-                    Session["User"] = user;
-                    Session["UserName"] = user.FullName;
-                    Session["UserID"] = user.IDCus;
-
-                    return RedirectToAction("Index", "WBH"); // Trang chính sau khi đăng nhập
-                }
-                else
-                {
-                    ViewBag.Error = "Email hoặc mật khẩu không đúng!";
-                }
-            }
-            return View(model);
-        }
-
-        // ===== ĐĂNG XUẤT =====
-        public ActionResult Logout()
-        {
-            Session.Clear(); // Xóa tất cả Session
-            return RedirectToAction("Login");
-        }
+       
     }
 }

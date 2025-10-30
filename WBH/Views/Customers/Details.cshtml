@@ -4,15 +4,24 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-<h2>Chi tiết khách hàng</h2>
+<link rel="stylesheet" href="~/Content/Dashboard.css" />
 
-<div>
-    <p><strong>Họ tên:</strong> @Model.FullName</p>
-    <p><strong>Email:</strong> @Model.Email</p>
-    <p><strong>Phone:</strong> @Model.Phone</p>
-    <p><strong>Địa chỉ:</strong> @Model.Address</p>
+<div class="navbar">
+    <div class="navbar-left">
+        <span class="logo">🛍️ Fashion Store</span>
+    </div>
+    <div class="navbar-right">
+        <span class="username">@Session["Username"] (Khách hàng)</span>
+        <a href="@Url.Action("Logout", "Login")" class="logout-btn">Đăng xuất</a>
+    </div>
 </div>
 
-@Html.ActionLink("Sửa", "Edit", new { id = Model.IDCus }, new { @class = "btn btn-primary" })
-@Html.ActionLink("Xóa", "Delete", new { id = Model.IDCus }, new { @class = "btn btn-danger" })
-@Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary" })
+<div class="dashboard-container">
+    <div class="profile-card">
+        <h2>Xin chào, @Model.FullName!</h2>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+        <p><strong>Địa chỉ:</strong> @Model.Address</p>
+        <a href="@Url.Action("ProductList", "Customers")" class="btn">Xem sản phẩm</a>
+    </div>
+</div>

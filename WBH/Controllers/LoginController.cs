@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using WBH.Models;
 
@@ -18,45 +15,40 @@ namespace WBH.Controllers
             return View();
         }
 
-        // POST: Login
         [HttpPost]
         public ActionResult DangNhap(string username, string password)
         {
-            var account = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
-
-            if (account != null)
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                Session["AccountID"] = account.IDAcc;
-                Session["Username"] = account.Username;
-                Session["Role"] = account.Role;
-
-                // Phân quyền
-                if (account.Role == "Admin")
-                {
-                    return RedirectToAction("Admin", "Admin"); // chuyển tới trang Admin
-                }
-                else if (account.Role == "Customer")
-                {
-                    // Lấy Id customer tương ứng với account login
-                    var customer = db.Customers.FirstOrDefault(c => c.IDCus == account.IDAcc);
-                    if (customer != null)
-                        return RedirectToAction("Details", "Customers", new { id = customer.IDCus });
-                    else
-                        return RedirectToAction("Index", "WBH"); // fallback
-                }
-                else
-                {
-                    ViewBag.Error = "Role không hợp lệ!";
-                    return View();
-                }
+                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
+                return View();
             }
 
-            ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không đúng!";
-            return View();
+            var account = db.Accounts.FirstOrDefault(a => a.Username == username && a.Password == password);
+            if (account == null)
+            {
+                ViewBag.Error = "Sai tên đăng nhập hoặc mật khẩu!";
+                return View();
+            }
+
+            // Lưu thông tin đăng nhập vào session
+            Session["UserName"] = account.Username;
+            Session["Role"] = account.Role;
+            Session["IDAcc"] = account.IDAcc;
+
+            // Chuyển hướng theo vai trò
+            switch (account.Role)
+            {
+                case "Admin":
+                    return RedirectToAction("Dashboard", "Admin");
+                case "Customer":
+                    return RedirectToAction("Dashboard", "Customers");
+                default:
+                    return RedirectToAction("DangNhap");
+            }
         }
 
-        // Logout
-        public ActionResult Logout()
+        public ActionResult DangXuat()
         {
             Session.Clear();
             return RedirectToAction("DangNhap");

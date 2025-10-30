@@ -1,0 +1,199 @@
+﻿@model WBH.Models.DashboardViewModel
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body.dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+        body.dark-mode .card {
+            background-color: #1e1e1e;
+            color: #f5f5f5;
+            border: 1px solid #333;
+        }
+
+        body.dark-mode .table {
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+    .theme-toggle {
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        font-size: 1.3rem;
+    }
+
+    .transition {
+        transition: background-color 0.3s, color 0.3s;
+    }
+</style>
+
+<div class="container my-5 transition">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">Xin chào, @Session["UserName"] 👋</h2>
+        <button id="themeToggle" class="theme-toggle" title="Chuyển chế độ sáng/tối">
+            🌞
+        </button>
+    </div>
+
+    <!-- Tổng quan -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Tổng đơn hàng</h6>
+                    <h3>@Model.TotalOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Tổng chi tiêu</h6>
+                    <h3>@Model.TotalSpent.ToString("N0") đ</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Đơn đang xử lý</h6>
+                    <h3>@Model.PendingOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Đơn đã giao</h6>
+                    <h3>@Model.DeliveredOrders</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ chi tiêu -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">Chi tiêu theo tháng</div>
+        <div class="card-body">
+            <canvas id="spendingChart" height="80"></canvas>
+        </div>
+    </div>
+
+    <!-- Đơn gần đây -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">Đơn hàng gần đây</div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Ngày đặt</th>
+                        <th>Trạng thái</th>
+                        <th>Tổng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td>#@order.IDOrder</td>
+                            <td>@order.DateOrder.ToString("dd/MM/yyyy")</td>
+                            <td>@order.Status</td>
+                            <td>@order.Total.ToString("N0") đ</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sản phẩm trong đơn mới nhất -->
+    @if (Model.LatestOrderProducts.Any())
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">Sản phẩm trong đơn gần nhất</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.LatestOrderProducts)
+                        {
+                            <tr>
+                                <td>@p.ProductName</td>
+                                <td>@p.Quantity</td>
+                                <td>@p.Price.ToString("N0") đ</td>
+                                <td>@p.LineTotal.ToString("N0") đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    // Biểu đồ chi tiêu
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MonthlySpending.Select(x => x.MonthLabel))),
+            datasets: [{
+                label: 'Chi tiêu (VNĐ)',
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MonthlySpending.Select(x => x.Amount))),
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return value.toLocaleString() + ' đ';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // 🌙 Chuyển theme sáng / tối
+    const toggleBtn = document.getElementById("themeToggle");
+    const body = document.body;
+
+    // Lấy trạng thái đã lưu
+    if (localStorage.getItem("theme") === "dark") {
+        body.classList.add("dark-mode");
+        toggleBtn.textContent = "🌙";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        const isDark = body.classList.contains("dark-mode");
+        toggleBtn.textContent = isDark ? "🌙" : "🌞";
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+</script>

@@ -23,6 +23,7 @@ namespace WBH.Models
         public int IDColor { get; set; }
         public string ColorName { get; set; }
         public int IDProduct { get; set; }
+        public string Image { get; set; }
     
         public virtual Product Product { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

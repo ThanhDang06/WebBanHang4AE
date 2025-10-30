@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -56,7 +54,7 @@ namespace WBH.Controllers
                 default:
                     products = products.OrderBy(p => p.IDProduct); // mặc định
                     break;
-                
+
             }
             ViewBag.CurrentCategory = category;
             ViewBag.SortOrder = sortOrder;
@@ -65,15 +63,13 @@ namespace WBH.Controllers
         // GET: Products/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
+            var product = db.Products
+        .Include(p => p.ProductColors)
+        .FirstOrDefault(p => p.IDProduct == id);
+
             if (product == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(product);
         }
 
@@ -158,13 +154,19 @@ namespace WBH.Controllers
         }
         public ActionResult ProductList(string sortOrder)
         {
-            var products = db.Products.AsQueryable();
+            var today = DateTime.Today;
+            // Lấy tất cả sản phẩm KHÔNG nằm trong thời gian sale
+            var products = db.Products
+                .Where(p => !db.Sales.Any(s => s.IDProduct == p.IDProduct
+                                             && s.StartDate <= today
+                                             && s.EndDate >= today))
+                .AsQueryable();
 
             // Sắp xếp an toàn với nullable
             switch (sortOrder)
             {
                 case "price_asc":
-                    products = products.OrderBy(p => p.Price ?? 0); // null -> 0
+                    products = products.OrderBy(p => p.Price ?? 0);
                     break;
                 case "price_desc":
                     products = products.OrderByDescending(p => p.Price ?? 0);
@@ -179,10 +181,11 @@ namespace WBH.Controllers
                     products = products.OrderBy(p => p.IDProduct);
                     break;
             }
+
             return View(products.ToList());
         }
 
-      
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
