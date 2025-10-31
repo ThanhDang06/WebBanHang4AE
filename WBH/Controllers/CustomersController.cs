@@ -30,11 +30,15 @@ namespace WBH.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+
+            // Tìm khách hàng theo ID tài khoản (IDAcc)
+            var customer = db.Customers.FirstOrDefault(c => c.IDCus == id);
+
             if (customer == null)
             {
                 return HttpNotFound();
             }
+
             return View(customer);
         }
 

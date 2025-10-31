@@ -51,7 +51,9 @@ namespace WBH.Controllers
         public ActionResult DangXuat()
         {
             Session.Clear();
+            Session.Abandon();
             return RedirectToAction("DangNhap");
+
         }
 
     }
