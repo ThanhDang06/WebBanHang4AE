@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
 using System.Web.Mvc;
 using WBH.Models;
 
@@ -8,7 +10,7 @@ namespace WBH.Controllers
 
     public class AdminController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
         // GET: Admin
         public ActionResult Dashboard()
         {
@@ -40,6 +42,54 @@ namespace WBH.Controllers
             ViewBag.User = Session["UserName"];
             return View();
 
+        }
+        // GET: Admin/RepairProducts
+        public ActionResult RepairProducts()
+        {
+            var products = db.Products.ToList();
+            var today = DateTime.Today;
+
+            foreach (var p in products)
+            {
+                // Nếu Price null hoặc <= 0 → gán mặc định 1000₫
+                if (!p.Price.HasValue || p.Price.Value <= 0)
+                    p.Price = 1000m;
+
+                // Nếu OldPrice null hoặc <= 0 → gán bằng Price
+                if (!p.OldPrice.HasValue || p.OldPrice.Value <= 0)
+                    p.OldPrice = p.Price;
+
+                // Kiểm tra sale còn hiệu lực không
+                var activeSale = db.Sales.FirstOrDefault(s => s.IDProduct == p.IDProduct &&
+                                                             s.StartDate <= today && s.EndDate >= today);
+                p.IsSale = activeSale != null;
+
+                db.Entry(p).State = EntityState.Modified;
+            }
+
+            db.SaveChanges();
+
+            TempData["Message"] = "Đã cập nhật tất cả sản phẩm thành công!";
+            return RedirectToAction("Index", "Products");
+        }
+
+        // GET: Admin/Orders
+        public ActionResult Orders()
+        {
+            var orders = db.Orders
+                .OrderByDescending(o => o.DateOrder)
+                .ToList();
+            return View(orders);
+        }
+
+        // GET: Admin/OrderDetails/5
+        public ActionResult OrderDetails(int id)
+        {
+            var order = db.Orders
+                .Include("OrderDetails")
+                .FirstOrDefault(o => o.IDOrder == id);
+            if (order == null) return HttpNotFound();
+            return View(order);
         }
         public ActionResult ProductList()
         {

@@ -2,7 +2,7 @@
 @using WBH.Helpers
 
 @{
-    ViewBag.Title = "ProductList";
+    ViewBag.Title = "AccessoriesList";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
 <link href="@Url.Content("~/Content/Main.css")" rel="stylesheet" />
@@ -15,9 +15,9 @@
 
     <section class="section-home">
         <div class="container">
-            <h1>Tất cả sản phẩm</h1>
+            <h1>Phụ Kiện</h1>
 
-            <form method="get" action="@Url.Action("ProductList", "Products")" class="sortby">
+            <form method="get" action="@Url.Action("AcessoriesList", "Products")" class="sortby">
                 <label>Sắp xếp:</label>
                 <select name="sortOrder" onchange="this.form.submit()">
                     <option value="">-- Sắp xếp --</option>
@@ -33,7 +33,7 @@
                     <div class="product-grid">
                         @foreach (var item in Model)
                         {
-                            <div class="product-card" data-category="@item.Category"  data-id="@item.IDProduct">
+                            <div class="product-card" data-category="@item.Category">
                                 <div class="product-image">
                                     <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
                                         <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />

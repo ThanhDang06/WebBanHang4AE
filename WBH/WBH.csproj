@@ -127,13 +127,18 @@
     <Compile Include="Controllers\CartsController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Controllers\WBHController.cs" />
     <Compile Include="Filters\AuthorizeUserAttribute.cs" />
+    <Compile Include="Filters\BreadCrumbAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SaleHelper.cs" />
+    <Compile Include="Helpers\SortHelper.cs" />
     <Compile Include="Models\Account.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
@@ -340,23 +345,35 @@
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
-    <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Products\ProductList.cshtml" />
     <Content Include="Views\Products\Sale.cshtml" />
     <Content Include="Views\Products\CategoryProducts.cshtml" />
     <Content Include="Views\Accounts\Login.cshtml" />
+    <Content Include="Views\Admin\Dashboard.cshtml" />
+    <Content Include="Views\Admin\_AdminLayout.cshtml" />
+    <Content Include="Views\Customers\Dashboard.cshtml" />
+    <Content Include="Views\Products\Search.cshtml" />
+    <Content Include="Views\Sales\Create.cshtml" />
+    <Content Include="Views\Sales\Delete.cshtml" />
+    <Content Include="Views\Sales\Details.cshtml" />
+    <Content Include="Views\Sales\Edit.cshtml" />
+    <Content Include="Views\Sales\Index.cshtml" />
+    <Content Include="Views\Products\ClothesList.cshtml" />
+    <Content Include="Views\Shared\_Breadcrumb.cshtml" />
+    <Content Include="Views\Products\AccessoriesList.cshtml" />
     <Content Include="Views\Carts\Create.cshtml" />
     <Content Include="Views\Carts\Delete.cshtml" />
     <Content Include="Views\Carts\Details.cshtml" />
     <Content Include="Views\Carts\Edit.cshtml" />
     <Content Include="Views\Carts\Index.cshtml" />
-    <Content Include="Views\Carts\MyCart.cshtml" />
-    <Content Include="Views\Admin\Dashboard.cshtml" />
-    <Content Include="Views\Admin\_AdminLayout.cshtml" />
-    <Content Include="Views\Customers\Dashboard.cshtml" />
+    <Content Include="Views\Carts\ThankYou.cshtml" />
+    <Content Include="Views\Login\DangKy.cshtml" />
+    <Content Include="Views\Admin\Orders.cshtml" />
+    <Content Include="Views\Admin\OrderDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Register\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

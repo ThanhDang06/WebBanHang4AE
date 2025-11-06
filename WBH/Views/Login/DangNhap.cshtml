@@ -2,38 +2,58 @@
     ViewBag.Title = "DangNhap";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+
 @section styles {
     <link rel="stylesheet" href="~/Content/Login.css" />
 }
-<div class="login-page">
-    <h2>Đăng nhập</h2>
+
+<div class="login-page container py-5" style="max-width: 400px;">
+    <h2 class="text-center mb-4 fw-bold">Đăng nhập</h2>
 
     @using (Html.BeginForm("DangNhap", "Login", FormMethod.Post))
     {
-        <div class="form-group">
-            <label>Tài khoản</label>
-            <input type="text" name="username" class="form-control" required />
+        <div class="form-group mb-3">
+            <label for="username" class="form-label">Tài khoản</label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   class="form-control"
+                   required
+                   autocomplete="username"
+                   placeholder="Nhập tên đăng nhập" />
         </div>
-        <div class="form-group">
-            <label>Mật khẩu</label>
-            <input type="password" name="password" class="form-control" required />
+
+        <div class="form-group mb-3">
+            <label for="password" class="form-label">Mật khẩu</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-control"
+                   required
+                   autocomplete="current-password"
+                   placeholder="Nhập mật khẩu" />
         </div>
-        <button type="submit" class="btn btn-success">Đăng nhập</button>
+
+        <button type="submit" class="btn btn-dark w-100">Đăng nhập</button>
     }
 
     @if (ViewBag.Error != null)
     {
-        <div class="alert alert-danger" style="margin-top:10px;">
+        <div class="alert alert-danger mt-3 text-center">
             @ViewBag.Error
         </div>
     }
+    <div class="text-center mt-3">
+        <span>Chưa có tài khoản? </span>
+        <a href="@Url.Action("DangKy", "Login")" class="text-primary fw-bold">Đăng ký</a>
+    </div>
 </div>
+
 <script>
     document.querySelector("form").addEventListener("submit", function () {
-        const btn = document.querySelector(".btn-success");
+        const btn = document.querySelector(".btn-dark");
         btn.innerText = "Đang xử lý...";
         btn.disabled = true;
-        btn.style.opacity = "1";
+        btn.style.opacity = "0.8";
     });
 </script>
-

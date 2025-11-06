@@ -4,49 +4,78 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Quantity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateAdded)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Customer.FullName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.ProductName)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Quantity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateAdded)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Customer.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.ProductName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.IDCart }) |
-            @Html.ActionLink("Details", "Details", new { id=item.IDCart }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.IDCart })
-        </td>
-    </tr>
+@section styles {
+    <link rel="stylesheet" href="~/Content/Cart.css" />
 }
+<div class="cart-container">
+    <!-- CỘT TRÁI: Thông tin đơn hàng -->
+    <div class="order-info">
+        <h2>Thông tin đơn hàng</h2>
+        <input type="text" id="fullname" placeholder="Họ và tên">
+        <input type="text" id="phone" placeholder="Số điện thoại">
+        <input type="text" id="address" placeholder="Địa chỉ">
 
-</table>
+        <select id="city">
+            <option value="">Tỉnh/thành phố</option>
+        </select>
+        <select id="district" disabled>
+            <option value="">Quận/huyện</option>
+        </select>
+        <select id="ward" disabled>
+            <option value="">Phường/xã</option>
+        </select>
+
+        <textarea id="note" placeholder="Ghi chú thêm"></textarea>
+
+        <h3>Hình thức thanh toán</h3>
+        <label class="payment">
+            <input type="radio" name="pay" value="COD" checked>
+            <span>Thanh toán khi giao hàng (COD)</span>
+        </label>
+        <label class="payment">
+            <input type="radio" name="pay" value="VNPAY">
+            <img src="~/Content/Img/AnhVNPAY.jpg" alt="VNPAY" width="40">
+            <span>Ví điện tử VNPAY</span>
+        </label>
+        <label class="payment">
+            <input type="radio" name="pay" value="MOMO">
+            <img src="~/Content/Img/AnhMOMO.png" alt="MoMo" width="40">
+            <span>Thanh toán MoMo</span>
+        </label>
+    </div>
+
+    <!-- CỘT PHẢI: Giỏ hàng -->
+    <div class="cart-summary">
+        <h2>Giỏ hàng của bạn</h2>
+        <div id="cart-items"></div>
+
+        <div class="voucher-section">
+            <h3>Ưu Đãi Dành Cho Bạn</h3>
+            <div class="voucher-list">
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher1" value="GIAM10K">
+                    <label for="voucher1"><strong>GIAM10K</strong> - Giảm 10,000đ cho đơn từ 199,000đ</label>
+                </div>
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher2" value="FREESHIP">
+                    <label for="voucher2"><strong>FREESHIP</strong> - Miễn phí vận chuyển cho đơn từ 399,000đ</label>
+                </div>
+                <div class="voucher">
+                    <input type="radio" name="voucher" id="voucher3" value="GIAM20K">
+                    <label for="voucher3"><strong>GIAM20K</strong> - Giảm 20,000đ cho đơn từ 499,000đ</label>
+                </div>
+            </div>
+            <input type="text" id="customVoucher" placeholder="Nhập mã giảm giá">
+            <button id="applyVoucher">Áp dụng Voucher</button>
+        </div>
+
+        <div class="cart-total">
+            <p>Tạm tính: <span id="subtotal">0đ</span></p>
+            <p>Phí vận chuyển: <strong>Miễn phí</strong></p>
+            <p>Voucher giảm giá: <span id="voucherDiscount">0đ</span></p>
+            <hr>
+            <p><strong>Tổng: <span id="total">0đ</span></strong></p>
+            <button id="checkoutBtn" class="checkout-btn">Thanh toán</button>
+        </div>
+    </div>
+</div>

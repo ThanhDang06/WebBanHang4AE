@@ -188,3 +188,9 @@
     padding: 3px 6px;
     border-radius: 4px;
 }
+.product-info h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}

@@ -17,13 +17,13 @@ namespace WBH.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Product()
         {
+            this.Carts = new HashSet<Cart>();
             this.OrderDetails = new HashSet<OrderDetail>();
             this.ProductColors = new HashSet<ProductColor>();
             this.ProductSizes = new HashSet<ProductSize>();
             this.Sales = new HashSet<Sale>();
             this.ProductVariants = new HashSet<ProductVariant>();
             this.Sales1 = new HashSet<Sale>();
-            this.Carts = new HashSet<Cart>();
         }
     
         public int IDProduct { get; set; }
@@ -37,6 +37,8 @@ namespace WBH.Models
         public bool IsSale { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cart> Carts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductColor> ProductColors { get; set; }
@@ -48,7 +50,5 @@ namespace WBH.Models
         public virtual ICollection<ProductVariant> ProductVariants { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Sale> Sales1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cart> Carts { get; set; }
     }
 }

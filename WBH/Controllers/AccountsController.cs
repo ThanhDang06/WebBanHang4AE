@@ -8,7 +8,7 @@ namespace WBH.Controllers
 {
     public class AccountsController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
         // GET: Accounts
         public ActionResult Index()

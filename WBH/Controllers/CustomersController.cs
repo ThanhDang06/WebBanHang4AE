@@ -10,7 +10,7 @@ namespace WBH.Controllers
 {
     public class CustomersController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
         // GET: Customers
         public ActionResult Index()

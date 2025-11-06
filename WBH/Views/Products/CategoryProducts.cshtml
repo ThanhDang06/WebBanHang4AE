@@ -58,9 +58,10 @@
                                     <span class="badge">Hàng Mới</span>
                                     <div class="product-actions">
                                         <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
-                                        <button class="add-to-cart">
+                                        <button class="add-to-cart" data-id="@item.IDProduct">
                                             <i class="ri-shopping-cart-2-fill"></i>
                                         </button>
+
                                     </div>
                                 </div>
                                 <div class="product-info">

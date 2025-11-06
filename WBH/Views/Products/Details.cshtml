@@ -138,13 +138,6 @@
         }
 </style>
 <div class="product-page">
-    <nav class="breadcrumb">
-        <a href="@Url.Action("ProductList", "Products")">Trang chủ</a> /
-        <a href="@Url.Action("CategoryProducts", "Products", new { category = HttpUtility.UrlEncode(Model.Category) })">
-            @Model.Category
-        </a>/
-        <span>@Model.ProductName</span>
-    </nav>
     <div class="product-wrapper">
         <div class="product-image">
             <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" />
@@ -175,7 +168,10 @@
                 </div>
             </div>
             <div class="actions">
-                <a href="@Url.Action("AddToCart", "Customer", new { id = Model.IDProduct })" class="add-cart add-cart">🛒 Thêm vào giỏ hàng</a>
+                <a href="javascript:void(0);"
+                   class="add-cart"
+                   data-id="@Model.IDProduct">🛒 Thêm vào giỏ hàng</a>
+
                 <a href="@Url.Action("ProductList", "Products")" class="back">← Quay lại cửa hàng</a>
             </div>
         </div>
@@ -197,4 +193,27 @@
             btn.style.border = "2px solid #000";
         });
     });
+
+    document.querySelectorAll('.add-cart').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const productId = btn.getAttribute('data-id');
+
+        fetch('@Url.Action("AddToCart", "Carts")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({ id: productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                // cập nhật số lượng giỏ hàng nếu có popup
+                if(typeof updateCartCount === "function") updateCartCount();
+                if(typeof renderMiniCart === "function") renderMiniCart();
+            }
+        })
+        .catch(err => console.error(err));
+    });
+});
+
 </script>

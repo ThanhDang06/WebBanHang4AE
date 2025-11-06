@@ -17,8 +17,8 @@ namespace WBH.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Customer()
         {
-            this.Orders = new HashSet<Order>();
             this.Carts = new HashSet<Cart>();
+            this.Orders = new HashSet<Order>();
         }
     
         public int IDCus { get; set; }
@@ -27,10 +27,12 @@ namespace WBH.Models
         public string Password { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
+        public Nullable<int> IDAcc { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual Account Account { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

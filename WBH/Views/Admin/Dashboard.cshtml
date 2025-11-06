@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "Dashboard";
-    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    Layout = "~/Views/Shared/WBH.cshtml";
     var chartData = ViewBag.ChartData as IEnumerable<dynamic>;
 }
 
@@ -15,7 +15,8 @@
         <ul>
             <li><a href="#" class="active">Dashboard</a></li>
             <li><a href="@Url.Action("QuanLySanPham", "Admin")">Quản lý sản phẩm</a></li>
-            <li><a href="@Url.Action("DonHang", "Admin")">Đơn hàng</a></li>
+            <li><a href="@Url.Action("Index", "Sales")">Quản lý Sale</a></li>
+            <li><a href="@Url.Action("Orders", "Admin")">Đơn hàng</a></li>
             <li><a href="@Url.Action("KhachHang", "Admin")">Khách hàng</a></li>
             <li><a href="@Url.Action("DangXuat", "Login")">Đăng xuất</a></li>
         </ul>

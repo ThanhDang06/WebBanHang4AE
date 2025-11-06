@@ -96,36 +96,38 @@
     const wardSelect = document.getElementById("ward");
 
     // Lấy danh sách Tỉnh / Thành phố
-    fetch("https://provinces.open-api.vn/api/p/")
+    fetch("/Location/Cities")
         .then(res => res.json())
         .then(data => {
-            data.forEach(city => {
+            data.results.forEach(city => {
                 const option = document.createElement("option");
-                option.value = city.code;
-                option.textContent = city.name;
+                option.value = city.province_id;
+                option.textContent = city.province_name;
                 citySelect.appendChild(option);
             });
-        });
+        })
+        .catch(err => console.error("Lỗi khi tải tỉnh/thành phố:", err));
 
     // Khi chọn Tỉnh → hiển thị danh sách Quận / Huyện
     citySelect.addEventListener("change", () => {
-        const cityCode = citySelect.value;
+        const cityId = citySelect.value;
         districtSelect.innerHTML = '<option value="">Quận/huyện</option>';
         wardSelect.innerHTML = '<option value="">Phường/xã</option>';
         wardSelect.disabled = true;
 
-        if (cityCode) {
-            fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+        if (cityId) {
+            fetch(`/Location/Districts/${cityId}`)
                 .then(res => res.json())
                 .then(data => {
-                    data.districts.forEach(district => {
+                    data.results.forEach(district => {
                         const option = document.createElement("option");
-                        option.value = district.code;
-                        option.textContent = district.name;
+                        option.value = district.district_id;
+                        option.textContent = district.district_name;
                         districtSelect.appendChild(option);
                     });
                     districtSelect.disabled = false;
-                });
+                })
+                .catch(err => console.error("Lỗi khi tải Quận/Huyện:", err));
         } else {
             districtSelect.disabled = true;
             wardSelect.disabled = true;
@@ -134,28 +136,44 @@
 
     // Khi chọn Quận / Huyện → hiển thị danh sách Phường / Xã
     districtSelect.addEventListener("change", () => {
-        const districtCode = districtSelect.value;
+        const districtId = districtSelect.value;
         wardSelect.innerHTML = '<option value="">Phường/xã</option>';
 
-        if (districtCode) {
-            fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+        if (districtId) {
+            fetch(`/Location/Wards/${districtId}`)
                 .then(res => res.json())
                 .then(data => {
-                    data.wards.forEach(ward => {
+                    data.results.forEach(ward => {
                         const option = document.createElement("option");
-                        option.value = ward.code;
-                        option.textContent = ward.name;
+                        option.value = ward.ward_id;
+                        option.textContent = ward.ward_name;
                         wardSelect.appendChild(option);
                     });
                     wardSelect.disabled = false;
-                });
+                })
+                .catch(err => console.error("Lỗi khi tải Phường/Xã:", err));
         } else {
             wardSelect.disabled = true;
         }
     });
 
+
     // ======== GIỎ HÀNG ========
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let cart = [];
+    fetch('/Carts/GetCartItems')
+        .then(res => res.json())
+        .then(data => {
+            cart = data.map(item => ({
+                id: item.IDCart,
+                name: item.ProductName,
+                price: item.Price,
+                img: item.Image,
+                quantity: item.Quantity
+            }));
+            renderCart();
+        })
+        .catch(err => console.error("Lỗi tải giỏ hàng:", err));
+
     const cartItemsDiv = document.getElementById('cart-items');
     const subtotalDisplay = document.getElementById('subtotal');
     const totalDisplay = document.getElementById('total');

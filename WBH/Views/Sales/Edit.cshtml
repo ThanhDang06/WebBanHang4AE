@@ -1,0 +1,40 @@
+﻿@model WBH.Models.Sale
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Edit Sale</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.IDProduct)
+        @Html.DropDownListFor(model => model.IDProduct, (SelectList)ViewBag.IDProduct, "Chọn sản phẩm", new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Category)
+        @Html.TextBoxFor(model => model.Category, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DiscountPercent)
+        @Html.TextBoxFor(model => model.DiscountPercent, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StartDate)
+        @Html.TextBoxFor(model => model.StartDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.EndDate)
+        @Html.TextBoxFor(model => model.EndDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+}

@@ -5,7 +5,7 @@ namespace WBH.Controllers
 {
     public class WBHController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
         // GET: WBH
         public ActionResult Home()
         {
@@ -41,9 +41,6 @@ namespace WBH.Controllers
         }
         public ActionResult DangNhap()
         {
-            if (Session["AccountId"] == null)
-                return RedirectToAction("Index", "Login"); // chưa login → chuyển về login
-
             return View();
         }
     }

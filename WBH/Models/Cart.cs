@@ -15,7 +15,7 @@ namespace WBH.Models
     public partial class Cart
     {
         public int IDCart { get; set; }
-        public int IDCus { get; set; }
+        public Nullable<int> IDCus { get; set; }
         public int IDProduct { get; set; }
         public int Quantity { get; set; }
         public Nullable<System.DateTime> DateAdded { get; set; }

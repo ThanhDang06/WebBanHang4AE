@@ -9,17 +9,26 @@ namespace WBH
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            // Route tường minh cho Search
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Login", action = "DangNhap", id = UrlParameter.Optional }
-
+                name: "ProductsSearch",
+                url: "Products/Search",
+                defaults: new { controller = "Products", action = "Search" }
             );
-            // Route bắt tất cả -> về Home/Index
+
+            routes.MapRoute(
+               name: "Default",
+               url: "{controller}/{action}/{id}",
+               defaults: new { controller = "Products", action = "ProductList", id = UrlParameter.Optional }
+           );
+
+
+            // CatchAll phải để cuối cùng
             routes.MapRoute(
                 name: "CatchAll",
                 url: "{*url}",
-                defaults: new { controller = "WBH", action = "Home" }
+                defaults: new { controller = "WBH", action = "Home" },
+                constraints: new { url = @"^(?!Products/Search|Carts).*" } // bỏ qua Products/Search
             );
         }
     }

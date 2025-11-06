@@ -1,0 +1,24 @@
+﻿@model WBH.Models.Sale
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Delete Sale</h2>
+
+<h3>Are you sure you want to delete this Sale?</h3>
+
+<div>
+    <h4>@Model.Product.ProductName</h4>
+    <p>Discount: @Model.DiscountPercent %</p>
+    <p>Start: @Model.StartDate?.ToString("dd/MM/yyyy")</p>
+    <p>End: @Model.EndDate?.ToString("dd/MM/yyyy")</p>
+</div>
+
+@using (Html.BeginForm("DeleteConfirmed", "Sales", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.IDSale" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+}

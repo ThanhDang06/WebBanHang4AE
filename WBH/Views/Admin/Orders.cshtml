@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WBH.Models.Order>
+
+@{
+    ViewBag.Title = "OrderDetails";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Quản lý đơn hàng</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Khách hàng</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Thanh toán</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Chi tiết</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            int stt = 1;
+            foreach (var order in Model)
+            {
+                <tr>
+                    <td>@stt</td>
+                    <td>@order.FullName</td>
+                    <td>@order.Phone</td>
+                    <td>@order.AddressDelivery</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@(order.DateOrder.HasValue ? order.DateOrder.Value.ToString("dd/MM/yyyy") : "-")</td>
+                    <td>@(order.Total.HasValue ? order.Total.Value.ToString("N0") + "₫" : "0₫")</td>
+                    <td>@order.Status</td>
+                    <td>
+                        <a href="@Url.Action("OrderDetails", "Admin", new { id = order.IDOrder })" class="btn btn-sm btn-primary">
+                            Xem
+                        </a>
+                    </td>
+                </tr>
+                stt++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9" class="text-center">Chưa có đơn hàng nào</td>
+            </tr>
+        }
+    </tbody>
+</table>

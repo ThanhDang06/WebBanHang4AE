@@ -1,0 +1,67 @@
+﻿@model List<WBH.Models.Product>
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<link href="@Url.Content("~/Content/Main.css")" rel="stylesheet" />
+
+<div class="product-list">
+    @if (Model != null && Model.Any())
+    {
+        <div class="product-grid">
+            @foreach (var item in Model)
+            {
+                <div class="product-card" data-category="@item.Category">
+                    <div class="product-image">
+                        <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
+                            <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
+                        </a>
+
+                        @if (item.OldPrice.HasValue && item.OldPrice.Value > 0)
+                        {
+                            <span class="product-sale">Sale</span>
+                        }
+
+                    <div class="product-actions">
+                        <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
+                        <button class="add-to-cart" data-id="@item.IDProduct">
+                            <i class="ri-shopping-cart-2-fill"></i>
+                        </button>
+
+                    </div>
+                    </div>
+
+                    <div class="product-info">
+                        <h3>@item.ProductName</h3>
+                        <div class="prices">
+                            <span class="new-price">@WBH.Helpers.SaleHelper.DisplayPrice(item.Price)</span>
+
+                            @if (item.OldPrice.HasValue && item.OldPrice.Value > 0)
+                            {
+                                int discount = 0;
+                                if (item.Price.HasValue && item.OldPrice.HasValue && item.OldPrice.Value > 0)
+                                {
+                                    discount = (int)Math.Round(
+                                        (double)((item.OldPrice.Value - item.Price.Value) / item.OldPrice.Value * 100)
+                                    );
+                                }
+
+                                <span class="old-price">@WBH.Helpers.SaleHelper.DisplayPrice(item.OldPrice)</span>
+                                <span class="sale-badge">-@discount%</span>
+                            }
+                        </div>
+
+                        @if (ViewBag.IsAdmin == true)
+                        {
+                            <p class="product-quantity">Số lượng: @item.Quantity</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Không tìm thấy sản phẩm nào.</p>
+    }
+</div>

@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using WBH.Filters;
 
 namespace WBH
 {
@@ -7,6 +8,8 @@ namespace WBH
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new AuthorizeUserAttribute());
+            filters.Add(new BreadCrumbAttribute());
         }
     }
 }

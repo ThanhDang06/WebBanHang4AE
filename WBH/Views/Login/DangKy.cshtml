@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "DangKy";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+
+<div class="register-page container py-5" style="max-width: 400px;">
+    <h2 class="text-center mb-4 fw-bold">Đăng ký</h2>
+
+    @using (Html.BeginForm("DangKy", "Login", FormMethod.Post))
+    {
+        <div class="form-group mb-3">
+            <label>Họ tên</label>
+            <input type="text" name="fullname" class="form-control" required placeholder="Nhập họ tên" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required placeholder="Nhập email" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Số điện thoại</label>
+            <input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Tài khoản</label>
+            <input type="text" name="username" class="form-control" required placeholder="Nhập tài khoản" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Mật khẩu</label>
+            <input type="password" name="password" class="form-control" required placeholder="Nhập mật khẩu" />
+        </div>
+
+        <button type="submit" class="btn btn-dark w-100">Đăng ký</button>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger mt-3 text-center">@ViewBag.Error</div>
+    }
+</div>

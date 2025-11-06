@@ -7,15 +7,27 @@ namespace WBH.Filters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var session = filterContext.HttpContext.Session;
-            if (session["User"] == null)
+
+            // Lấy thông tin controller/action hiện tại
+            string controller = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+            string action = filterContext.ActionDescriptor.ActionName;
+
+            if ((controller == "Products" &&
+                        (action == "ProductList" || action == "Sale" || action == "ClothesList" || action == "AccessoriesList" || action == "Details"|| action == "Search" || action == "CategoryProducts" || action == "SearchAjax")) ||
+                        (controller == "Login" && (action == "DangNhap" || action == "DangKy")))
             {
-                // Chuyển hướng về trang Login nếu chưa đăng nhập
+                return; // không redirect
+            }
+
+            // ✅ Sửa đúng session key (vì bạn lưu là "UserName", không phải "User")
+            if (session["UserName"] == null)
+            {
                 filterContext.Result = new RedirectToRouteResult(
-                     new System.Web.Routing.RouteValueDictionary
-                     {
-                       { "controller", "Login" },
-                       { "action", "DangNhap" }
-                     }
+                    new System.Web.Routing.RouteValueDictionary
+                    {
+                        { "controller", "Login" },
+                        { "action", "DangNhap" }
+                    }
                 );
             }
         }

@@ -1,7 +1,10 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using WBH.Models;
 
@@ -9,15 +12,136 @@ namespace WBH.Controllers
 {
     public class CartsController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
         // GET: Carts
         public ActionResult Index()
         {
-            var carts = db.Carts.Include(c => c.Customer).Include(c => c.Product);
-            return View(carts.ToList());
+            int userId = Convert.ToInt32(Session["IDCus"]);
+            var cartItems = db.Carts
+                              .Include(c => c.Product) // load luôn Product
+                              .Where(c => c.IDCus == userId)
+                              .ToList();
+
+            return View(cartItems);
+        }
+        //Thêm sản phẩm vào giỏ
+        [HttpPost]
+        public ActionResult AddToCart(int id)
+        {
+            if (Session["IDCus"] == null)
+                return Json(new { success = false, message = "Vui lòng đăng nhập" });
+
+            int userId = Convert.ToInt32(Session["IDCus"]);
+
+            var existing = db.Carts.FirstOrDefault(c => c.IDProduct == id && c.IDCus == userId);
+            if (existing != null)
+                existing.Quantity += 1;
+            else
+                db.Carts.Add(new Cart { IDCus = userId, IDProduct = id, Quantity = 1, DateAdded = DateTime.Now });
+
+            db.SaveChanges();
+            return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
         }
 
+        //Cập nhật số lượng
+        [HttpPost]
+        public ActionResult UpdateQuantity(int id, int quantity)
+        {
+            var cart = db.Carts.Find(id);
+            if (cart != null)
+            {
+                cart.Quantity = quantity;
+                db.SaveChanges();
+            }
+            return Json(new { success = true });
+        }
+        // Xóa sản phẩm khỏi giỏ
+        [HttpPost]
+        public ActionResult Remove(int id)
+        {
+            var cartItem = db.Carts.Find(id);
+            if (cartItem != null)
+            {
+                db.Carts.Remove(cartItem);
+                db.SaveChanges();
+            }
+            return Json(new { success = true });
+        }
+
+        // Thanh toán
+        [HttpPost]
+        public JsonResult Checkout(string fullName, string phone, string address, string payment, string note, string citySelect, string districtSelect, string wardSelect)
+        {
+            int userId = Convert.ToInt32(Session["IDCus"]);
+            var cartItems = db.Carts.Where(c => c.IDCus == userId).ToList();
+
+            if (!cartItems.Any())
+                return Json(new { success = false, message = "Giỏ hàng trống!" });
+            var order = new Order
+            {
+                IDCus = userId,
+                FullName = fullName,
+                Phone = phone,
+                AddressDelivery = $"{address}, {wardSelect}, {districtSelect}, {citySelect}",
+                PaymentMethod = payment,
+                Note = note,
+                DateOrder = DateTime.Now,
+                Status = "Pending",
+                Total = cartItems.Sum(x => x.Product.Price * x.Quantity)
+            };
+
+            db.Orders.Add(order);
+            db.SaveChanges();
+
+            foreach (var item in cartItems)
+            {
+                db.OrderDetails.Add(new OrderDetail
+                {
+                    IDOrder = order.IDOrder,
+                    IDProduct = item.IDProduct,
+                    Quantity = item.Quantity,
+                    Price = item.Product.Price
+                });
+            }
+
+            db.SaveChanges();
+
+            db.Carts.RemoveRange(cartItems);
+            db.SaveChanges();
+
+            return Json(new { success = true, redirect = Url.Action("ThankYou") });
+        }
+
+
+        [HttpGet]
+        public ActionResult GetCartItems()
+        {
+            if (Session["IDCus"] == null)
+                return Json(new object[] { }, JsonRequestBehavior.AllowGet);
+
+            int userId = Convert.ToInt32(Session["IDCus"]);
+
+            var items = db.Carts
+                .Where(c => c.IDCus == userId)
+                .Select(c => new
+                {
+                    c.IDCart,
+                    c.Product.ProductName,
+                    Image = "/Content/Img/" + c.Product.Image, // fix đường dẫn
+                    c.Quantity,
+                    Price = c.Product.Price ?? 0,
+                    OldPrice = c.Product.OldPrice ?? 0,
+                    IsSale = c.Product.IsSale
+                })
+                .ToList();
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult ThankYou() => View();
+ 
         // GET: Carts/Details/5
         public ActionResult Details(int? id)
         {
@@ -128,42 +252,6 @@ namespace WBH.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-        // GET: Carts/MyCart
-        public ActionResult MyCart(int idCus = 1) // idCus tạm = 1
-        {
-            // Lấy ID khách hàng hiện tại từ session
-            int currentUserId = 0;
-            if (Session["UserId"] != null)
-            {
-                currentUserId = (int)Session["UserId"];
-            }
-            else
-            {
-                // Nếu chưa login thì chuyển hướng về trang đăng nhập
-                return RedirectToAction("Login", "Account");
-            }
-
-            // Lấy danh sách giỏ hàng của khách hiện tại
-            var cartItems = db.Carts
-                              .Where(c => c.IDCus == currentUserId)
-                              .Include(c => c.Product)
-                              .ToList();
-
-            return View(cartItems);
-        }
-
-        // GET: Carts/Checkout
-        public ActionResult Checkout(int idCus = 1)
-        {
-            var carts = db.Carts.Where(c => c.IDCus == idCus).ToList();
-            if (carts.Any())
-            {
-                db.Carts.RemoveRange(carts);
-                db.SaveChanges();
-            }
-            TempData["Success"] = "Thanh toán thành công!";
-            return RedirectToAction("MyCart", new { idCus = idCus });
         }
     }
 }

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<WBH.Models.Sale>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Danh sách Sale</h2>
+
+<p>
+    @Html.ActionLink("Thêm Sale mới", "Create", "Sales", null, new { @class = "btn btn-success" })
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Sản phẩm</th>
+            <th>Giá gốc</th>
+            <th>Giá sale</th>
+            <th>% Giảm</th>
+            <th>Thời gian</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int stt = 1;
+        }
+        @foreach (var item in Model)
+        {
+            var product = item.Product; // cần include Product trong controller
+            <tr>
+                <td>@(item.Product != null ? item.Product.ProductName : "Không có sản phẩm")</td>
+
+                <td>@stt</td>
+                <td>@product.ProductName</td>
+                <td>@WBH.Helpers.SaleHelper.DisplayPrice(product.OldPrice ?? product.Price)</td>
+                <td>@WBH.Helpers.SaleHelper.DisplayPrice(product.Price)</td>
+                <td>@item.DiscountPercent %</td>
+                <td>
+                    @(item.StartDate?.ToString("dd/MM/yyyy") ?? "-") - @(item.EndDate?.ToString("dd/MM/yyyy") ?? "-")
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm" }) |
+                    @using (Html.BeginForm("Delete", "Sales", new { id = item.IDSale }, FormMethod.Post, new { onsubmit = "return confirm('Bạn có chắc muốn xóa?');" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    }
+                </td>
+            </tr>
+            stt++;
+        }
+    </tbody>
+</table>

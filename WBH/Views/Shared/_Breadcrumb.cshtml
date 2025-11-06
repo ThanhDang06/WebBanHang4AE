@@ -1,0 +1,58 @@
+﻿@model List<(string Name, string Url)>
+
+<style>
+    /* Breadcrumb hiện đại - tone đen trắng */
+    .breadcrumb-wrapper {
+        background-color: transparent; /* không nền, hòa vào trang */
+        border-bottom: 1px solid #e5e5e5;
+        margin-top: 76px; /* tránh đè header fixed-top */
+        margin-bottom: 10px;
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "›";
+        color: #999;
+        margin: 0 6px;
+    }
+
+    .breadcrumb a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .breadcrumb a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+    .breadcrumb-item.active {
+        color: #000;
+        font-weight: 500;
+    }
+</style>
+@if (Model != null && Model.Count > 1)
+{
+    <nav aria-label="breadcrumb" class="bg-light py-2">
+        <div class="container">
+            <ol class="breadcrumb mb-0">
+                @foreach (var item in Model)
+                {
+                    if (item.Url == null)
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@item.Name</li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item"><a href="@item.Url">@item.Name</a></li>
+                    }
+                }
+            </ol>
+        </div>
+    </nav>
+}

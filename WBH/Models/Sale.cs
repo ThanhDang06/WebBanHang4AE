@@ -20,6 +20,7 @@ namespace WBH.Models
         public Nullable<decimal> DiscountPercent { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
+        public Nullable<bool> Active { get; set; }
     
         public virtual Product Product { get; set; }
         public virtual Product Product1 { get; set; }

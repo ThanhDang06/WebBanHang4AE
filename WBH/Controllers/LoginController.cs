@@ -1,14 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using WBH.Models;
 
 namespace WBH.Controllers
 {
     public class LoginController : Controller
     {
-        private DBFashionStoreEntities01 db = new DBFashionStoreEntities01();
+        private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
-        // GET: Login
         [HttpGet]
         public ActionResult DangNhap()
         {
@@ -31,29 +33,118 @@ namespace WBH.Controllers
                 return View();
             }
 
-            // Lưu thông tin đăng nhập vào session
+            // Tạo authentication ticket
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+                1,
+                username,
+                DateTime.Now,
+                DateTime.Now.AddHours(1),
+                false,
+                account.Role,
+                FormsAuthentication.FormsCookiePath
+            );
+
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            Response.Cookies.Add(authCookie);
+
+            // Lưu session
             Session["UserName"] = account.Username;
             Session["Role"] = account.Role;
             Session["IDAcc"] = account.IDAcc;
 
-            // Chuyển hướng theo vai trò
-            switch (account.Role)
+            // Lưu IDCus nếu là khách hàng
+            if (account.Role != "Admin")
             {
-                case "Admin":
-                    return RedirectToAction("Dashboard", "Admin");
-                case "Customer":
-                    return RedirectToAction("Dashboard", "Customers");
-                default:
-                    return RedirectToAction("DangNhap");
+                var customer = db.Customers.FirstOrDefault(c => c.IDAcc == account.IDAcc);
+                if (customer != null)
+                    Session["IDCus"] = customer.IDCus;
             }
+
+            // Redirect theo role
+            if (account.Role == "Admin")
+                return RedirectToAction("Dashboard", "Admin");
+            else
+                return RedirectToAction("Index", "Products");
         }
 
+        [HttpGet]
+        public ActionResult DangKy()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult DangKy(string username, string password, string email, string fullname, string phone)
+        {
+            // Validate dữ liệu
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
+            {
+                ViewBag.Error = "Vui lòng điền đầy đủ thông tin!";
+                return View();
+            }
+
+            if (db.Accounts.Any(a => a.Username == username))
+            {
+                ViewBag.Error = "Tên tài khoản đã tồn tại!";
+                return View();
+            }
+
+            if (db.Customers.Any(c => c.Email == email))
+            {
+                ViewBag.Error = "Email đã được đăng ký!";
+                return View();
+            }
+
+            // Tạo account mới
+            var account = new Account
+            {
+                Username = username,
+                Password = password,
+                Role = "Customer"
+            };
+            db.Accounts.Add(account);
+            db.SaveChanges();
+
+            // Tạo customer mới
+            var customer = new Customer
+            {
+                IDAcc = account.IDAcc,
+                FullName = fullname,
+                Email = email,
+                Phone = phone
+            };
+            db.Customers.Add(customer);
+            db.SaveChanges();
+
+            // Tự động login sau khi đăng ký
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+                1,
+                username,
+                DateTime.Now,
+                DateTime.Now.AddHours(1),
+                false,
+                account.Role,
+                FormsAuthentication.FormsCookiePath
+            );
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket));
+
+            Session["UserName"] = account.Username;
+            Session["Role"] = account.Role;
+            Session["IDAcc"] = account.IDAcc;
+            Session["IDCus"] = customer.IDCus;
+
+            return RedirectToAction("Index", "Products");
+        }
+
+        // ================= Logout =================
         public ActionResult DangXuat()
         {
+            FormsAuthentication.SignOut();
             Session.Clear();
             Session.Abandon();
             return RedirectToAction("DangNhap");
-
         }
 
     }
