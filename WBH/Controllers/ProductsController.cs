@@ -164,7 +164,7 @@
             {
                 db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ProductList");
             }
 
             return View(product);

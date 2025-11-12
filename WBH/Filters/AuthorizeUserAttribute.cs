@@ -19,7 +19,7 @@ namespace WBH.Filters
                 return; // không redirect
             }
 
-            // ✅ Sửa đúng session key (vì bạn lưu là "UserName", không phải "User")
+            //Sửa đúng session key (vì bạn lưu là "UserName", không phải "User")
             if (session["UserName"] == null)
             {
                 filterContext.Result = new RedirectToRouteResult(

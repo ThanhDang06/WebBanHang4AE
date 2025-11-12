@@ -5,6 +5,9 @@ body {
     padding-top: 80px; /* để tránh header fixed-top che nội dung */
     background-color: #f8f9fa;
 }
+a {
+    text-decoration: none;
+}
 /* Tăng khoảng cách giữa các menu item và tăng chữ */
 .menu-main .nav-link {
     font-size: 1.1rem; /* Chữ to hơn */

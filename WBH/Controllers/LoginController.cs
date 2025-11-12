@@ -30,7 +30,7 @@ namespace WBH.Controllers
             if (account == null)
             {
                 ViewBag.Error = "Sai tên đăng nhập hoặc mật khẩu!";
-                return View();
+                return View();// Sai thông tin đăng nhập
             }
 
             // Tạo authentication ticket
@@ -41,12 +41,12 @@ namespace WBH.Controllers
                 DateTime.Now.AddHours(1),
                 false,
                 account.Role,
-                FormsAuthentication.FormsCookiePath
+                FormsAuthentication.FormsCookiePath // Đường dẫn cookie
             );
 
-            string encryptedTicket = FormsAuthentication.Encrypt(ticket);
-            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-            Response.Cookies.Add(authCookie);
+            string encryptedTicket = FormsAuthentication.Encrypt(ticket);// Mã hóa ticket
+            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);// Tạo cookie
+            Response.Cookies.Add(authCookie);// Thêm cookie vào response
 
             // Lưu session
             Session["UserName"] = account.Username;
@@ -65,7 +65,19 @@ namespace WBH.Controllers
             if (account.Role == "Admin")
                 return RedirectToAction("Dashboard", "Admin");
             else
-                return RedirectToAction("Index", "Products");
+            {
+                var customer = db.Customers.FirstOrDefault(c => c.IDAcc == account.IDAcc);
+                if (customer != null)
+                {
+                    Session["IDCus"] = customer.IDCus; // đảm bảo session có IDCus
+                    return RedirectToAction("Details", "Customers", new { id = customer.IDCus });
+                }
+                else
+                {
+                    ViewBag.Error = "Không tìm thấy thông tin khách hàng!";
+                    return View();
+                }
+            }
         }
 
         [HttpGet]
@@ -135,7 +147,7 @@ namespace WBH.Controllers
             Session["IDAcc"] = account.IDAcc;
             Session["IDCus"] = customer.IDCus;
 
-            return RedirectToAction("Index", "Products");
+            return RedirectToAction("ProductList", "Products");
         }
 
         // ================= Logout =================

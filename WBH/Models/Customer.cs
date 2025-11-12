@@ -27,7 +27,7 @@ namespace WBH.Models
         public string Password { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public Nullable<int> IDAcc { get; set; }
+        public int IDAcc { get; set; }
     
         public virtual Account Account { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

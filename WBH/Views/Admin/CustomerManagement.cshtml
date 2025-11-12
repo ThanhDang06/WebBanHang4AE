@@ -1,0 +1,28 @@
+﻿@model IEnumerable<WBH.Models.Customer>
+@{
+    ViewBag.Title = "CustomerManagement";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Khách hàng</h2>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Số đơn hàng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.FullName</td>
+                <td>@c.Email</td>
+                <td>@c.Phone</td>
+                <td>@c.Orders.Count()</td>
+            </tr>
+        }
+    </tbody>
+</table>

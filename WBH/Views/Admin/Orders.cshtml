@@ -30,11 +30,22 @@
                     <td>@stt</td>
                     <td>@order.FullName</td>
                     <td>@order.Phone</td>
-                    <td>@order.AddressDelivery</td>
+                    <td>@(string.IsNullOrEmpty(order.AddressDelivery) ? "-" : order.AddressDelivery)</td>
                     <td>@order.PaymentMethod</td>
                     <td>@(order.DateOrder.HasValue ? order.DateOrder.Value.ToString("dd/MM/yyyy") : "-")</td>
                     <td>@(order.Total.HasValue ? order.Total.Value.ToString("N0") + "₫" : "0₫")</td>
-                    <td>@order.Status</td>
+                    <td>
+                        <select class="order-status"
+                                data-order-id="@order.IDOrder"
+                                data-update-url="@Url.Action("UpdateOrderStatus", "Admin")">
+                            <option value="Đang xử lý" @(order.Status == "Đang xử lý" ? "selected" : "")>Đang xử lý</option>
+                            <option value="Hoàn thành" @(order.Status == "Hoàn thành" ? "selected" : "")>Hoàn thành</option>
+                            <option value="Đã hủy" @(order.Status == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                        </select>
+
+                    </td>
+
+
                     <td>
                         <a href="@Url.Action("OrderDetails", "Admin", new { id = order.IDOrder })" class="btn btn-sm btn-primary">
                             Xem
@@ -52,3 +63,43 @@
         }
     </tbody>
 </table>
+<script src="@Url.Content("~/Scripts/jquery-3.7.0.min.js")"></script>
+<script>
+    $(document).ready(function () {
+        $('.order-status').change(function () {
+            var select = $(this);
+            var orderId = select.data('order-id');
+            var status = select.val();
+            var url = select.data('update-url');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { id: orderId, status: status },
+                success: function (response) {
+                    if (response.success) {
+                        // Đổi màu select theo status
+                        var color = 'secondary';
+                        if (status === "Hoàn thành") color = 'success';
+                        else if (status === "Đang xử lý") color = 'warning';
+                        else if (status === "Đã hủy") color = 'danger';
+
+                        select.removeClass('bg-success bg-warning bg-danger bg-secondary')
+                            .addClass('bg-' + color);
+
+                        // Tùy chọn: hiển thị thông báo nhỏ thay alert
+                        $('<div class="alert alert-success mt-2">Cập nhật trạng thái thành công!</div>')
+                            .insertAfter(select)
+                            .delay(2000)
+                            .fadeOut(500, function () { $(this).remove(); });
+                    } else {
+                        alert("Cập nhật thất bại!");
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra, thử lại.");
+                }
+            });
+        });
+    });
+</script>

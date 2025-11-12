@@ -13,11 +13,11 @@
     <div class="sidebar">
         <h3>👑 Admin</h3>
         <ul>
-            <li><a href="#" class="active">Dashboard</a></li>
-            <li><a href="@Url.Action("QuanLySanPham", "Admin")">Quản lý sản phẩm</a></li>
+            <li><a href="@Url.Action("Dashboard", "Admin")" class="active">Dashboard</a></li>
+            <li><a href="@Url.Action("ProductManagement", "Admin")">Quản lý sản phẩm</a></li>
             <li><a href="@Url.Action("Index", "Sales")">Quản lý Sale</a></li>
             <li><a href="@Url.Action("Orders", "Admin")">Đơn hàng</a></li>
-            <li><a href="@Url.Action("KhachHang", "Admin")">Khách hàng</a></li>
+            <li><a href="@Url.Action("CustomerManagement", "Admin")">Khách hàng</a></li>
             <li><a href="@Url.Action("DangXuat", "Login")">Đăng xuất</a></li>
         </ul>
     </div>
@@ -34,22 +34,29 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <h5>Đơn hàng</h5>
-                    <p>@ViewBag.TotalOrders</p>
-                </div>
+                <a href="@Url.Action("Orders", "Admin")">
+                    <div class="stat-card">
+                        <h5>Đơn hàng</h5>
+                        <p>@ViewBag.TotalOrders</p>
+                    </div>
+                </a>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <h5>Khách hàng</h5>
-                    <p>@ViewBag.TotalCustomers</p>
-                </div>
+                <a href="@Url.Action("CustomerManagement", "Admin")">
+                    <div class="stat-card">
+                        <h5>Khách hàng</h5>
+                        <p>@ViewBag.TotalCustomers</p>
+                    </div>
+                </a>
             </div>
             <div class="col-md-3">
-                <div class="stat-card">
-                    <h5>Sản phẩm</h5>
-                    <p>@ViewBag.TotalProducts</p>
-                </div>
+                <a href="@Url.Action("ProductManagement", "Admin")">
+                    <div class="stat-card">
+                        <h5>Sản phẩm</h5>
+                        <p>@ViewBag.TotalProducts</p>
+                    </div>
+                </a>
+
             </div>
         </div>
 
@@ -58,6 +65,7 @@
             <canvas id="revenueChart"></canvas>
         </div>
     </div>
+
 </div>
 
 <script>

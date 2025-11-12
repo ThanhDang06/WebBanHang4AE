@@ -38,7 +38,7 @@
                                     <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
                                         <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
                                     </a>
-                                    <span class="badge">@((item.IsSale) ? "Sale" : "Hàng Mới")</span>
+                                    <span class="product-badge">@((item.IsSale) ? "Sale" : "Hàng Mới")</span>
                                     <div class="product-actions">
                                         <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
                                         <button class="add-to-cart" data-id="@item.IDProduct">

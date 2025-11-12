@@ -1,138 +1,118 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
-using WBH.Filters;
 using WBH.Models;
 
 namespace WBH.Controllers
 {
-    public class CustomersController : Controller
+    public class AdminVouchersController : Controller
     {
         private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
-        // GET: Customers
+        // GET: AdminVouchers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            return View(db.Vouchers.ToList());
         }
-        public ActionResult ProductList()
-        {
-            var products = db.Products.ToList();
-            ViewBag.IsAdmin = false;
-            return View(products);
-        }
-        // GET: Customers/Details/5
+
+        // GET: AdminVouchers/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
+            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var customer = db.Customers
-                .FirstOrDefault(c => c.IDCus == id);
-
-            if (customer == null)
+            }
+            Voucher voucher = db.Vouchers.Find(id);
+            if (voucher == null)
+            {
                 return HttpNotFound();
-
-            var orders = db.Orders
-                .Where(o => o.IDCus == id)
-                .OrderByDescending(o => o.DateOrder)
-                .Take(5)
-                .ToList();
-
-            ViewBag.Orders = orders;
-
-            return View(customer);
+            }
+            return View(voucher);
         }
 
-        // GET: Customers/Create
+        // GET: AdminVouchers/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Customers/Create
+        // POST: AdminVouchers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IDCus,FullName,Email,Phone,Address")] Customer customer)
+        public ActionResult Create([Bind(Include = "IDVoucher,Code,Type,Value,MinOrderAmount,StartDate,EndDate,RemainingUses,IsActive")] Voucher voucher)
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customer);
+                db.Vouchers.Add(voucher);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(customer);
+            return View(voucher);
         }
 
-        // GET: Customers/Edit/5
+        // GET: AdminVouchers/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
+            Voucher voucher = db.Vouchers.Find(id);
+            if (voucher == null)
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            return View(voucher);
         }
 
-        // POST: Customers/Edit/5
+        // POST: AdminVouchers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "IDCus,FullName,Email,Phone,Address")] Customer customer)
+        public ActionResult Edit([Bind(Include = "IDVoucher,Code,Type,Value,MinOrderAmount,StartDate,EndDate,RemainingUses,IsActive")] Voucher voucher)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
+                db.Entry(voucher).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(customer);
+            return View(voucher);
         }
 
-        // GET: Customers/Delete/5
+        // GET: AdminVouchers/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
+            Voucher voucher = db.Vouchers.Find(id);
+            if (voucher == null)
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            return View(voucher);
         }
 
-        // POST: Customers/Delete/5
+        // POST: AdminVouchers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
+            Voucher voucher = db.Vouchers.Find(id);
+            db.Vouchers.Remove(voucher);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        public JsonResult GetOrderStatus(int id)
-        {
-            var order = db.Orders.Find(id);
-            if (order != null)
-                return Json(new { status = order.Status }, JsonRequestBehavior.AllowGet);
-
-            return Json(new { status = "" }, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)
@@ -143,7 +123,5 @@ namespace WBH.Controllers
             }
             base.Dispose(disposing);
         }
-        
-
     }
 }

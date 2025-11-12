@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web.Mvc;
 using WBH.Models;
 
-
 namespace WBH.Controllers
 {
 
@@ -18,8 +17,8 @@ namespace WBH.Controllers
                 return RedirectToAction("DangNhap", "Login");
 
             // Tổng số liệu:
-            decimal? totalRevenue = db.Orders.Sum(o => (decimal?)o.Total);
-            ViewBag.TotalRevenue = totalRevenue.HasValue ? totalRevenue.Value : 0;
+            decimal? totalRevenue = db.Orders.Sum(o => (decimal?)o.Total);// Sử dụng decimal? để tránh lỗi null
+            ViewBag.TotalRevenue = totalRevenue.HasValue ? totalRevenue.Value : 0; // Nếu null thì gán 0
             ViewBag.TotalOrders = db.Orders.Count();
             ViewBag.TotalCustomers = db.Customers.Count();
             ViewBag.TotalProducts = db.Products.Count();
@@ -97,6 +96,28 @@ namespace WBH.Controllers
             ViewBag.IsAdmin = true;
             return View(products);
         }
+        public ActionResult ProductManagement()
+        {
+            var products = db.Products.ToList();
+            return View(products);
+        }
 
+        public ActionResult CustomerManagement()
+        {
+            var customers = db.Customers.ToList();
+            return View(customers);
+        }
+        [HttpPost]
+        public JsonResult UpdateOrderStatus(int id, string status)
+        {
+            var order = db.Orders.Find(id);
+            if (order != null)
+            {
+                order.Status = status;
+                db.SaveChanges();
+                return Json(new { success = true, status = order.Status });
+            }
+            return Json(new { success = false });
+        }
     }
 }

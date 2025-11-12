@@ -16,6 +16,7 @@ namespace WBH.Filters
 
             var db = new DBFashionStoreEntitiess();
             var breadcrumb = new List<(string Name, string Url)>();
+            var urlHelper = new UrlHelper(filterContext.RequestContext);
 
             // Mapping category code → tên hiển thị
             var categoryNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -79,7 +80,47 @@ namespace WBH.Filters
                     }
                 }
             }
+            else if (controller == "Admin" || controller == "Sales")
+            {
+                if (controller == "Admin" && action.Equals("Dashboard", StringComparison.OrdinalIgnoreCase))
+                {
+                    filterContext.Controller.ViewBag.Breadcrumb = null;
+                    base.OnActionExecuting(filterContext);
+                    return;
+                }
+                breadcrumb.Add(("Admin", urlHelper.Action("Dashboard", "Admin")));
 
+                if (controller == "Admin")
+                {
+                    switch (action)
+                    {
+                        case "ProductManagement":
+                            breadcrumb.Add(("Quản lý sản phẩm", null));
+                            break;
+
+                        case "Orders":
+                            breadcrumb.Add(("Quản lý đơn hàng", null));
+                            break;
+
+                        case "CustomerManagement":
+                            breadcrumb.Add(("Quản lý khách hàng", null));
+                            break;
+
+                        case "EditProduct":
+                            breadcrumb.Add(("Quản lý sản phẩm", urlHelper.Action("ProductManagement", "Admin")));
+                            breadcrumb.Add(("Chỉnh sửa sản phẩm", null));
+                            break;
+
+                        default:
+                            breadcrumb.Add((action, null));
+                            break;
+                    }
+                }
+                if (controller == "Sales")
+                {
+                    breadcrumb.Add(("Quản lý khuyến mãi", null));
+                }
+            }
 
             // Gán vào ViewBag
             filterContext.Controller.ViewBag.Breadcrumb = breadcrumb;

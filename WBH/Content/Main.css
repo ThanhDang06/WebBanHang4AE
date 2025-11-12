@@ -129,7 +129,7 @@
         transform: scale(1.1);
     }
 /* Nhãn Hàng mới */
-.badge {
+.product-badge {
     position: absolute;
     top: 8px;
     left: 8px;

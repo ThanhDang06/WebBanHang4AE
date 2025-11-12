@@ -1,0 +1,36 @@
+﻿@model IEnumerable<WBH.Models.Product>
+@{
+    ViewBag.Title = "ProductManagement";
+    Layout = "~/Views/Shared/WBH.cshtml";
+}
+<h2>Quản lý sản phẩm</h2>
+<a href="@Url.Action("Create", "Products")" class="btn btn-primary">+ Thêm sản phẩm</a>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Tồn kho</th>
+            <th>Danh mục</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IDProduct</td>
+                <td>@item.ProductName</td>
+                <td>@String.Format("{0:N0} đ", item.Price)</td>
+                <td>@item.Quantity</td>
+                <td>@item.Category</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Products", new { id = item.IDProduct })" class="btn btn-warning btn-sm">Sửa</a>
+                    <a href="@Url.Action("Delete", "Products", new { id = item.IDProduct })" class="btn btn-danger btn-sm">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,138 +1,134 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
-using WBH.Filters;
 using WBH.Models;
 
 namespace WBH.Controllers
 {
-    public class CustomersController : Controller
+    public class OrdersController : Controller
     {
         private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
-        // GET: Customers
-        public ActionResult Index()
+        // GET: Orders
+        public ActionResult Index(int? customerId)
         {
-            return View(db.Customers.ToList());
+            IQueryable<Order> orders = db.Orders;
+
+            if (customerId.HasValue)
+            {
+                orders = orders.Where(o => o.IDCus == customerId.Value);
+            }
+
+            orders = orders.OrderByDescending(o => o.DateOrder);
+
+            return View(orders.ToList());
         }
-        public ActionResult ProductList()
-        {
-            var products = db.Products.ToList();
-            ViewBag.IsAdmin = false;
-            return View(products);
-        }
-        // GET: Customers/Details/5
+
+        // GET: Orders/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var customer = db.Customers
-                .FirstOrDefault(c => c.IDCus == id);
+            var order = db.Orders
+                          .Include(o => o.Customer)
+                          .Include(o => o.OrderDetails.Select(od => od.Product))
+                          .FirstOrDefault(o => o.IDOrder == id);
 
-            if (customer == null)
+            if (order == null)
                 return HttpNotFound();
 
-            var orders = db.Orders
-                .Where(o => o.IDCus == id)
-                .OrderByDescending(o => o.DateOrder)
-                .Take(5)
-                .ToList();
-
-            ViewBag.Orders = orders;
-
-            return View(customer);
+            return View(order);
         }
 
-        // GET: Customers/Create
+
+        // GET: Orders/Create
         public ActionResult Create()
         {
+            ViewBag.IDCus = new SelectList(db.Customers, "IDCus", "FullName");
             return View();
         }
 
-        // POST: Customers/Create
+        // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IDCus,FullName,Email,Phone,Address")] Customer customer)
+        public ActionResult Create([Bind(Include = "IDOrder,IDCus,DateOrder,AddressDelivery,FullName,Phone,PaymentMethod,Note,Status,Total")] Order order)
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customer);
+                db.Orders.Add(order);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(customer);
+            ViewBag.IDCus = new SelectList(db.Customers, "IDCus", "FullName", order.IDCus);
+            return View(order);
         }
 
-        // GET: Customers/Edit/5
+        // GET: Orders/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
+            Order order = db.Orders.Find(id);
+            if (order == null)
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            ViewBag.IDCus = new SelectList(db.Customers, "IDCus", "FullName", order.IDCus);
+            return View(order);
         }
 
-        // POST: Customers/Edit/5
+        // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "IDCus,FullName,Email,Phone,Address")] Customer customer)
+        public ActionResult Edit([Bind(Include = "IDOrder,IDCus,DateOrder,AddressDelivery,FullName,Phone,PaymentMethod,Note,Status,Total")] Order order)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
+                db.Entry(order).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(customer);
+            ViewBag.IDCus = new SelectList(db.Customers, "IDCus", "FullName", order.IDCus);
+            return View(order);
         }
 
-        // GET: Customers/Delete/5
+        // GET: Orders/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
+            Order order = db.Orders.Find(id);
+            if (order == null)
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            return View(order);
         }
 
-        // POST: Customers/Delete/5
+        // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
+            Order order = db.Orders.Find(id);
+            db.Orders.Remove(order);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        public JsonResult GetOrderStatus(int id)
-        {
-            var order = db.Orders.Find(id);
-            if (order != null)
-                return Json(new { status = order.Status }, JsonRequestBehavior.AllowGet);
-
-            return Json(new { status = "" }, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)
@@ -143,7 +139,5 @@ namespace WBH.Controllers
             }
             base.Dispose(disposing);
         }
-        
-
     }
 }
