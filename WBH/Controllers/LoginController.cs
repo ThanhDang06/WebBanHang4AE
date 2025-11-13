@@ -70,7 +70,7 @@ namespace WBH.Controllers
                 if (customer != null)
                 {
                     Session["IDCus"] = customer.IDCus; // đảm bảo session có IDCus
-                    return RedirectToAction("Details", "Customers", new { id = customer.IDCus });
+                    return RedirectToAction("ProductList", "Products", new { id = customer.IDCus });
                 }
                 else
                 {

@@ -10,210 +10,269 @@
         margin: auto;
         padding: 40px;
         font-family: sans-serif;
-        color: #222
+        color: #222;
     }
-
-    .breadcrumb {
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 24px
-    }
-
-        .breadcrumb span {
-            color: #000;
-            font-weight: 600
-        }
 
     .product-wrapper {
         display: flex;
         gap: 60px;
-        align-items: flex-start
+        flex-wrap: wrap;
+        align-items: flex-start;
     }
 
-    .product-image img {
-        width: 100%;
-        max-width: 500px;
-        border-radius: 16px;
-        transition: .3s
+    .product-image {
+        flex: 1;
+        position: relative;
+        min-width: 300px;
     }
 
-        .product-image img:hover {
-            transform: scale(1.03)
+        .product-image img {
+            width: 100%;
+            border-radius: 16px;
+            transition: .3s;
         }
 
-    .product-info h1 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 16px
+            .product-image img:hover {
+                transform: scale(1.03);
+            }
+
+    .sale-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: red;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-weight: bold;
     }
+
+    .product-info {
+        flex: 1;
+        min-width: 300px;
+    }
+
+        .product-info h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
 
     .desc {
         font-size: 17px;
         line-height: 1.6;
         color: #555;
-        margin-bottom: 24px
+        margin-bottom: 24px;
     }
 
     .price {
         font-size: 28px;
         font-weight: 700;
         margin-bottom: 32px;
-        color: #e60023
+        color: #e60023;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: gray;
+        font-size: 22px;
+        margin-right: 12px;
     }
 
     .actions {
         display: flex;
-        gap: 16px
+        gap: 16px;
     }
 
     .add-cart {
         padding: 14px 28px;
         background: #111;
         color: #fff;
-        text-decoration: none;
         border-radius: 12px;
+        text-decoration: none;
         font-size: 17px;
-        transition: .3s
+        transition: .3s;
     }
 
         .add-cart:hover {
-            opacity: .85
+            opacity: .85;
         }
 
     .back {
         padding: 14px 28px;
         border: 1px solid #aaa;
-        text-decoration: none;
-        color: #333;
         border-radius: 12px;
+        color: #333;
+        text-decoration: none;
         font-size: 17px;
-        transition: .3s
+        transition: .3s;
     }
 
         .back:hover {
-            background: #f5f5f5
+            background: #f5f5f5;
         }
-
-    .product-options {
-        margin-bottom: 32px
-    }
-
-    .option-label {
-        display: block;
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 8px
-    }
 
     .option-group {
         display: flex;
-        gap: 12px
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
     }
 
-    .opt-btn {
-        padding: 10px 20px;
+    .opt-btn, .color-btn {
+        cursor: pointer;
+        transition: .2s;
         border: 1px solid #ccc;
         border-radius: 10px;
+        padding: 10px 20px;
         background: #fff;
-        cursor: pointer;
         font-size: 15px;
-        transition: .2s
     }
 
-        .opt-btn:hover {
-            border-color: #000
+        .opt-btn:hover, .color-btn:hover {
+            border-color: #000;
         }
 
     .color-btn {
         width: 32px;
         height: 32px;
-        border: 1px solid #ccc;
         border-radius: 50%;
-        cursor: pointer;
-        transition: .2s
+        padding: 0;
     }
 
-        .color-btn:hover {
-            border-color: #000
+        .opt-btn.selected, .color-btn.selected {
+            border: 2px solid #000;
         }
 </style>
 <div class="product-page">
     <div class="product-wrapper">
+        <!-- Ảnh sản phẩm -->
         <div class="product-image">
             <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" />
+            @if (ViewBag.SalePercent != null)
+            {
+                <div class="sale-badge">-@ViewBag.SalePercent%</div>
+            }
         </div>
+
+        <!-- Thông tin sản phẩm -->
         <div class="product-info">
             <h1>@Model.ProductName</h1>
             <p class="desc">@Model.Description</p>
-            <div class="price">@String.Format("{0:N0} ₫", Model.Price)</div>
 
+            <div class="price">
+                @if (ViewBag.OldPrice != null)
+                {
+                    <span class="old-price">@String.Format("{0:N0} ₫", ViewBag.OldPrice)</span>
+                }
+                <span class="current-price">@String.Format("{0:N0} ₫", ViewBag.CurrentPrice)</span>
+            </div>
 
+            <!-- Chọn size -->
             <div class="product-options">
-                <label class="option-label">Kích thước:</label>
+                <label>Kích thước:</label>
                 <div class="option-group">
-                    <button class="opt-btn">S</button>
-                    <button class="opt-btn">M</button>
-                    <button class="opt-btn">L</button>
-                    <button class="opt-btn">XL</button>
+                    @foreach (var size in Model.ProductSizes)
+                    {
+                        <button class="opt-btn" data-size-id="@size.IDSize" data-size="@size.SizeName">@size.SizeName</button>
+                    }
                 </div>
-                <label class="option-label" style="margin-top:20px;">Màu sắc:</label>
+
+                <!-- Chọn màu -->
+                <label>Màu sắc:</label>
                 <div class="option-group">
                     @foreach (var color in Model.ProductColors)
                     {
                         <button class="color-btn"
                                 style="background:@color.ColorName"
+                                data-color-id="@color.IDColor"
+                                data-color-name="@color.ColorName"
                                 data-img="@Url.Content("~/Content/Img/" + color.Image)">
                         </button>
                     }
                 </div>
             </div>
-            <div class="actions">
-                <a href="javascript:void(0);"
-                   class="add-cart"
-                   data-id="@Model.IDProduct">🛒 Thêm vào giỏ hàng</a>
 
-                <a href="@Url.Action("ProductList", "Products")" class="back">← Quay lại cửa hàng</a>
+            <div class="actions">
+                <a href="javascript:void(0);" class="add-cart" data-id="@Model.IDProduct">🛒 Thêm vào giỏ hàng</a>
+                <a href="@Url.Action("ProductList","Products")" class="back">← Quay lại cửa hàng</a>
             </div>
         </div>
     </div>
 </div>
+
+
 <script>
-    const colorButtons = document.querySelectorAll('.color-btn');
-    const mainImage = document.querySelector('.product-image img');
+const colorButtons = document.querySelectorAll('.color-btn');
+const sizeButtons = document.querySelectorAll('.opt-btn');
+const mainImage = document.querySelector('.product-image img');
 
-    colorButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const newImg = btn.getAttribute('data-img');
-            if (newImg) {
-                mainImage.src = newImg;
-            }
+// Chọn màu
+colorButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const newImg = btn.getAttribute('data-img');
+        if (newImg) mainImage.src = newImg;
 
-            // Hiệu ứng chọn
-            colorButtons.forEach(b => b.style.border = "1px solid #ccc");
-            btn.style.border = "2px solid #000";
-        });
+        colorButtons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
     });
+});
 
-    document.querySelectorAll('.add-cart').forEach(btn => {
+// Chọn size
+sizeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        sizeButtons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    });
+});
+
+// Thêm vào giỏ hàng
+document.querySelectorAll('.add-cart').forEach(btn => {
     btn.addEventListener('click', () => {
         const productId = btn.getAttribute('data-id');
 
+        const selectedColor = document.querySelector('.color-btn.selected');
+        const selectedSize = document.querySelector('.opt-btn.selected');
+
+        if (!selectedColor) { alert('Vui lòng chọn màu sản phẩm!'); return; }
+        if (!selectedSize) { alert('Vui lòng chọn kích thước!'); return; }
+
+        // Lấy ID và tên màu
+        const colorId = parseInt(selectedColor.getAttribute('data-color-id'));
+        const colorName = selectedColor.getAttribute('data-color-name');
+        const sizeId = parseInt(selectedSize.getAttribute('data-size-id'));
+        const sizeName = selectedSize.getAttribute('data-size');
+
+
+
         fetch('@Url.Action("AddToCart", "Carts")', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ id: productId })
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                id: parseInt(productId),
+                colorId: colorId,
+                colorName: colorName, // tuỳ chọn nếu lưu tên
+                sizeId: sizeId,
+                sizeName: sizeName,
+                quantity: 1
+            })
         })
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            if(data.success) {
+            if(data.success){
                 alert(data.message);
-                // cập nhật số lượng giỏ hàng nếu có popup
                 if(typeof updateCartCount === "function") updateCartCount();
                 if(typeof renderMiniCart === "function") renderMiniCart();
+            } else {
+                alert(data.message || 'Lỗi thêm giỏ hàng!');
             }
         })
         .catch(err => console.error(err));
     });
 });
+
 
 </script>

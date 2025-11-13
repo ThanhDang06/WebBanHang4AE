@@ -4,21 +4,24 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f92b5e95fb28476f8958c372c35c7795" Name="Diagram1">
-        <EntityTypeShape EntityType="DBFashionStoreModel.Account" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Cart" Width="1.5" PointX="3" PointY="9.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Customer" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.OrderDetail" Width="1.5" PointX="6" PointY="9.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Order" Width="1.5" PointX="3.75" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.ProductColor" Width="1.5" PointX="3" PointY="12.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Product" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.ProductSize" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.ProductVariant" Width="1.5" PointX="5.25" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Sale" Width="1.5" PointX="3" PointY="18.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="DBFashionStoreModel.Voucher" Width="1.5" PointX="5.75" PointY="2.375" IsExpanded="true" />
+      <Diagram DiagramId="c1dd38769be64bef98902263bcf2e186" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="DBFashionStoreModel.Account" Width="1.5" PointX="4.75" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Cart" Width="1.5" PointX="8.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Customer" Width="1.5" PointX="8.5" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.OrderDetail" Width="1.5" PointX="15.875" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Order" Width="1.5" PointX="11.625" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.ProductColor" Width="1.5" PointX="8.875" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Product" Width="1.5" PointX="14.875" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.ProductSize" Width="1.5" PointX="11.625" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.ProductVariant" Width="1.5" PointX="11.75" PointY="10.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Sale" Width="1.5" PointX="17.75" PointY="4.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Voucher" Width="1.5" PointX="1.125" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DBFashionStoreModel.Customers_Backup" Width="1.5" PointX="0.75" PointY="4.875" IsExpanded="true" />
         <AssociationConnector Association="DBFashionStoreModel.FK_Customers_Accounts" ManuallyRouted="false" />
+        <AssociationConnector Association="DBFashionStoreModel.FK__Cart__IDColor__29221CFB" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK__Cart__IDCus__01142BA1" ManuallyRouted="false" />
-        <AssociationConnector Association="DBFashionStoreModel.FK__Cart__IDProduct__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="DBFashionStoreModel.FK__Cart__IDProduct__2739D489" ManuallyRouted="false" />
+        <AssociationConnector Association="DBFashionStoreModel.FK__Cart__IDSize__282DF8C2" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK__Orders__IDCus__60A75C0F" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK__OrderDeta__IDOrd__5FB337D6" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK__OrderDeta__IDPro__2C3393D0" ManuallyRouted="false" />
@@ -29,6 +32,8 @@
         <AssociationConnector Association="DBFashionStoreModel.FK_ProductVariants_Products" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK_Sales_Products" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK_ProductVariants_ProductSize" ManuallyRouted="false" />
+        <AssociationConnector Association="DBFashionStoreModel.FK_OrderDetails_ProductColor" />
+        <AssociationConnector Association="DBFashionStoreModel.FK_OrderDetails_ProductSize" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

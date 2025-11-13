@@ -19,8 +19,12 @@ namespace WBH.Models
         public Nullable<int> IDProduct { get; set; }
         public Nullable<int> Quantity { get; set; }
         public Nullable<decimal> Price { get; set; }
+        public Nullable<int> IDSize { get; set; }
+        public Nullable<int> IDColor { get; set; }
     
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
+        public virtual ProductColor ProductColor { get; set; }
+        public virtual ProductSize ProductSize { get; set; }
     }
 }

@@ -23,8 +23,8 @@
                                  .Where(p => p.Category == "ao" || p.Category == "quan")
                                  .AsQueryable();
 
-            products = SortHelper.ApplySort(products, sortOrder);
-            return View(products.ToList());
+                products = SortHelper.ApplySort(products, sortOrder);
+                return View(products.ToList());
             }
 
             public ActionResult AccessoriesList(string sortOrder = "")
@@ -87,19 +87,36 @@
         // GET: Products/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var product = db.Products.Find(id);
-            if (product == null) return HttpNotFound();
+            if (product == null)
+                return HttpNotFound();
 
-            // Tính giá hiển thị tạm thời (không lưu DB)
-            if (product.IsSale && product.OldPrice.HasValue)
+            if (product.IsSale && product.OldPrice.HasValue && product.Price.HasValue)
             {
-                product.Price = product.Price; // đã giảm theo Sale
+                ViewBag.OldPrice = product.OldPrice.Value;
+                ViewBag.CurrentPrice = product.Price.Value;
+
+                // Tính phần trăm giảm (sửa lỗi decimal?)
+                decimal percent = Math.Round(
+                    ((product.OldPrice.Value - product.Price.Value) / product.OldPrice.Value) * 100,
+                    0
+                );
+                ViewBag.SalePercent = percent;
+            }
+            else
+            {
+                ViewBag.OldPrice = null;
+                ViewBag.CurrentPrice = product.Price;
+                ViewBag.SalePercent = null;
             }
 
             return View(product);
         }
+
+
 
 
         // GET: Products/Create
@@ -205,6 +222,7 @@
             var today = DateTime.Today;
 
             var products = db.Products
+                .Include(p => p.ProductColors)
                 .Where(p => !db.Sales.Any(s =>
                     s.IDProduct == p.IDProduct &&
                     s.StartDate <= today &&
@@ -225,7 +243,8 @@
                 Category = p.Category,
                 Image = p.Image,
                 Description = p.Description,
-                Quantity = p.Quantity
+                Quantity = p.Quantity,
+                ProductColors = p.ProductColors
             }).ToList();
 
             // Sắp xếp
@@ -244,74 +263,73 @@
 
 
         [HttpGet]
-            [AllowAnonymous]
-            public JsonResult SearchAjax(string keyword)
-            {
-                if (string.IsNullOrEmpty(keyword))
-                    return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+        [AllowAnonymous]
+        public JsonResult SearchAjax(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
 
-                var today = DateTime.Today;
-                string cleanKeyword = keyword.ToLower();
+            var today = DateTime.Today;
+            string cleanKeyword = keyword.ToLower();
 
-                var products = (from p in db.Products
-                                join s in db.Sales
-                                    .Where(s => s.StartDate <= today && s.EndDate >= today)
-                                    on p.IDProduct equals s.IDProduct into ps
-                                from s in ps.DefaultIfEmpty()
-                                where p.ProductName.ToLower().Contains(cleanKeyword)
-                                select new
-                                {
-                                    p.IDProduct,
-                                    p.ProductName,
-                                    p.Image,
-                                    OriginalPrice = (decimal?)p.Price ?? 0,
-                                    SalePercent = s != null ? (decimal?)s.DiscountPercent : null
-                                })
-                            .Take(8) // chỉ show tối đa 8 gợi ý
-                            .ToList();
+            var products = (from p in db.Products
+                            join s in db.Sales
+                                .Where(s => s.StartDate <= today && s.EndDate >= today)
+                                on p.IDProduct equals s.IDProduct into ps
+                            from s in ps.DefaultIfEmpty()
+                            where p.ProductName.ToLower().Contains(cleanKeyword)
+                            select new
+                            {
+                                p.IDProduct,
+                                p.ProductName,
+                                p.Image,
+                                OriginalPrice = (double)(p.Price ?? 0),
+                                SalePercent = s != null ? (double?)s.DiscountPercent : null
+                            })
+                        .Take(8)
+                        .ToList();
 
             var result = products.Select(p => new
             {
                 p.IDProduct,
                 p.ProductName,
                 Image = Url.Content("~/Content/Img/" + p.Image),
-
-                // Vì Price đã giảm rồi => SalePrice = Price luôn
                 OriginalPrice = p.OriginalPrice,
-                SalePrice = p.SalePercent.HasValue ? p.OriginalPrice : (decimal?)null
+                SalePrice = p.SalePercent.HasValue
+                            ? Math.Round(p.OriginalPrice * (1 - p.SalePercent.Value / 100), 0)
+                            : (double?)null,
+                SaleLabel = p.SalePercent.HasValue ? $"-{p.SalePercent.Value}%" : null
             }).ToList();
 
-
             return Json(result, JsonRequestBehavior.AllowGet);
-            }
+        }
+
 
 
         public ActionResult Search(string keyword)
         {
             var today = DateTime.Today;
 
-            // Join với bảng Sales để kiểm tra sản phẩm đang giảm giá
             var products = (from p in db.Products
                             join s in db.Sales
                                 on p.IDProduct equals s.IDProduct into ps
-                            from s in ps.DefaultIfEmpty() // Left join
+                            from s in ps.DefaultIfEmpty()
                             where p.ProductName.Contains(keyword)
-                            select new
-                            {
-                                Product = p,
-                                Sale = s
-                            })
+                            select new { p, s })
                             .AsEnumerable()
                             .Select(x =>
                             {
-                                var p = x.Product;
-                                var s = x.Sale;
+                                var p = x.p;
+                                var s = x.s;
 
-                                // Nếu đang trong thời gian sale → tính giá giảm
+                                // Xác định có đang sale hợp lệ không
+                                bool isOnSale = s != null && s.StartDate <= today && s.EndDate >= today;
+
+                                // Giá giảm (nếu có)
                                 decimal? salePrice = null;
-                                if (s != null && s.StartDate <= today && s.EndDate >= today)
+                                if (isOnSale && s.DiscountPercent.HasValue)
                                 {
-                                    salePrice = SaleHelper.GetSalePrice(p, (decimal)s.DiscountPercent);
+                                    salePrice = Math.Round((p.Price ?? 0m) * (1 - s.DiscountPercent.Value / 100), 0);
                                 }
 
                                 return new Product
@@ -319,16 +337,14 @@
                                     IDProduct = p.IDProduct,
                                     ProductName = p.ProductName,
                                     Image = p.Image,
-                                    Price = salePrice ?? p.Price, // Nếu có giảm giá thì dùng giá giảm
-                                    OldPrice = salePrice.HasValue ? (p.OldPrice ?? p.Price) : null,
-
+                                    Price = salePrice ?? p.Price, // giá hiển thị
+                                    OldPrice = salePrice.HasValue ? p.Price : (decimal?)null, // giá gốc hiển thị gạch ngang
                                     IsSale = salePrice.HasValue
                                 };
                             }).ToList();
 
             return View(products);
         }
-
 
         protected override void Dispose(bool disposing)
             {

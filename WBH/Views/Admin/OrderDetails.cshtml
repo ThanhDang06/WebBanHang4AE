@@ -17,6 +17,8 @@
     <thead>
         <tr>
             <th>Sản phẩm</th>
+            <th>Màu</th>
+            <th>Size</th>
             <th>Số lượng</th>
             <th>Giá</th>
             <th>Thành tiền</th>
@@ -29,17 +31,18 @@
             {
                 <tr>
                     <td>@(item.Product?.ProductName ?? "Không xác định")</td>
+                    <td>@(item.ProductColor?.ColorName ?? "-")</td>
+                    <td>@(item.ProductSize?.SizeName ?? "-")</td>
                     <td>@item.Quantity</td>
                     <td>@(item.Price?.ToString("N0") ?? "0")₫</td>
-                    <td>@((decimal)(item.Quantity * (item.Price ?? 0)).Value).ToString("N0")₫</td>
-
+                    <td>@(((decimal)(item.Quantity * (item.Price ?? 0))).ToString("N0"))₫</td>
                 </tr>
             }
         }
         else
         {
             <tr>
-                <td colspan="4" class="text-center">Không có sản phẩm nào</td>
+                <td colspan="6" class="text-center">Không có sản phẩm nào</td>
             </tr>
         }
     </tbody>

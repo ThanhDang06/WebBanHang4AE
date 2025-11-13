@@ -50,18 +50,21 @@
                     <div class="product-grid">
                         @foreach (var item in Model)
                         {
+                            var defaultImg = item.ProductColors.FirstOrDefault()?.Image ?? item.Image;
                             <div class="product-card" data-category="@item.Category">
                                 <div class="product-image">
                                     <a href="@Url.Action("Details", "Products", new { id = item.IDProduct })">
-                                        <img src="@Url.Content("~/Content/Img/" + item.Image)" alt="@item.ProductName" />
+                                        <img id="img-@item.IDProduct"
+                                             src="@Url.Content("~/Content/Img/" + defaultImg)"
+                                             alt="@item.ProductName" />
                                     </a>
-                                    <span class="product-badge">Hàng Mới</span>
+                                    <span class="product-badge">@((item.IsSale) ? "Sale" : "Hàng Mới")</span>
+
                                     <div class="product-actions">
                                         <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
                                         <button class="add-to-cart" data-id="@item.IDProduct">
                                             <i class="ri-shopping-cart-2-fill"></i>
                                         </button>
-
                                     </div>
                                 </div>
                                 <div class="product-info">
@@ -70,6 +73,20 @@
                                     @if (ViewBag.IsAdmin == true)
                                     {
                                         <p class="product-quantity">Số lượng: @item.Quantity</p>
+                                    }
+                                    <!-- Phần chọn màu -->
+                                    @if (item.ProductColors != null && item.ProductColors.Any())
+                                    {
+                                        <div class="color-options">
+                                            @foreach (var color in item.ProductColors)
+                                            {
+                                                <button class="color-btn"
+                                                        style="background:@color.ColorName"
+                                                        data-img="@Url.Content("~/Content/Img/" + color.Image)"
+                                                        data-product="@item.IDProduct">
+                                                </button>
+                                            }
+                                        </div>
                                     }
                                 </div>
                             </div>
@@ -80,3 +97,17 @@
         </div>
     </section>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const colorButtons = document.querySelectorAll(".color-btn");
+
+        colorButtons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                const imgSrc = this.dataset.img;
+                const productId = this.dataset.product;
+                const img = document.getElementById(`img-${productId}`);
+                img.src = imgSrc;
+            });
+        });
+    });
+</script>

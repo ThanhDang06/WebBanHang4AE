@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DBFashionStoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="DBFashionStoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="IDAcc" />
@@ -20,9 +20,12 @@
           </Key>
           <Property Name="IDCart" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IDCus" Type="int" />
-          <Property Name="IDProduct" Type="int" Nullable="false" />
+          <Property Name="IDProduct" Type="int" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="DateAdded" Type="datetime" />
+          <Property Name="IDSize" Type="int" />
+          <Property Name="IDColor" Type="int" />
+          <Property Name="Image" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Customers">
           <Key>
@@ -38,6 +41,20 @@
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Customers_Backup">
+          <Key>
+            <PropertyRef Name="IDCus" />
+            <PropertyRef Name="IDAcc" />
+          </Key>
+          <Property Name="IDCus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
+          <Property Name="Password" Type="nvarchar" MaxLength="100" />
+          <Property Name="Phone" Type="varchar" MaxLength="15" />
+          <Property Name="Address" Type="nvarchar" MaxLength="200" />
+          <Property Name="IDAcc" Type="int" Nullable="false" />
+          <Property Name="IDAcc2" Type="int" />
+        </EntityType>
         <EntityType Name="OrderDetails">
           <Key>
             <PropertyRef Name="IDDetail" />
@@ -47,6 +64,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="IDProduct" Type="int" />
           <Property Name="Quantity" Type="int" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="IDSize" Type="int" />
+          <Property Name="IDColor" Type="int" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -130,6 +149,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="RemainingUses" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <Association Name="FK__Cart__IDColor__29221CFB">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Cart__IDCus__01142BA1">
           <End Role="Customers" Type="Self.Customers" Multiplicity="0..1" />
           <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
@@ -142,8 +173,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Cart__IDProduct__68487DD7">
-          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+        <Association Name="FK__Cart__IDProduct__2739D489">
+          <End Role="Products" Type="Self.Products" Multiplicity="0..1" />
           <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
@@ -151,6 +182,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Principal>
             <Dependent Role="Cart">
               <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Cart__IDSize__282DF8C2">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDSize" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -238,6 +281,30 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OrderDetails_ProductColor">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_ProductSize">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProductVariants_ProductColor">
           <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="1" />
           <End Role="ProductVariants" Type="Self.ProductVariants" Multiplicity="*" />
@@ -298,12 +365,32 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySet Name="ProductVariants" EntityType="Self.ProductVariants" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sales" EntityType="Self.Sales" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Voucher" EntityType="Self.Voucher" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customers_Backup" EntityType="Self.Customers_Backup" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Customers_Backup].[IDCus] AS [IDCus], 
+    [Customers_Backup].[FullName] AS [FullName], 
+    [Customers_Backup].[Email] AS [Email], 
+    [Customers_Backup].[Password] AS [Password], 
+    [Customers_Backup].[Phone] AS [Phone], 
+    [Customers_Backup].[Address] AS [Address], 
+    [Customers_Backup].[IDAcc] AS [IDAcc], 
+    [Customers_Backup].[IDAcc2] AS [IDAcc2]
+    FROM [dbo].[Customers_Backup] AS [Customers_Backup]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__Cart__IDColor__29221CFB" Association="Self.FK__Cart__IDColor__29221CFB">
+            <End Role="ProductColor" EntitySet="ProductColor" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
           <AssociationSet Name="FK__Cart__IDCus__01142BA1" Association="Self.FK__Cart__IDCus__01142BA1">
             <End Role="Customers" EntitySet="Customers" />
             <End Role="Cart" EntitySet="Cart" />
           </AssociationSet>
-          <AssociationSet Name="FK__Cart__IDProduct__68487DD7" Association="Self.FK__Cart__IDProduct__68487DD7">
+          <AssociationSet Name="FK__Cart__IDProduct__2739D489" Association="Self.FK__Cart__IDProduct__2739D489">
             <End Role="Products" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Cart__IDSize__282DF8C2" Association="Self.FK__Cart__IDSize__282DF8C2">
+            <End Role="ProductSize" EntitySet="ProductSize" />
             <End Role="Cart" EntitySet="Cart" />
           </AssociationSet>
           <AssociationSet Name="FK__OrderDeta__IDOrd__5FB337D6" Association="Self.FK__OrderDeta__IDOrd__5FB337D6">
@@ -334,6 +421,14 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             <End Role="Accounts" EntitySet="Accounts" />
             <End Role="Customers" EntitySet="Customers" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_ProductColor" Association="Self.FK_OrderDetails_ProductColor">
+            <End Role="ProductColor" EntitySet="ProductColor" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_ProductSize" Association="Self.FK_OrderDetails_ProductSize">
+            <End Role="ProductSize" EntitySet="ProductSize" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProductVariants_ProductColor" Association="Self.FK_ProductVariants_ProductColor">
             <End Role="ProductColor" EntitySet="ProductColor" />
             <End Role="ProductVariants" EntitySet="ProductVariants" />
@@ -351,8 +446,7 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             <End Role="Sales" EntitySet="Sales" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DBFashionStoreModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -372,11 +466,16 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           </Key>
           <Property Name="IDCart" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IDCus" Type="Int32" />
-          <Property Name="IDProduct" Type="Int32" Nullable="false" />
+          <Property Name="IDProduct" Type="Int32" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <Property Name="IDSize" Type="Int32" />
+          <Property Name="IDColor" Type="Int32" />
+          <NavigationProperty Name="ProductColor" Relationship="Self.FK__Cart__IDColor__29221CFB" FromRole="Cart" ToRole="ProductColor" />
           <NavigationProperty Name="Customer" Relationship="Self.FK__Cart__IDCus__01142BA1" FromRole="Cart" ToRole="Customers" />
-          <NavigationProperty Name="Product" Relationship="Self.FK__Cart__IDProduct__68487DD7" FromRole="Cart" ToRole="Products" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__Cart__IDProduct__2739D489" FromRole="Cart" ToRole="Products" />
+          <NavigationProperty Name="ProductSize" Relationship="Self.FK__Cart__IDSize__282DF8C2" FromRole="Cart" ToRole="ProductSize" />
+          <Property Name="Image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -404,6 +503,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Order" Relationship="Self.FK__OrderDeta__IDOrd__5FB337D6" FromRole="OrderDetails" ToRole="Orders" />
           <NavigationProperty Name="Product" Relationship="Self.FK__OrderDeta__IDPro__2C3393D0" FromRole="OrderDetails" ToRole="Products" />
+          <Property Name="IDSize" Type="Int32" />
+          <Property Name="IDColor" Type="Int32" />
+          <NavigationProperty Name="ProductColor" Relationship="DBFashionStoreModel.FK_OrderDetails_ProductColor" FromRole="OrderDetail" ToRole="ProductColor" />
+          <NavigationProperty Name="ProductSize" Relationship="DBFashionStoreModel.FK_OrderDetails_ProductSize" FromRole="OrderDetail" ToRole="ProductSize" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -430,8 +533,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="ColorName" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IDProduct" Type="Int32" Nullable="false" />
           <Property Name="Image" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Carts" Relationship="Self.FK__Cart__IDColor__29221CFB" FromRole="ProductColor" ToRole="Cart" />
           <NavigationProperty Name="Product" Relationship="Self.FK__ProductCo__IDPro__36B12243" FromRole="ProductColor" ToRole="Products" />
           <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_ProductColor" FromRole="ProductColor" ToRole="ProductVariants" />
+          <NavigationProperty Name="OrderDetails" Relationship="DBFashionStoreModel.FK_OrderDetails_ProductColor" FromRole="ProductColor" ToRole="OrderDetail" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -446,7 +551,7 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="OldPrice" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="IsSale" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Carts" Relationship="Self.FK__Cart__IDProduct__68487DD7" FromRole="Products" ToRole="Cart" />
+          <NavigationProperty Name="Carts" Relationship="Self.FK__Cart__IDProduct__2739D489" FromRole="Products" ToRole="Cart" />
           <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__IDPro__2C3393D0" FromRole="Products" ToRole="OrderDetails" />
           <NavigationProperty Name="ProductColors" Relationship="Self.FK__ProductCo__IDPro__36B12243" FromRole="Products" ToRole="ProductColor" />
           <NavigationProperty Name="ProductSizes" Relationship="Self.FK__ProductSi__IDPro__398D8EEE" FromRole="Products" ToRole="ProductSize" />
@@ -461,8 +566,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="IDSize" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SizeName" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="IDProduct" Type="Int32" />
+          <NavigationProperty Name="Carts" Relationship="Self.FK__Cart__IDSize__282DF8C2" FromRole="ProductSize" ToRole="Cart" />
           <NavigationProperty Name="Product" Relationship="Self.FK__ProductSi__IDPro__398D8EEE" FromRole="ProductSize" ToRole="Products" />
           <NavigationProperty Name="ProductVariants" Relationship="Self.FK_ProductVariants_ProductSize" FromRole="ProductSize" ToRole="ProductVariants" />
+          <NavigationProperty Name="OrderDetails" Relationship="DBFashionStoreModel.FK_OrderDetails_ProductSize" FromRole="ProductSize" ToRole="OrderDetail" />
         </EntityType>
         <EntityType Name="ProductVariant">
           <Key>
@@ -505,6 +612,20 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="RemainingUses" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="Customers_Backup">
+          <Key>
+            <PropertyRef Name="IDCus" />
+            <PropertyRef Name="IDAcc" />
+          </Key>
+          <Property Name="IDCus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IDAcc" Type="Int32" Nullable="false" />
+          <Property Name="IDAcc2" Type="Int32" />
+        </EntityType>
         <Association Name="FK_Customers_Accounts">
           <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
           <End Role="Customers" Type="Self.Customer" Multiplicity="*" />
@@ -514,6 +635,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Principal>
             <Dependent Role="Customers">
               <PropertyRef Name="IDAcc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Cart__IDColor__29221CFB">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDColor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -529,8 +662,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Cart__IDProduct__68487DD7">
-          <End Role="Products" Type="Self.Product" Multiplicity="1" />
+        <Association Name="FK__Cart__IDProduct__2739D489">
+          <End Role="Products" Type="Self.Product" Multiplicity="0..1" />
           <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
@@ -538,6 +671,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Principal>
             <Dependent Role="Cart">
               <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Cart__IDSize__282DF8C2">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="IDSize" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -673,16 +818,25 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySet Name="ProductVariants" EntityType="Self.ProductVariant" />
           <EntitySet Name="Sales" EntityType="Self.Sale" />
           <EntitySet Name="Vouchers" EntityType="Self.Voucher" />
+          <EntitySet Name="Customers_Backup" EntityType="Self.Customers_Backup" />
           <AssociationSet Name="FK_Customers_Accounts" Association="Self.FK_Customers_Accounts">
             <End Role="Accounts" EntitySet="Accounts" />
             <End Role="Customers" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Cart__IDColor__29221CFB" Association="Self.FK__Cart__IDColor__29221CFB">
+            <End Role="ProductColor" EntitySet="ProductColors" />
+            <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
           <AssociationSet Name="FK__Cart__IDCus__01142BA1" Association="Self.FK__Cart__IDCus__01142BA1">
             <End Role="Customers" EntitySet="Customers" />
             <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
-          <AssociationSet Name="FK__Cart__IDProduct__68487DD7" Association="Self.FK__Cart__IDProduct__68487DD7">
+          <AssociationSet Name="FK__Cart__IDProduct__2739D489" Association="Self.FK__Cart__IDProduct__2739D489">
             <End Role="Products" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Cart__IDSize__282DF8C2" Association="Self.FK__Cart__IDSize__282DF8C2">
+            <End Role="ProductSize" EntitySet="ProductSizes" />
             <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
           <AssociationSet Name="FK__Orders__IDCus__60A75C0F" Association="Self.FK__Orders__IDCus__60A75C0F">
@@ -725,7 +879,39 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             <End Role="ProductSize" EntitySet="ProductSizes" />
             <End Role="ProductVariants" EntitySet="ProductVariants" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_ProductColor" Association="DBFashionStoreModel.FK_OrderDetails_ProductColor">
+            <End Role="ProductColor" EntitySet="ProductColors" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_ProductSize" Association="DBFashionStoreModel.FK_OrderDetails_ProductSize">
+            <End Role="ProductSize" EntitySet="ProductSizes" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
         </EntityContainer>
+        <Association Name="FK_OrderDetails_ProductColor">
+          <End Type="DBFashionStoreModel.ProductColor" Role="ProductColor" Multiplicity="0..1" />
+          <End Type="DBFashionStoreModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_ProductSize">
+          <End Type="DBFashionStoreModel.ProductSize" Role="ProductSize" Multiplicity="0..1" />
+          <End Type="DBFashionStoreModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -745,11 +931,14 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySetMapping Name="Carts">
             <EntityTypeMapping TypeName="DBFashionStoreModel.Cart">
               <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="IDCart" ColumnName="IDCart" />
                 <ScalarProperty Name="IDCus" ColumnName="IDCus" />
                 <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -769,6 +958,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="DBFashionStoreModel.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="IDColor" ColumnName="IDColor" />
+                <ScalarProperty Name="IDSize" ColumnName="IDSize" />
                 <ScalarProperty Name="IDDetail" ColumnName="IDDetail" />
                 <ScalarProperty Name="IDOrder" ColumnName="IDOrder" />
                 <ScalarProperty Name="IDProduct" ColumnName="IDProduct" />
@@ -863,6 +1054,20 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="RemainingUses" ColumnName="RemainingUses" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers_Backup">
+            <EntityTypeMapping TypeName="DBFashionStoreModel.Customers_Backup">
+              <MappingFragment StoreEntitySet="Customers_Backup">
+                <ScalarProperty Name="IDCus" ColumnName="IDCus" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IDAcc" ColumnName="IDAcc" />
+                <ScalarProperty Name="IDAcc2" ColumnName="IDAcc2" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -27,22 +27,40 @@ namespace WBH.Controllers
         }
         //Thêm sản phẩm vào giỏ
         [HttpPost]
-        public ActionResult AddToCart(int id)
+        public ActionResult AddToCart(int id, int colorId, int sizeId, int quantity = 1, string image = null)
         {
             if (Session["IDCus"] == null)
                 return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
             int userId = Convert.ToInt32(Session["IDCus"]);
 
-            var existing = db.Carts.FirstOrDefault(c => c.IDProduct == id && c.IDCus == userId);
+
+
+
+            // Kiểm tra sản phẩm cùng màu + size
+            var existing = db.Carts.FirstOrDefault(c => c.IDProduct == id
+                                                      && c.IDCus == userId
+                                                      && c.IDColor == colorId
+                                                      && c.IDSize == sizeId);
+
             if (existing != null)
-                existing.Quantity += 1;
+                existing.Quantity += quantity;
             else
-                db.Carts.Add(new Cart { IDCus = userId, IDProduct = id, Quantity = 1, DateAdded = DateTime.Now });
+                db.Carts.Add(new Cart
+                {
+                    IDCus = userId,
+                    IDProduct = id,
+                    Quantity = quantity,
+                    IDColor = colorId,
+                    IDSize = sizeId,
+                    Image = db.ProductColors.Find(colorId)?.Image,
+                    DateAdded = DateTime.Now
+                });
 
             db.SaveChanges();
             return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
         }
+
 
         //Cập nhật số lượng
         [HttpPost]
@@ -100,6 +118,8 @@ namespace WBH.Controllers
                 {
                     IDOrder = order.IDOrder,
                     IDProduct = item.IDProduct,
+                    IDSize = item.IDSize,
+                    IDColor = item.IDColor,
                     Quantity = item.Quantity,
                     Price = item.Product.Price
                 });
@@ -128,11 +148,13 @@ namespace WBH.Controllers
                 {
                     c.IDCart,
                     c.Product.ProductName,
-                    Image = "/Content/Img/" + c.Product.Image, // fix đường dẫn
+                    Image = "/Content/Img/" + c.Image,
                     c.Quantity,
                     Price = c.Product.Price ?? 0,
                     OldPrice = c.Product.OldPrice ?? 0,
-                    IsSale = c.Product.IsSale
+                    IsSale = c.Product.IsSale,
+                    ColorName = c.ProductColor.ColorName,
+                    SizeName = c.ProductSize.SizeName
                 })
                 .ToList();
 

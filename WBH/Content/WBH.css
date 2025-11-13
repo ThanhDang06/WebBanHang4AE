@@ -146,6 +146,26 @@ a {
     #searchResults div .text-danger {
         font-weight: bold;
     }
+/* Giá gốc gạch ngang màu xám */
+.old-price {
+    text-decoration: line-through;
+    color: #888;
+    margin-right: 5px;
+}
+/* Giá sale đỏ, in đậm */
+.sale-price {
+    color: red;
+    font-weight: bold;
+}
+/* Badge Sale */
+.sale-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-left: 5px;
+}
 
 /*FOOTER*/
 footer {

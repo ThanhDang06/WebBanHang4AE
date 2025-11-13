@@ -7,7 +7,7 @@ using WBH.Models;
 namespace WBH.Helpers
 {
     public static class SaleHelper
-    {
+    {    
         public static decimal GetSalePrice(Product product, decimal? discountPercent)
         {
             if (product == null)

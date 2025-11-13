@@ -49,16 +49,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const li = document.createElement("li");
                 li.classList.add("cart-item");
                 li.innerHTML = `
-                    <img src="${item.Image}" alt="${item.ProductName}" width="50">
-                    <div class="cart-item-info">
-                        <div>${item.ProductName}</div>
-                        <div>${item.Quantity} x ${item.Price.toLocaleString()}₫</div>
-                    </div>
-                    <button class="remove-btn" data-id="${item.IDCart}">&times;</button>
-                `;
+        <img src="${item.Image}" alt="${item.ProductName}" width="50">
+        <div class="cart-item-info">
+            <div>${item.ProductName}</div>
+            <div>Màu: ${item.ColorName} | Size: ${item.SizeName}</div>
+            <div>${item.Quantity} x ${item.Price.toLocaleString()}₫</div>
+        </div>
+        <button class="remove-btn" data-id="${item.IDCart}">&times;</button>
+    `;
                 cartItemsEl.appendChild(li);
                 total += item.Quantity * item.Price;
             });
+
         }
         if (totalPriceEl) totalPriceEl.textContent = total.toLocaleString() + "₫";
         if (cartCountEl) cartCountEl.textContent = cart.reduce((sum, i) => sum + i.Quantity, 0);
@@ -79,22 +81,24 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = "cart-item";
             div.dataset.index = idx;
             div.innerHTML = `
-                <img src="${item.Image}" width="70" alt="${item.ProductName}">
-                <div class="info">
-                    <h4>${item.ProductName}</h4>
-                    <p>Giá: ${item.Price.toLocaleString()}đ</p>
-                    <div class="quantity">
-                        <button class="decrease">-</button>
-                        <span>${item.Quantity}</span>
-                        <button class="increase">+</button>
-                    </div>
-                    <p>Thành tiền: ${(item.Price * item.Quantity).toLocaleString()}đ</p>
-                </div>
-                <button class="remove">Xóa</button>
-            `;
+        <img src="${item.Image}" width="70" alt="${item.ProductName}">
+        <div class="info">
+            <h4>${item.ProductName}</h4>
+            <p>Màu: ${item.ColorName} | Size: ${item.SizeName}</p>
+            <p>Giá: ${item.Price.toLocaleString()}đ</p>
+            <div class="quantity">
+                <button class="decrease">-</button>
+                <span>${item.Quantity}</span>
+                <button class="increase">+</button>
+            </div>
+            <p>Thành tiền: ${(item.Price * item.Quantity).toLocaleString()}đ</p>
+        </div>
+        <button class="remove">Xóa</button>
+    `;
             cartPageItemsDiv.appendChild(div);
             subtotal += item.Price * item.Quantity;
         });
+
 
         if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString() + "đ";
         const voucher = parseInt(voucherEl?.dataset.value) || 0;
@@ -278,37 +282,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function debounce(func, delay) {
         let timer;
-        return function (...args) { clearTimeout(timer); timer = setTimeout(() => func.apply(this, args), delay); }
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        }
     }
 
     $input.on("keyup", debounce(function (e) {
         const keyword = $(this).val().trim();
+
+        // Nhấn Enter đi trang Search
         if (e.key === "Enter") {
             e.preventDefault();
             if (keyword.length) window.location.href = searchPage + "?keyword=" + encodeURIComponent(keyword);
             return;
         }
-        if (keyword.length < 2) { $results.empty().hide(); return; }
+
+        if (keyword.length < 2) {
+            $results.empty().hide();
+            return;
+        }
 
         $.getJSON(ajaxUrl, { keyword }, data => {
-            if (!data.length) { $results.html('<div class="p-2 text-muted">Không có sản phẩm phù hợp</div>').show(); return; }
+            if (!data.length) {
+                $results.html('<div class="p-2 text-muted">Không có sản phẩm phù hợp</div>').show();
+                return;
+            }
+
             let html = '';
             data.forEach(item => {
                 html += `
-                    <a href="/Products/Details/${item.IDProduct}" class="list-group-item">
-                        <img src="${item.Image}" />
-                        <div>
-                            <div>${item.ProductName}</div>
-                            <div class="text-danger">${item.SalePrice != null ? item.SalePrice.toLocaleString('vi-VN') + '₫' : item.OriginalPrice.toLocaleString('vi-VN') + '₫'}</div>
-                        </div>
-                    </a>
-                `;
+            <a href="/Products/Details/${item.IDProduct}" class="list-group-item d-flex align-items-center ">
+                <img src="${item.Image}" class="me-2" width="50" />
+                <div>
+                    <div>${item.ProductName}</div>
+                    <div>
+                        ${item.SalePrice != null
+                        ? `<span class="text-muted text-decoration-line-through">${item.OriginalPrice.toLocaleString('vi-VN')}₫</span>
+                               <span class="text-danger fw-bold ms-1">${item.SalePrice.toLocaleString('vi-VN')}₫</span>`
+                        : `<span>${item.OriginalPrice.toLocaleString('vi-VN')}₫</span>`
+                    }
+                    </div>
+                    ${item.SaleLabel != null ? `<span class="badge bg-danger mt-1">${item.SaleLabel}</span>` : ''}
+                </div>
+            </a>
+        `;
             });
+
             $results.html(html).show();
         });
     }, 300));
 
+    // click ngoài ẩn dropdown
     $(document).click(e => {
         if (!$(e.target).closest(".position-relative").length) $results.hide();
     });
+
 });

@@ -36,5 +36,6 @@ namespace WBH.Models
         public virtual DbSet<ProductVariant> ProductVariants { get; set; }
         public virtual DbSet<Sale> Sales { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
+        public virtual DbSet<Customers_Backup> Customers_Backup { get; set; }
     }
 }

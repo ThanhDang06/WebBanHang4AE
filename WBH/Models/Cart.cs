@@ -16,11 +16,16 @@ namespace WBH.Models
     {
         public int IDCart { get; set; }
         public Nullable<int> IDCus { get; set; }
-        public int IDProduct { get; set; }
+        public Nullable<int> IDProduct { get; set; }
         public int Quantity { get; set; }
         public Nullable<System.DateTime> DateAdded { get; set; }
+        public Nullable<int> IDSize { get; set; }
+        public Nullable<int> IDColor { get; set; }
+        public string Image { get; set; }
     
+        public virtual ProductColor ProductColor { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual Product Product { get; set; }
+        public virtual ProductSize ProductSize { get; set; }
     }
 }

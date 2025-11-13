@@ -153,6 +153,9 @@
     <Compile Include="Models\Customer.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Customers_Backup.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DashboardViewModel.cs" />
     <Compile Include="Models\DBFashionStore.Context.cs">
       <AutoGen>True</AutoGen>
