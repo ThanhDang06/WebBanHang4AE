@@ -38,7 +38,16 @@ namespace WBH.Controllers
         // GET: AdminVouchers/Create
         public ActionResult Create()
         {
+            ViewBag.Customers = new SelectList(db.Customers, "IDCus", "FullName");
             return View();
+        }
+
+        private string GenerateRandomCode(int length)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
         // POST: AdminVouchers/Create
@@ -46,16 +55,36 @@ namespace WBH.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IDVoucher,Code,Type,Value,MinOrderAmount,StartDate,EndDate,RemainingUses,IsActive")] Voucher voucher)
+        public ActionResult Create(CreateVoucherViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // Sinh mã voucher ngẫu nhiên 8 ký tự
+                string code = GenerateRandomCode(8);
+
+                var voucher = new Voucher
+                {
+                    Code = code,
+                    Type = model.Type,
+                    Value = model.Value,
+                    MinOrderAmount = model.MinOrderAmount,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    RemainingUses = model.RemainingUses,
+                    IsActive = true,
+                    CreatedDate = DateTime.Now,
+                    IDCus = model.IDCus
+                };
+
                 db.Vouchers.Add(voucher);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                TempData["Success"] = $"Voucher đã tạo: {code}";
+                return RedirectToAction("Create");
             }
 
-            return View(voucher);
+            ViewBag.Customers = new SelectList(db.Customers, "IDCus", "FullName", model.IDCus);
+            return View(model);
         }
 
         // GET: AdminVouchers/Edit/5

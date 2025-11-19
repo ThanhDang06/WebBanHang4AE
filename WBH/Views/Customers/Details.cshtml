@@ -65,9 +65,12 @@
                                     </a>
                                 </td>
                                 <td>@(order.DateOrder?.ToString("dd/MM/yyyy") ?? "-")</td>
-                                <td>@(order.Total?.ToString("N0") ?? "-") VNĐ</td>
+                                <td>@(order.Total.HasValue ? ((order.Total.Value - (order.Discount ?? 0)).ToString("N0") + "₫") : "0₫") </td>
                                 <td>
-                                    <span class="badge order-status-badge bg-@(order.Status == "Hoàn thành" ? "success" : order.Status == "Đang xử lý" ? "warning" : "secondary")"
+                                    <span class="badge order-status-badge bg-@(
+                                        order.Status == "Hoàn thành" ? "success" :
+                                        order.Status == "Đang xử lý" ? "warning" :
+                                        order.Status == "Đã hủy" ? "danger" : "secondary")"
                                           data-order-id="@order.IDOrder"
                                           data-url="@Url.Action("GetOrderStatus", "Customers")">
                                         @order.Status

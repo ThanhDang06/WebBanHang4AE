@@ -23,5 +23,11 @@ namespace WBH.Models
         public System.DateTime EndDate { get; set; }
         public int RemainingUses { get; set; }
         public bool IsActive { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public byte[] RowVersion { get; set; }
+        public Nullable<int> IDCus { get; set; }
+        public Nullable<int> CustomerID { get; set; }
+    
+        public virtual Customer Customer { get; set; }
     }
 }

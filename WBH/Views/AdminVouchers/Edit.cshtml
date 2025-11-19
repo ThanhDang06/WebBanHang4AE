@@ -5,92 +5,53 @@
     Layout = "~/Views/Shared/WBH.cshtml";
 }
 
-<h2>Edit</h2>
+<div class="container my-4">
+    <h2 class="mb-4">Chỉnh sửa Voucher</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Voucher</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.IDVoucher)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
-            </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Code, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control", @readonly = "readonly" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Type, new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.Type, new SelectList(new[] { "PERCENT", "AMOUNT" }), "Chọn type", new { @class = "form-select" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Value, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Value, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.Value, new { @class = "form-control" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MinOrderAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MinOrderAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MinOrderAmount, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.MinOrderAmount, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.MinOrderAmount, new { @class = "form-control" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.StartDate, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-ddTHH:mm}", new { type = "datetime-local", @class = "form-control" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.EndDate, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-ddTHH:mm}", new { type = "datetime-local", @class = "form-control" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.RemainingUses, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RemainingUses, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RemainingUses, "", new { @class = "text-danger" })
-            </div>
+        <div class="mb-3">
+            @Html.LabelFor(m => m.RemainingUses, new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.RemainingUses, new { @class = "form-control" })
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActive)
-                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
-                </div>
-            </div>
+        <div class="mb-3 form-check">
+            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", id = "IsActiveCheck" })
+            <label class="form-check-label" for="IsActiveCheck">Active</label>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary ms-2" })
+    }
 </div>

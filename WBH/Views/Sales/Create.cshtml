@@ -4,49 +4,65 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+<div class="container my-4">
+    <h2 class="text-primary mb-4">Thêm Sale mới</h2>
 
-<h2>Thêm Sale mới</h2>
+    @using (Html.BeginForm("Create", "Sales", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+    {
+        @Html.AntiForgeryToken()
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
-    <div class="form-horizontal">
-        <div class="form-group">
-            @Html.LabelFor(model => model.IDProduct, "Sản phẩm", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-6">
-                @Html.DropDownList("IDProduct", ViewBag.IDProduct as SelectList, "Chọn sản phẩm", htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.IDProduct, "", new { @class = "text-danger" })
-            </div>
+        <!-- Sản phẩm -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.IDProduct, "Sản phẩm", htmlAttributes: new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.IDProduct, (SelectList)ViewBag.IDProduct, "Chọn sản phẩm", new { @class = "form-select", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn sản phẩm.</div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DiscountPercent, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-2">
-                @Html.EditorFor(model => model.DiscountPercent, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DiscountPercent, "", new { @class = "text-danger" })
-            </div>
+        <!-- Giảm giá (%) -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.DiscountPercent, htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.DiscountPercent, new { @class = "form-control", type = "number", min = "0", max = "100", required = "required", placeholder = "Nhập % giảm giá" })
+            <div class="invalid-feedback">Vui lòng nhập % giảm giá hợp lệ (0-100).</div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-3">
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
-
-            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-3">
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
+        <!-- Ngày bắt đầu -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.StartDate, htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn ngày bắt đầu.</div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Lưu" class="btn btn-success" />
-                @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-default" })
-            </div>
+        <!-- Ngày kết thúc -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.EndDate, htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn ngày kết thúc.</div>
         </div>
-    </div>
+
+        <!-- Nút lưu / hủy -->
+        <div class="col-12 text-center mt-3">
+            <button type="submit" class="btn btn-success me-2">Lưu</button>
+            @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary" })
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        // Bootstrap 5 validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
 }

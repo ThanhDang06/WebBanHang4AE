@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WBH.Models.Cart>
+﻿@model WBH.Models.CartViewModel
 
 @{
     ViewBag.Title = "Index";
@@ -9,7 +9,7 @@
 }
 <div class="cart-container">
     <!-- CỘT TRÁI: Thông tin đơn hàng -->
-    <div class="order-info">
+    <div class="order-info" id="checkoutForm">
         <h2>Thông tin đơn hàng</h2>
         <input type="text" id="fullname" placeholder="Họ và tên">
         <input type="text" id="phone" placeholder="Số điện thoại">
@@ -47,34 +47,42 @@
     <!-- CỘT PHẢI: Giỏ hàng -->
     <div class="cart-summary">
         <h2>Giỏ hàng của bạn</h2>
-        <div id="cart-items"></div>
+        <div id="cart-items">
+            @foreach (var item in Model.Items)
+            {
+                <div class="cart-item">
+                    <p>@item.Product.ProductName x @item.Quantity</p>
+                    <p>Giá: @(item.Product.Price ?? 0):C</p>
+                </div>
+            }
+        </div>
 
         <div class="voucher-section">
             <h3>Ưu Đãi Dành Cho Bạn</h3>
             <div class="voucher-list">
-                <div class="voucher">
-                    <input type="radio" name="voucher" id="voucher1" value="GIAM10K">
-                    <label for="voucher1"><strong>GIAM10K</strong> - Giảm 10,000đ cho đơn từ 199,000đ</label>
-                </div>
-                <div class="voucher">
-                    <input type="radio" name="voucher" id="voucher2" value="FREESHIP">
-                    <label for="voucher2"><strong>FREESHIP</strong> - Miễn phí vận chuyển cho đơn từ 399,000đ</label>
-                </div>
-                <div class="voucher">
-                    <input type="radio" name="voucher" id="voucher3" value="GIAM20K">
-                    <label for="voucher3"><strong>GIAM20K</strong> - Giảm 20,000đ cho đơn từ 499,000đ</label>
-                </div>
+                @foreach (var voucher in ViewBag.Vouchers as List<WBH.Models.Voucher>)
+                {
+                    <div class="voucher">
+                        <input type="radio" name="voucher" value="@voucher.Code"
+                               @(voucher.Code == Model.VoucherCode ? "checked" : "")>
+                        <label>
+                            <strong>@voucher.Code</strong> -
+                            @(voucher.Type == "PERCENT" ? $"Giảm {voucher.Value}%" : $"Giảm {voucher.Value:C}")
+                        </label>
+                    </div>
+                }
             </div>
             <input type="text" id="customVoucher" placeholder="Nhập mã giảm giá">
             <button id="applyVoucher">Áp dụng Voucher</button>
+            <button id="removeVoucherBtn" style="display: none">Xóa voucher</button>
         </div>
 
         <div class="cart-total">
-            <p>Tạm tính: <span id="subtotal">0đ</span></p>
+            <p>Tạm tính: <span id="subtotal">@Model.TotalAmount.ToString("N0")₫</span></p>
             <p>Phí vận chuyển: <strong>Miễn phí</strong></p>
-            <p>Voucher giảm giá: <span id="voucherDiscount">0đ</span></p>
+            <p>Voucher giảm giá: <span id="voucherDiscount" data-value="@Model.Discount">@Model.Discount.ToString("N0")₫</span></p>
             <hr>
-            <p><strong>Tổng: <span id="total">0đ</span></strong></p>
+            <p><strong>Tổng: <span id="total">@((Model.TotalAmount - Model.Discount).ToString("N0"))₫</span></strong></p>
             <button id="checkoutBtn" class="checkout btn btn-success">Thanh toán</button>
         </div>
     </div>

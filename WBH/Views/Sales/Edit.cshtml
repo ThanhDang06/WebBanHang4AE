@@ -4,37 +4,65 @@
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-<h2>Edit Sale</h2>
+<div class="container my-4">
+    <h2 class="text-primary mb-4">Sửa Sale</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm("Edit", "Sales", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.IDProduct)
-        @Html.DropDownListFor(model => model.IDProduct, (SelectList)ViewBag.IDProduct, "Chọn sản phẩm", new { @class = "form-control" })
-    </div>
+        <!-- Sản phẩm -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.IDProduct, "Sản phẩm", htmlAttributes: new { @class = "form-label" })
+            @Html.DropDownListFor(m => m.IDProduct, (SelectList)ViewBag.IDProduct, "Chọn sản phẩm", new { @class = "form-select", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn sản phẩm.</div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Category)
-        @Html.TextBoxFor(model => model.Category, new { @class = "form-control" })
-    </div>
+        <!-- Giảm giá (%) -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.DiscountPercent, "Giảm giá (%)", htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.DiscountPercent, new { @class = "form-control", type = "number", min = "0", max = "100", required = "required", placeholder = "Nhập % giảm giá" })
+            <div class="invalid-feedback">Vui lòng nhập % giảm giá hợp lệ (0-100).</div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.DiscountPercent)
-        @Html.TextBoxFor(model => model.DiscountPercent, new { @class = "form-control" })
-    </div>
+        <!-- Ngày bắt đầu -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.StartDate, "Ngày bắt đầu", htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn ngày bắt đầu.</div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.StartDate)
-        @Html.TextBoxFor(model => model.StartDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
-    </div>
+        <!-- Ngày kết thúc -->
+        <div class="col-md-6">
+            @Html.LabelFor(m => m.EndDate, "Ngày kết thúc", htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+            <div class="invalid-feedback">Vui lòng chọn ngày kết thúc.</div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.EndDate)
-        @Html.TextBoxFor(model => model.EndDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control" })
-    </div>
+        <!-- Nút lưu / hủy -->
+        <div class="col-12 text-center mt-3">
+            <button type="submit" class="btn btn-success me-2">Lưu</button>
+            @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary" })
+        </div>
+    }
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary" })
+</div>
+
+@section Scripts {
+    <script>
+        // Bootstrap 5 validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
 }

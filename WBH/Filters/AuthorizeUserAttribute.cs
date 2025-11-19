@@ -14,7 +14,10 @@ namespace WBH.Filters
 
             if ((controller == "Products" &&
                         (action == "ProductList" || action == "Sale" || action == "ClothesList" || action == "AccessoriesList" || action == "Details"|| action == "Search" || action == "CategoryProducts" || action == "SearchAjax")) ||
-                        (controller == "Login" && (action == "DangNhap" || action == "DangKy")))
+                        (controller == "Login" && (action == "DangNhap" || action == "DangKy"))||
+                         (controller == "Cart" && action == "Index" || action == "GetCartItems")
+
+                        )
             {
                 return; // không redirect
             }
@@ -22,11 +25,16 @@ namespace WBH.Filters
             //Sửa đúng session key (vì bạn lưu là "UserName", không phải "User")
             if (session["UserName"] == null)
             {
+                string returnUrl = filterContext.HttpContext.Request.RawUrl;
+
+                filterContext.Controller.TempData["ReturnUrl"] = returnUrl;
+
                 filterContext.Result = new RedirectToRouteResult(
                     new System.Web.Routing.RouteValueDictionary
                     {
                         { "controller", "Login" },
-                        { "action", "DangNhap" }
+                        { "action", "DangNhap" },
+                        { "returnUrl", returnUrl }
                     }
                 );
             }

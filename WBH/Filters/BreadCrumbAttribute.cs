@@ -80,7 +80,7 @@ namespace WBH.Filters
                     }
                 }
             }
-            else if (controller == "Admin" || controller == "Sales")
+            else if (controller == "Admin" || controller == "Sales"|| controller == "AdminVouchers")
             {
                 if (controller == "Admin" && action.Equals("Dashboard", StringComparison.OrdinalIgnoreCase))
                 {
@@ -120,6 +120,11 @@ namespace WBH.Filters
                 {
                     breadcrumb.Add(("Quản lý khuyến mãi", null));
                 }
+
+                if (controller == "AdminVouchers")
+                {
+                    breadcrumb.Add(("Quản lý voucher", null));
+                }   
             }
 
             // Gán vào ViewBag

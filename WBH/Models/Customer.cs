@@ -19,6 +19,7 @@ namespace WBH.Models
         {
             this.Carts = new HashSet<Cart>();
             this.Orders = new HashSet<Order>();
+            this.Vouchers = new HashSet<Voucher>();
         }
     
         public int IDCus { get; set; }
@@ -34,5 +35,7 @@ namespace WBH.Models
         public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Voucher> Vouchers { get; set; }
     }
 }

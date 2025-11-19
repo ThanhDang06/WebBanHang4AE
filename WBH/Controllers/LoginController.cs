@@ -12,13 +12,13 @@ namespace WBH.Controllers
         private DBFashionStoreEntitiess db = new DBFashionStoreEntitiess();
 
         [HttpGet]
-        public ActionResult DangNhap()
+        public ActionResult DangNhap(string returnUrl)
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult DangNhap(string username, string password)
+        public ActionResult DangNhap(string username, string password, string returnUrl)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -59,6 +59,12 @@ namespace WBH.Controllers
                 var customer = db.Customers.FirstOrDefault(c => c.IDAcc == account.IDAcc);
                 if (customer != null)
                     Session["IDCus"] = customer.IDCus;
+            }
+
+            if (TempData["ReturnUrl"] != null)
+            {
+                string url = TempData["ReturnUrl"].ToString();
+                return Redirect(url);
             }
 
             // Redirect theo role

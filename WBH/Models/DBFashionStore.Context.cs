@@ -12,6 +12,8 @@ namespace WBH.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class DBFashionStoreEntitiess : DbContext
     {
@@ -37,5 +39,38 @@ namespace WBH.Models
         public virtual DbSet<Sale> Sales { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<Customers_Backup> Customers_Backup { get; set; }
+    
+        public virtual ObjectResult<string> AdminCreateVoucher(string type, Nullable<decimal> value, Nullable<decimal> minOrderAmount, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, Nullable<int> remainingUses, Nullable<int> iDCus)
+        {
+            var typeParameter = type != null ?
+                new ObjectParameter("Type", type) :
+                new ObjectParameter("Type", typeof(string));
+    
+            var valueParameter = value.HasValue ?
+                new ObjectParameter("Value", value) :
+                new ObjectParameter("Value", typeof(decimal));
+    
+            var minOrderAmountParameter = minOrderAmount.HasValue ?
+                new ObjectParameter("MinOrderAmount", minOrderAmount) :
+                new ObjectParameter("MinOrderAmount", typeof(decimal));
+    
+            var startDateParameter = startDate.HasValue ?
+                new ObjectParameter("StartDate", startDate) :
+                new ObjectParameter("StartDate", typeof(System.DateTime));
+    
+            var endDateParameter = endDate.HasValue ?
+                new ObjectParameter("EndDate", endDate) :
+                new ObjectParameter("EndDate", typeof(System.DateTime));
+    
+            var remainingUsesParameter = remainingUses.HasValue ?
+                new ObjectParameter("RemainingUses", remainingUses) :
+                new ObjectParameter("RemainingUses", typeof(int));
+    
+            var iDCusParameter = iDCus.HasValue ?
+                new ObjectParameter("IDCus", iDCus) :
+                new ObjectParameter("IDCus", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("AdminCreateVoucher", typeParameter, valueParameter, minOrderAmountParameter, startDateParameter, endDateParameter, remainingUsesParameter, iDCusParameter);
+        }
     }
 }

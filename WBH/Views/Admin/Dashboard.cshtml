@@ -16,8 +16,9 @@
             <li><a href="@Url.Action("Dashboard", "Admin")" class="active">Dashboard</a></li>
             <li><a href="@Url.Action("ProductManagement", "Admin")">Quản lý sản phẩm</a></li>
             <li><a href="@Url.Action("Index", "Sales")">Quản lý Sale</a></li>
-            <li><a href="@Url.Action("Orders", "Admin")">Đơn hàng</a></li>
-            <li><a href="@Url.Action("CustomerManagement", "Admin")">Khách hàng</a></li>
+            <li><a href="@Url.Action("Orders", "Admin")">Quản lý đơn hàng</a></li>
+            <li><a href="@Url.Action("Index", "AdminVouchers")">Quản lý voucher</a></li>
+            <li><a href="@Url.Action("CustomerManagement", "Admin")">Quản lý khách hàng</a></li>
             <li><a href="@Url.Action("DangXuat", "Login")">Đăng xuất</a></li>
         </ul>
     </div>
@@ -48,6 +49,15 @@
                         <p>@ViewBag.TotalCustomers</p>
                     </div>
                 </a>
+            </div>
+            <div class="col-md-3">
+                <a href="@Url.Action("Index", "AdminVouchers")">
+                    <div class="stat-card">
+                        <h5>Voucher</h5>
+                        <p>@ViewBag.TotalVouchers</p>
+                    </div>
+                </a>
+
             </div>
             <div class="col-md-3">
                 <a href="@Url.Action("ProductManagement", "Admin")">

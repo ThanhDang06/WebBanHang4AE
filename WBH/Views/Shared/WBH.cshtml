@@ -2,7 +2,7 @@
 <html>
 <head lang="vi">
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>F4HCM STORE</title>
 
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet">
@@ -34,6 +34,10 @@
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="@Url.Action("ClothesList", "Products")">Sản Phẩm</a>
+                        <button class="dropdown-toggle-mobile" aria-label="Toggle dropdown">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="@Url.Action("CategoryProducts", "Products", new { category = "ao" })">Áo</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("CategoryProducts", "Products", new { category = "quan" })">Quần</a></li>
@@ -42,6 +46,10 @@
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="@Url.Action("AccessoriesList", "Products")">Phụ kiện</a>
+                        <button class="dropdown-toggle-mobile" aria-label="Toggle dropdown">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="@Url.Action("CategoryProducts", "Products", new { category = "vo" })">Vớ</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("CategoryProducts", "Products", new { category = "non" })">Nón</a></li>
@@ -188,5 +196,6 @@
     <script src="@Url.Content("~/Scripts/bootstrap.bundle.min.js")"></script>
     <script src="@Url.Content("~/Scripts/Customer.js")"></script>
     <script src="@Url.Content("~/Scripts/WBH.js")" defer></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

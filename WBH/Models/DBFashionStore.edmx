@@ -81,6 +81,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="Note" Type="nvarchar" MaxLength="255" />
           <Property Name="Status" Type="nvarchar" MaxLength="50" />
           <Property Name="Total" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="VoucherCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Discount" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="ProductColor">
           <Key>
@@ -139,7 +141,7 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Key>
             <PropertyRef Name="IDVoucher" />
           </Key>
-          <Property Name="IDVoucher" Type="int" Nullable="false" />
+          <Property Name="IDVoucher" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Type" Type="nvarchar" MaxLength="10" Nullable="false" />
           <Property Name="Value" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -148,6 +150,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="EndDate" Type="datetime" Nullable="false" />
           <Property Name="RemainingUses" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="IDCus" Type="int" />
+          <Property Name="CustomerID" Type="int" />
         </EntityType>
         <Association Name="FK__Cart__IDColor__29221CFB">
           <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="0..1" />
@@ -197,6 +203,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__OrderDeta__IDCol__2CF2ADDF">
+          <End Role="ProductColor" Type="Self.ProductColor" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductColor">
+              <PropertyRef Name="IDColor" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="IDColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__OrderDeta__IDOrd__5FB337D6">
           <End Role="Orders" Type="Self.Orders" Multiplicity="0..1" />
           <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
@@ -218,6 +236,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Principal>
             <Dependent Role="OrderDetails">
               <PropertyRef Name="IDProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OrderDeta__IDSiz__2BFE89A6">
+          <End Role="ProductSize" Type="Self.ProductSize" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductSize">
+              <PropertyRef Name="IDSize" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="IDSize" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -353,6 +383,27 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Voucher_Customers">
+          <End Role="Customers" Type="Self.Customers" Multiplicity="0..1" />
+          <End Role="Voucher" Type="Self.Voucher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="IDCus" />
+            </Principal>
+            <Dependent Role="Voucher">
+              <PropertyRef Name="IDCus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="AdminCreateVoucher" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="nvarchar" Mode="In" />
+          <Parameter Name="Value" Type="decimal" Mode="In" />
+          <Parameter Name="MinOrderAmount" Type="decimal" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+          <Parameter Name="RemainingUses" Type="int" Mode="In" />
+          <Parameter Name="IDCus" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="DBFashionStoreModelStoreContainer">
           <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
@@ -393,12 +444,20 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             <End Role="ProductSize" EntitySet="ProductSize" />
             <End Role="Cart" EntitySet="Cart" />
           </AssociationSet>
+          <AssociationSet Name="FK__OrderDeta__IDCol__2CF2ADDF" Association="Self.FK__OrderDeta__IDCol__2CF2ADDF">
+            <End Role="ProductColor" EntitySet="ProductColor" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK__OrderDeta__IDOrd__5FB337D6" Association="Self.FK__OrderDeta__IDOrd__5FB337D6">
             <End Role="Orders" EntitySet="Orders" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
           <AssociationSet Name="FK__OrderDeta__IDPro__2C3393D0" Association="Self.FK__OrderDeta__IDPro__2C3393D0">
             <End Role="Products" EntitySet="Products" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OrderDeta__IDSiz__2BFE89A6" Association="Self.FK__OrderDeta__IDSiz__2BFE89A6">
+            <End Role="ProductSize" EntitySet="ProductSize" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
           <AssociationSet Name="FK__Orders__IDCus__60A75C0F" Association="Self.FK__Orders__IDCus__60A75C0F">
@@ -444,6 +503,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <AssociationSet Name="FK_Sales_Products" Association="Self.FK_Sales_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="Sales" EntitySet="Sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Voucher_Customers" Association="Self.FK_Voucher_Customers">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Voucher" EntitySet="Voucher" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -491,6 +554,7 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <NavigationProperty Name="Account" Relationship="Self.FK_Customers_Accounts" FromRole="Customers" ToRole="Accounts" />
           <NavigationProperty Name="Carts" Relationship="Self.FK__Cart__IDCus__01142BA1" FromRole="Customers" ToRole="Cart" />
           <NavigationProperty Name="Orders" Relationship="Self.FK__Orders__IDCus__60A75C0F" FromRole="Customers" ToRole="Orders" />
+          <NavigationProperty Name="Vouchers" Relationship="DBFashionStoreModel.FK_Voucher_Customers" FromRole="Customer" ToRole="Voucher" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -524,6 +588,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="Total" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Customer" Relationship="Self.FK__Orders__IDCus__60A75C0F" FromRole="Orders" ToRole="Customers" />
           <NavigationProperty Name="OrderDetails" Relationship="Self.FK__OrderDeta__IDOrd__5FB337D6" FromRole="Orders" ToRole="OrderDetails" />
+          <Property Name="VoucherCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Discount" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="ProductColor">
           <Key>
@@ -611,6 +677,11 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="RemainingUses" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="RowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="IDCus" Type="Int32" />
+          <Property Name="CustomerID" Type="Int32" />
+          <NavigationProperty Name="Customer" Relationship="DBFashionStoreModel.FK_Voucher_Customers" FromRole="Voucher" ToRole="Customer" />
         </EntityType>
         <EntityType Name="Customers_Backup">
           <Key>
@@ -887,6 +958,19 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             <End Role="ProductSize" EntitySet="ProductSizes" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
           </AssociationSet>
+          <AssociationSet Name="FK_Voucher_Customers" Association="DBFashionStoreModel.FK_Voucher_Customers">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Voucher" EntitySet="Vouchers" />
+          </AssociationSet>
+          <FunctionImport Name="AdminCreateVoucher" ReturnType="Collection(String)">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="Value" Mode="In" Type="Decimal" />
+            <Parameter Name="MinOrderAmount" Mode="In" Type="Decimal" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+            <Parameter Name="RemainingUses" Mode="In" Type="Int32" />
+            <Parameter Name="IDCus" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <Association Name="FK_OrderDetails_ProductColor">
           <End Type="DBFashionStoreModel.ProductColor" Role="ProductColor" Multiplicity="0..1" />
@@ -909,6 +993,18 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
             </Principal>
             <Dependent Role="OrderDetail">
               <PropertyRef Name="IDSize" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Voucher_Customers">
+          <End Type="DBFashionStoreModel.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="DBFashionStoreModel.Voucher" Role="Voucher" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="IDCus" />
+            </Principal>
+            <Dependent Role="Voucher">
+              <PropertyRef Name="IDCus" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -971,6 +1067,8 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="DBFashionStoreModel.Order">
               <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="VoucherCode" ColumnName="VoucherCode" />
                 <ScalarProperty Name="IDOrder" ColumnName="IDOrder" />
                 <ScalarProperty Name="IDCus" ColumnName="IDCus" />
                 <ScalarProperty Name="DateOrder" ColumnName="DateOrder" />
@@ -1045,6 +1143,10 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
           <EntitySetMapping Name="Vouchers">
             <EntityTypeMapping TypeName="DBFashionStoreModel.Voucher">
               <MappingFragment StoreEntitySet="Voucher">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="IDCus" ColumnName="IDCus" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IDVoucher" ColumnName="IDVoucher" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Type" ColumnName="Type" />
@@ -1071,6 +1173,7 @@ warning 6002: The table/view 'DBFashionStore.dbo.Customers_Backup' does not have
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AdminCreateVoucher" FunctionName="DBFashionStoreModel.Store.AdminCreateVoucher" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

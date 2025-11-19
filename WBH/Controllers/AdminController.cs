@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using WBH.Models;
@@ -73,12 +74,24 @@ namespace WBH.Controllers
         }
 
         // GET: Admin/Orders
-        public ActionResult Orders()
+        public ActionResult Orders(string sortOrder, string statusFilter)
         {
-            var orders = db.Orders
-                .OrderByDescending(o => o.DateOrder)
-                .ToList();
-            return View(orders);
+            var ordersQuery = db.Orders.AsQueryable();
+
+            // Lọc theo Status nếu có
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                ordersQuery = ordersQuery.Where(o => o.Status == statusFilter);
+            }
+
+            // Áp dụng sort theo ngày / status
+            ordersQuery = WBH.Helpers.SortHelper.ApplyOrderSort(ordersQuery, sortOrder);
+
+            // Gửi về View để giữ trạng thái dropdown
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.CurrentStatus = statusFilter;
+
+            return View(ordersQuery.ToList());
         }
 
         // GET: Admin/OrderDetails/5

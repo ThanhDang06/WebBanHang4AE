@@ -34,6 +34,7 @@
         <AssociationConnector Association="DBFashionStoreModel.FK_ProductVariants_ProductSize" ManuallyRouted="false" />
         <AssociationConnector Association="DBFashionStoreModel.FK_OrderDetails_ProductColor" />
         <AssociationConnector Association="DBFashionStoreModel.FK_OrderDetails_ProductSize" />
+        <AssociationConnector Association="DBFashionStoreModel.FK_Voucher_Customers" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

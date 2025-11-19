@@ -2,7 +2,10 @@
 @{
     ViewBag.Title = "OrderDetails";
     Layout = "~/Views/Shared/WBH.cshtml";
+
+    Func<decimal?, string> formatMoney = val => string.Format("{0:N0}₫", val ?? 0m);
 }
+
 <h2>Chi tiết đơn hàng #@Model.IDOrder</h2>
 
 <p><strong>Khách hàng:</strong> @Model.FullName</p>
@@ -34,8 +37,8 @@
                     <td>@(item.ProductColor?.ColorName ?? "-")</td>
                     <td>@(item.ProductSize?.SizeName ?? "-")</td>
                     <td>@item.Quantity</td>
-                    <td>@(item.Price?.ToString("N0") ?? "0")₫</td>
-                    <td>@(((decimal)(item.Quantity * (item.Price ?? 0))).ToString("N0"))₫</td>
+                    <td>@formatMoney(item.Price)</td>
+                    <td>@formatMoney(item.Price * item.Quantity)</td>
                 </tr>
             }
         }
@@ -47,5 +50,10 @@
         }
     </tbody>
 </table>
+<p><strong>Tổng tiền:</strong> @formatMoney(Model.Total)</p>
 
-<p><strong>Tổng tiền: @(Model.Total?.ToString("N0") ?? "0")₫</strong></p>
+<h3>Thông tin voucher</h3>
+<p><strong>Mã voucher:</strong> @(string.IsNullOrWhiteSpace(Model.VoucherCode) ? "Không có" : Model.VoucherCode)</p>
+<p><strong>Giảm giá:</strong> @formatMoney(Model.Discount)</p>
+<hr>
+<p><strong>Tổng tiền sau khi áp dụng voucher:</strong> @formatMoney(Model.Total - Model.Discount)</p>

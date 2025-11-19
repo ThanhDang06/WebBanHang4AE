@@ -4,6 +4,7 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+
 <style>
     .product-page {
         max-width: 1280px;
@@ -144,6 +145,7 @@
             border: 2px solid #000;
         }
 </style>
+
 <div class="product-page">
     <div class="product-wrapper">
         <!-- Ảnh sản phẩm -->
@@ -178,19 +180,22 @@
                     }
                 </div>
 
-                <!-- Chọn màu -->
-                <label>Màu sắc:</label>
-                <div class="option-group">
-                    @foreach (var color in Model.ProductColors)
-                    {
-                        <button class="color-btn"
-                                style="background:@color.ColorName"
-                                data-color-id="@color.IDColor"
-                                data-color-name="@color.ColorName"
-                                data-img="@Url.Content("~/Content/Img/" + color.Image)">
-                        </button>
-                    }
-                </div>
+                <!-- Chọn màu nếu có -->
+                @if (Model.ProductColors != null && Model.ProductColors.Any())
+                {
+                    <label>Màu sắc:</label>
+                    <div class="option-group">
+                        @foreach (var color in Model.ProductColors)
+                        {
+                            <button class="color-btn"
+                                    style="background:@color.ColorName"
+                                    data-color-id="@color.IDColor"
+                                    data-color-name="@color.ColorName"
+                                    data-img="@Url.Content("~/Content/Img/" + color.Image)">
+                            </button>
+                        }
+                    </div>
+                }
             </div>
 
             <div class="actions">
@@ -201,13 +206,11 @@
     </div>
 </div>
 
-
 <script>
 const colorButtons = document.querySelectorAll('.color-btn');
 const sizeButtons = document.querySelectorAll('.opt-btn');
 const mainImage = document.querySelector('.product-image img');
 
-// Chọn màu
 colorButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const newImg = btn.getAttribute('data-img');
@@ -218,7 +221,6 @@ colorButtons.forEach(btn => {
     });
 });
 
-// Chọn size
 sizeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         sizeButtons.forEach(b => b.classList.remove('selected'));
@@ -226,24 +228,31 @@ sizeButtons.forEach(btn => {
     });
 });
 
-// Thêm vào giỏ hàng
 document.querySelectorAll('.add-cart').forEach(btn => {
     btn.addEventListener('click', () => {
         const productId = btn.getAttribute('data-id');
-
-        const selectedColor = document.querySelector('.color-btn.selected');
         const selectedSize = document.querySelector('.opt-btn.selected');
 
-        if (!selectedColor) { alert('Vui lòng chọn màu sản phẩm!'); return; }
-        if (!selectedSize) { alert('Vui lòng chọn kích thước!'); return; }
+        // Kiểm tra size
+        if (!selectedSize) {
+            alert('Vui lòng chọn kích thước!');
+            return;
+        }
 
-        // Lấy ID và tên màu
-        const colorId = parseInt(selectedColor.getAttribute('data-color-id'));
-        const colorName = selectedColor.getAttribute('data-color-name');
+        // Kiểm tra màu nếu có
+        let selectedColor = null;
+        if (colorButtons.length > 0) {
+            selectedColor = document.querySelector('.color-btn.selected');
+            if (!selectedColor) {
+                alert('Vui lòng chọn màu sản phẩm!');
+                return;
+            }
+        }
+
+        const colorId = selectedColor ? parseInt(selectedColor.getAttribute('data-color-id')) : null;
+        const colorName = selectedColor ? selectedColor.getAttribute('data-color-name') : null;
         const sizeId = parseInt(selectedSize.getAttribute('data-size-id'));
         const sizeName = selectedSize.getAttribute('data-size');
-
-
 
         fetch('@Url.Action("AddToCart", "Carts")', {
             method: 'POST',
@@ -254,7 +263,7 @@ document.querySelectorAll('.add-cart').forEach(btn => {
             body: JSON.stringify({
                 id: parseInt(productId),
                 colorId: colorId,
-                colorName: colorName, // tuỳ chọn nếu lưu tên
+                colorName: colorName,
                 sizeId: sizeId,
                 sizeName: sizeName,
                 quantity: 1
@@ -273,6 +282,4 @@ document.querySelectorAll('.add-cart').forEach(btn => {
         .catch(err => console.error(err));
     });
 });
-
-
 </script>

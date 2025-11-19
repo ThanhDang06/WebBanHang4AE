@@ -23,6 +23,11 @@ namespace WBH.Controllers
             ViewBag.IsAdmin = false;
             return View(products);
         }
+        // GET: Nhập voucher
+        public ActionResult ApplyVoucher()
+        {
+            return View();
+        }
         // GET: Customers/Details/5
         public ActionResult Details(int? id)
         {
@@ -52,6 +57,53 @@ namespace WBH.Controllers
             return View();
         }
 
+        // POST: Áp dụng voucher
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApplyVoucher(ApplyVoucherViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Session["IDCus"] == null)
+                    return RedirectToAction("Login", "Account");
+
+                int userId = Convert.ToInt32(Session["IDCus"]);
+
+                var voucher = db.Vouchers
+                    .FirstOrDefault(v => v.Code == model.Code
+                                         && v.IsActive
+                                         && v.StartDate <= DateTime.Now
+                                         && v.EndDate >= DateTime.Now
+                                         && v.RemainingUses > 0
+                                         && (v.IDCus == null || v.IDCus == userId));
+
+                if (voucher == null)
+                {
+                    ModelState.AddModelError("", "Voucher không hợp lệ hoặc đã hết hạn.");
+                    return View(model);
+                }
+
+                if (model.OrderAmount < voucher.MinOrderAmount)
+                {
+                    ModelState.AddModelError("", $"Đơn hàng phải từ {voucher.MinOrderAmount:N0}₫ trở lên để áp dụng voucher.");
+                    return View(model);
+                }
+
+                // Trừ số lần còn dùng
+                voucher.RemainingUses -= 1;
+                db.Entry(voucher).State = EntityState.Modified;
+                db.SaveChanges();
+
+                decimal discount = voucher.Type == "PERCENT"
+                    ? model.OrderAmount * voucher.Value / 100
+                    : voucher.Value;
+
+                TempData["Success"] = $"Voucher hợp lệ! Bạn được giảm {discount:N0}₫";
+                return RedirectToAction("Index", "Carts"); // hoặc trang bạn muốn hiển thị
+            }
+
+            return View(model);
+        }
         // POST: Customers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -93,9 +145,21 @@ namespace WBH.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
+                // Lấy entity từ DB
+                var existingCustomer = db.Customers.Find(customer.IDCus);
+                if (existingCustomer == null)
+                {
+                    return HttpNotFound();
+                }
+
+                // Cập nhật từng field
+                existingCustomer.FullName = customer.FullName;
+                existingCustomer.Email = customer.Email;
+                existingCustomer.Phone = customer.Phone;
+                existingCustomer.Address = customer.Address;
+
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("CustomerManagement", "Admin");
             }
             return View(customer);
         }

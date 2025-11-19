@@ -1,102 +1,79 @@
-﻿@model WBH.Models.Voucher
+﻿@model WBH.Models.CreateVoucherViewModel
+
 
 @{
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+<h2 class="text-center text-primary mb-4">Tạo Voucher</h2>
 
-<h2>Create</h2>
+@using (Html.BeginForm("Create", "AdminVouchers", FormMethod.Post, new { @class = "voucher-form row g-3 needs-validation", novalidate = "novalidate" }))
 
-@using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Voucher</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.IDVoucher, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.IDVoucher, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.IDVoucher, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.Type, htmlAttributes: new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.Type, new SelectList(new[] { "PERCENT", "AMOUNT" }), "Chọn loại", new { @class = "form-select", required = "required" })
+        <div class="invalid-feedback">Vui lòng chọn loại voucher.</div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.Value, htmlAttributes: new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Value, new { @class = "form-control", placeholder = "Nhập giá trị giảm giá", required = "required", type = "number", min = "0" })
+        <div class="invalid-feedback">Vui lòng nhập giá trị hợp lệ.</div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Value, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.MinOrderAmount, htmlAttributes: new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.MinOrderAmount, new { @class = "form-control", placeholder = "Số tiền tối thiểu", type = "number", min = "0" })
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MinOrderAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MinOrderAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MinOrderAmount, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.RemainingUses, htmlAttributes: new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.RemainingUses, new { @class = "form-control", placeholder = "Số lần sử dụng (để trống = không giới hạn)", type = "number", min = "0" })
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.StartDate, htmlAttributes: new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.EndDate, htmlAttributes: new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.RemainingUses, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RemainingUses, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RemainingUses, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="col-12">
+        @Html.Label("Chọn khách (để trống = voucher chung)", htmlAttributes: new { @class = "form-label" })
+        @Html.DropDownListFor(m => m.IDCus, (SelectList)ViewBag.Customers, "Mọi khách", new { @class = "form-select" })
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActive)
-                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+    <div class="col-12 text-center mt-3">
+        <button type="submit" class="btn btn-primary btn-lg">Tạo Voucher</button>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success mt-3 text-center">@TempData["Success"]</div>
+}
+
+@section Scripts {
+    <script>
+        // Bootstrap validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

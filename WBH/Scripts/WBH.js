@@ -2,15 +2,68 @@
 // ======================== WBH.js =======================
 document.addEventListener("DOMContentLoaded", () => {
     // -------------------- DROPDOWN HOVER --------------------
-    document.querySelectorAll('.nav-item.dropdown').forEach(dropdown => {
-        dropdown.addEventListener('mouseenter', () => {
-            dropdown.querySelector('.dropdown-menu')?.classList.add('show');
-        });
-        dropdown.addEventListener('mouseleave', () => {
-            dropdown.querySelector('.dropdown-menu')?.classList.remove('show');
-        });
-    });
+    
 
+    function initDropdown(dropdownsSelector, toggleSelector = null) {
+        const dropdowns = document.querySelectorAll(dropdownsSelector);
+
+        dropdowns.forEach(dropdown => {
+            const menu = dropdown.querySelector('.dropdown-menu');
+            if (!menu) return;
+            const toggle = toggleSelector ? dropdown.querySelector(toggleSelector) : null;
+            const link = dropdown.querySelector('.nav-link');
+
+            // Desktop hover
+            dropdown.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 768) menu.classList.add('show');
+            });
+            dropdown.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 768) menu.classList.remove('show');
+            });
+
+            // Mobile click
+            toggle?.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdowns.forEach(d => {
+                    const m = d.querySelector('.dropdown-menu');
+                    if (m !== menu) m.classList.remove('show');
+                });
+                menu.classList.toggle('show');
+            });
+
+            // Ngăn link nhầm trên mobile
+            if (link && toggleSelector) {
+                link.addEventListener('click', e => {
+                    if (window.innerWidth <= 768 && !e.target.closest(toggleSelector)) e.preventDefault();
+                });
+            }
+        });
+
+        // Click ngoài đóng dropdown
+        document.addEventListener('click', e => {
+            dropdowns.forEach(d => {
+                const m = d.querySelector('.dropdown-menu');
+                if (m && !e.target.closest(dropdownsSelector)) {
+                    m.classList.remove('show');
+                }
+            });
+        });
+
+        // Resize reset
+        window.addEventListener('resize', () => {
+            dropdowns.forEach(d => {
+                const m = d.querySelector('.dropdown-menu');
+                if (m) m.classList.remove('show');
+            });
+        });
+
+    }
+
+    // Menu chính
+    initDropdown('.nav-item.dropdown', '.dropdown-toggle-mobile');
+    // Login dropdown
+    initDropdown('.header-login.dropdown', '.dropdown-toggle');
     // -------------------- GIỎ HÀNG -------------------------
     const cartIcon = document.getElementById("cart-icon");
     const cartPopup = document.getElementById("cart-popup");
@@ -81,29 +134,31 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = "cart-item";
             div.dataset.index = idx;
             div.innerHTML = `
-        <img src="${item.Image}" width="70" alt="${item.ProductName}">
-        <div class="info">
-            <h4>${item.ProductName}</h4>
-            <p>Màu: ${item.ColorName} | Size: ${item.SizeName}</p>
-            <p>Giá: ${item.Price.toLocaleString()}đ</p>
-            <div class="quantity">
-                <button class="decrease">-</button>
-                <span>${item.Quantity}</span>
-                <button class="increase">+</button>
-            </div>
-            <p>Thành tiền: ${(item.Price * item.Quantity).toLocaleString()}đ</p>
+    <img src="${item.Image}" width="70" alt="${item.ProductName}">
+    <div class="info">
+        <h4>${item.ProductName}</h4>
+        <p>Màu: ${item.ColorName} | Size: ${item.SizeName}</p>
+        <p>Giá: ${item.Price.toLocaleString()}đ</p>
+        <div class="quantity">
+            <button class="decrease">-</button>
+            <span>${item.Quantity}</span>
+            <button class="increase">+</button>
         </div>
-        <button class="remove">Xóa</button>
-    `;
+        <p>Thành tiền: ${(item.Price * item.Quantity).toLocaleString()}đ</p>
+    </div>
+    <button class="remove">Xóa</button>
+`;
             cartPageItemsDiv.appendChild(div);
             subtotal += item.Price * item.Quantity;
         });
 
-
         if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString() + "đ";
-        const voucher = parseInt(voucherEl?.dataset.value) || 0;
-        if (totalEl) totalEl.textContent = (subtotal - voucher).toLocaleString() + "đ";
+
+        // Lấy voucher từ dataset
+        const discount = parseFloat(voucherEl?.dataset.value) || 0;
+        if (totalEl) totalEl.textContent = (subtotal - discount).toLocaleString() + "đ";
     }
+
 
     async function loadCart() {
         cart = await fetchCart();
@@ -115,20 +170,40 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("click", async e => {
         const btn = e.target.closest(".add-to-cart");
         if (!btn) return;
+
         const id = btn.dataset.id;
-        if (!id) return;
+        const colorId = btn.dataset.color || ""; 
+        const sizeId = btn.dataset.size || "";
+        const quantity = btn.dataset.quantity || 1;
+
+        if (!id) {
+            alert("Sản phẩm không hợp lệ");
+            return;
+        }
+
         try {
-            const res = await fetch("/Carts/AddToCart?id=" + id, { method: "POST", credentials: "include" });
+            const res = await fetch("/Carts/AddToCart", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `id=${id}&colorId=${colorId || 0}&sizeId=${sizeId || 0}&quantity=${quantity}`
+            });
+
             const data = await res.json();
+
             if (data.success) {
                 await loadCart();
                 cartIcon?.classList.add("added");
                 setTimeout(() => cartIcon?.classList.remove("added"), 800);
-            } else alert(data.message);
-        } catch {
-            alert("Cần phải đăng nhập mới thêm vào giỏ hàng");
+            } else {
+                alert(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Vui lòng đăng nhập, trước khi thêm vào giỏ hàng");
         }
     });
+
 
     // Xóa / tăng giảm trên trang cart
     cartPageItemsDiv?.addEventListener("click", e => {
@@ -162,6 +237,72 @@ document.addEventListener("DOMContentLoaded", () => {
         cartPopup.addEventListener("mouseenter", () => clearTimeout(hideCartTimer));
         cartPopup.addEventListener("mouseleave", () => { hideCartTimer = setTimeout(() => cartPopup.classList.remove("show"), 300); });
     }
+    // -------------------- VOUCHER -------------------------
+    const voucherRadios = document.querySelectorAll('input[name="voucher"]');
+    const applyVoucherBtn = document.getElementById('applyVoucher');
+    const customVoucherInput = document.getElementById('customVoucher');
+    const removeVoucherBtn = document.getElementById('removeVoucherBtn');
+
+    function applyVoucher(code) {
+        fetch('/Carts/ApplyVoucher', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ code })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    const discount = parseFloat(res.discountValue) || 0;
+                    if (voucherEl) {
+                        voucherEl.dataset.value = discount;
+                        voucherEl.textContent = discount.toLocaleString('vi-VN') + "₫";
+                    }
+
+                    // Cập nhật total ngay, không gọi renderCartPage() để tránh ghi đè
+                    const subtotal = cart.reduce((sum, i) => sum + i.Price * i.Quantity, 0);
+                    if (totalEl) totalEl.textContent = (subtotal - discount).toLocaleString('vi-VN') + "₫";
+                    removeVoucherBtn.style.display = "inline-block";
+                } else {
+                    alert(res.message);
+                }
+            })
+
+            .catch(() => alert("Lỗi khi áp dụng voucher"));
+    }
+    function removeVoucher() {
+        // Xóa session trên server nếu muốn
+        fetch('/Carts/RemoveVoucher', { method: 'POST', credentials: 'include' });
+
+        // Bỏ chọn radio và clear input custom
+        voucherRadios.forEach(r => r.checked = false);
+        customVoucherInput.value = '';
+
+        // Reset giá
+        const subtotal = cart.reduce((sum, i) => sum + i.Price * i.Quantity, 0);
+        if (voucherEl) {
+            voucherEl.dataset.value = 0;
+            voucherEl.textContent = '0₫';
+        }
+        if (totalEl) totalEl.textContent = subtotal.toLocaleString('vi-VN') + "₫";
+        removeVoucherBtn.style.display = "none";
+    }
+
+    removeVoucherBtn?.addEventListener('click', removeVoucher);
+    // Áp dụng khi chọn radio
+    voucherRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.checked) applyVoucher(radio.value);
+        });
+    });
+
+    // Áp dụng khi nhập voucher custom
+    applyVoucherBtn?.addEventListener('click', () => {
+        // Bỏ chọn radio nếu có
+        voucherRadios.forEach(r => r.checked = false);
+        const code = customVoucherInput.value.trim();
+        if (code) applyVoucher(code);
+    });
+
 
     // -------------------- CHECKOUT -------------------------
     document.querySelectorAll(".checkout").forEach(btn => {

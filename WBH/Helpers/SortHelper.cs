@@ -19,6 +19,72 @@ namespace WBH.Helpers
                 default: return query.OrderBy(p => p.IDProduct);
             }
         }
+        // Sắp xếp Order theo nhiều trường
+        public static IQueryable<Order> ApplyOrderSort(IQueryable<Order> query, string sortOrder)
+        {
+            if (string.IsNullOrEmpty(sortOrder))
+                return query
+                    .OrderByDescending(o => o.DateOrder) // ngày mới nhất trước
+                    .ThenBy(o => o.Status == "Đã hủy" ? 1 :
+                                o.Status == "Đang xử lý" ? 2 :
+                                o.Status == "Hoàn thành" ? 3 : 4);
+
+            var sortFields = sortOrder.Split(',');
+            IOrderedQueryable<Order> orderedQuery = null;
+
+            foreach (var field in sortFields)
+            {
+                switch (field.Trim().ToLower())
+                {
+                    case "status_asc":
+                        if (orderedQuery == null)
+                            orderedQuery = query
+                                .OrderBy(o => o.Status == "Đã hủy" ? 1 :
+                                              o.Status == "Đang xử lý" ? 2 :
+                                              o.Status == "Hoàn thành" ? 3 : 4)
+                                .ThenByDescending(o => o.DateOrder);
+                        else
+                            orderedQuery = orderedQuery
+                                .ThenBy(o => o.Status == "Đã hủy" ? 1 :
+                                             o.Status == "Đang xử lý" ? 2 :
+                                             o.Status == "Hoàn thành" ? 3 : 4);
+                        break;
+
+                    case "status_desc":
+                        if (orderedQuery == null)
+                            orderedQuery = query
+                                .OrderByDescending(o => o.Status == "Đã hủy" ? 1 :
+                                                       o.Status == "Đang xử lý" ? 2 :
+                                                       o.Status == "Hoàn thành" ? 3 : 4)
+                                .ThenByDescending(o => o.DateOrder);
+                        else
+                            orderedQuery = orderedQuery
+                                .ThenByDescending(o => o.Status == "Đã hủy" ? 1 :
+                                                          o.Status == "Đang xử lý" ? 2 :
+                                                          o.Status == "Hoàn thành" ? 3 : 4);
+                        break;
+
+                    case "date_asc":
+                        if (orderedQuery == null)
+                            orderedQuery = query.OrderBy(o => o.DateOrder);
+                        else
+                            orderedQuery = orderedQuery.ThenBy(o => o.DateOrder);
+                        break;
+
+                    case "date_desc":
+                        if (orderedQuery == null)
+                            orderedQuery = query.OrderByDescending(o => o.DateOrder);
+                        else
+                            orderedQuery = orderedQuery.ThenByDescending(o => o.DateOrder);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            return orderedQuery ?? query.OrderByDescending(o => o.DateOrder);
+        }
     }
 
 }

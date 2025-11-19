@@ -42,7 +42,7 @@
                 </td>
 
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm" }) |
+                    @Html.ActionLink("Edit", "Sales", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm" }) |
                     @using (Html.BeginForm("Delete", "Sales", new { id = item.IDSale }, FormMethod.Post, new { onsubmit = "return confirm('Bạn có chắc muốn xóa?');" }))
                     {
                         @Html.AntiForgeryToken()

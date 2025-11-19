@@ -12,6 +12,7 @@
 
     @using (Html.BeginForm("DangNhap", "Login", FormMethod.Post))
     {
+        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
         <div class="form-group mb-3">
             <label for="username" class="form-label">Tài khoản</label>
             <input type="text"
