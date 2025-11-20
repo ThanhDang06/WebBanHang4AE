@@ -84,17 +84,21 @@
         </div>
     </section>
 </main>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const colorButtons = document.querySelectorAll(".color-btn");
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById('searchInput');
+            const tableRows = document.querySelectorAll('table tbody tr');
 
-        colorButtons.forEach(btn => {
-            btn.addEventListener("click", function () {
-                const imgSrc = this.dataset.img;
-                const productId = this.dataset.product;
-                const img = document.getElementById(`img-${productId}`);
-                img.src = imgSrc;
+            searchInput.addEventListener('keyup', function () {
+                const filter = this.value.toLowerCase().trim();
+
+                tableRows.forEach(row => {
+                    // Lấy tên sản phẩm (cột thứ 2, index = 1)
+                    const productName = row.cells[1].textContent.toLowerCase().trim();
+                    row.style.display = productName.includes(filter) ? '' : 'none';
+                });
             });
         });
-    });
-</script>
+    </script>
+}

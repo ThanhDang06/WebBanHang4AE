@@ -87,6 +87,27 @@
             background: #ddd;
         }
 
+.quantity-input {
+    width: 50px; /* chiều ngang nhỏ */
+    height: 30px; /* chiều cao nhỏ hơn mặc định */
+    text-align: center; /* chữ căn giữa */
+    font-size: 14px; /* chữ nhỏ hơn */
+    border-radius: 4px; /* bo góc nhẹ */
+    border: 1px solid #ccc; /* viền nhẹ */
+}
+.quantity {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* khoảng cách giữa nút và input */
+}
+
+    .quantity button {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        font-size: 18px;
+    }
+
 .remove {
     background: none !important;
     font-size: 20px;

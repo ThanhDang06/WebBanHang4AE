@@ -281,7 +281,7 @@
                             select new
                             {
                                 p.IDProduct,
-                                p.ProductName,
+                                 p.ProductName,
                                 p.Image,
                                 OriginalPrice = (double)(p.Price ?? 0),
                                 SalePercent = s != null ? (double?)s.DiscountPercent : null

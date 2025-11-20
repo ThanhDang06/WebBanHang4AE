@@ -27,7 +27,8 @@ namespace WBH.Helpers
                     .OrderByDescending(o => o.DateOrder) // ngày mới nhất trước
                     .ThenBy(o => o.Status == "Đã hủy" ? 1 :
                                 o.Status == "Đang xử lý" ? 2 :
-                                o.Status == "Hoàn thành" ? 3 : 4);
+                                o.Status == "Hoàn thành" ? 3 :
+                                o.Status == "Chưa xử lý" ? 4 : 5);
 
             var sortFields = sortOrder.Split(',');
             IOrderedQueryable<Order> orderedQuery = null;
@@ -41,13 +42,15 @@ namespace WBH.Helpers
                             orderedQuery = query
                                 .OrderBy(o => o.Status == "Đã hủy" ? 1 :
                                               o.Status == "Đang xử lý" ? 2 :
-                                              o.Status == "Hoàn thành" ? 3 : 4)
+                                              o.Status == "Hoàn thành" ? 3 :
+                                              o.Status == "Chưa xử lý" ? 4 : 5)
                                 .ThenByDescending(o => o.DateOrder);
                         else
                             orderedQuery = orderedQuery
                                 .ThenBy(o => o.Status == "Đã hủy" ? 1 :
                                              o.Status == "Đang xử lý" ? 2 :
-                                             o.Status == "Hoàn thành" ? 3 : 4);
+                                             o.Status == "Hoàn thành" ? 3 :
+                                             o.Status == "Chưa xử lý" ? 4 : 5);
                         break;
 
                     case "status_desc":
@@ -55,13 +58,15 @@ namespace WBH.Helpers
                             orderedQuery = query
                                 .OrderByDescending(o => o.Status == "Đã hủy" ? 1 :
                                                        o.Status == "Đang xử lý" ? 2 :
-                                                       o.Status == "Hoàn thành" ? 3 : 4)
+                                                       o.Status == "Hoàn thành" ? 3 :
+                                                       o.Status == "Chưa xử lý" ? 4 : 5)
                                 .ThenByDescending(o => o.DateOrder);
                         else
                             orderedQuery = orderedQuery
                                 .ThenByDescending(o => o.Status == "Đã hủy" ? 1 :
                                                           o.Status == "Đang xử lý" ? 2 :
-                                                          o.Status == "Hoàn thành" ? 3 : 4);
+                                                          o.Status == "Hoàn thành" ? 3 :
+                                                          o.Status == "Chưa xử lý" ? 4 : 5);
                         break;
 
                     case "date_asc":

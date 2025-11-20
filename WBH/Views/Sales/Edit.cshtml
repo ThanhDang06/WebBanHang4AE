@@ -1,56 +1,63 @@
 ﻿@model WBH.Models.Sale
-
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
-<div class="container my-4">
-    <h2 class="text-primary mb-4">Sửa Sale</h2>
-
-    @using (Html.BeginForm("Edit", "Sales", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
-    {
-        @Html.AntiForgeryToken()
-
-        <!-- Sản phẩm -->
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.IDProduct, "Sản phẩm", htmlAttributes: new { @class = "form-label" })
-            @Html.DropDownListFor(m => m.IDProduct, (SelectList)ViewBag.IDProduct, "Chọn sản phẩm", new { @class = "form-select", required = "required" })
-            <div class="invalid-feedback">Vui lòng chọn sản phẩm.</div>
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Sửa Sale</h3>
         </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Edit", "Sales", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+            {
+                @Html.AntiForgeryToken()
 
-        <!-- Giảm giá (%) -->
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.DiscountPercent, "Giảm giá (%)", htmlAttributes: new { @class = "form-label" })
-            @Html.TextBoxFor(m => m.DiscountPercent, new { @class = "form-control", type = "number", min = "0", max = "100", required = "required", placeholder = "Nhập % giảm giá" })
-            <div class="invalid-feedback">Vui lòng nhập % giảm giá hợp lệ (0-100).</div>
+                <!-- Hidden IDSale và IDProduct -->
+                @Html.HiddenFor(m => m.IDSale)
+                @Html.HiddenFor(m => m.IDProduct)
+
+                <!-- Sản phẩm (hiển thị nhưng không edit) -->
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.IDProduct, "Sản phẩm", htmlAttributes: new { @class = "form-label fw-bold" })
+                    @Html.DropDownListFor(m => m.IDProduct, (SelectList)ViewBag.IDProduct, new { @class = "form-select", disabled = "disabled" })
+                </div>
+
+                <!-- Giảm giá (%) -->
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.DiscountPercent, "Giảm giá (%)", htmlAttributes: new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.DiscountPercent, new { @class = "form-control", type = "number", min = "0", max = "100", required = "required" })
+                    <div class="invalid-feedback">Vui lòng nhập % giảm giá hợp lệ (0-100).</div>
+                </div>
+
+                <!-- Ngày bắt đầu -->
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.StartDate, "Ngày bắt đầu", htmlAttributes: new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                    <div class="invalid-feedback">Vui lòng chọn ngày bắt đầu.</div>
+                </div>
+
+                <!-- Ngày kết thúc -->
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.EndDate, "Ngày kết thúc", htmlAttributes: new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                    <div class="invalid-feedback">Vui lòng chọn ngày kết thúc.</div>
+                </div>
+
+                <!-- Nút lưu / hủy -->
+                <div class="col-12 text-center mt-4">
+                    <button type="submit" class="btn btn-success btn-lg me-2">
+                        Lưu
+                    </button>
+                    @Html.ActionLink("Hủy", "Index", "Sales", null, new { @class = "btn btn-secondary btn-lg" })
+                </div>
+            }
         </div>
-
-        <!-- Ngày bắt đầu -->
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.StartDate, "Ngày bắt đầu", htmlAttributes: new { @class = "form-label" })
-            @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
-            <div class="invalid-feedback">Vui lòng chọn ngày bắt đầu.</div>
-        </div>
-
-        <!-- Ngày kết thúc -->
-        <div class="col-md-6">
-            @Html.LabelFor(m => m.EndDate, "Ngày kết thúc", htmlAttributes: new { @class = "form-label" })
-            @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
-            <div class="invalid-feedback">Vui lòng chọn ngày kết thúc.</div>
-        </div>
-
-        <!-- Nút lưu / hủy -->
-        <div class="col-12 text-center mt-3">
-            <button type="submit" class="btn btn-success me-2">Lưu</button>
-            @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary" })
-        </div>
-    }
-
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        // Bootstrap 5 validation
         (function () {
             'use strict'
             var forms = document.querySelectorAll('.needs-validation')

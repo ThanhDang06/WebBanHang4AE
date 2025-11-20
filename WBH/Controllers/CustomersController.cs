@@ -184,10 +184,28 @@ namespace WBH.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = db.Customers.Find(id);
+            var customer = db.Customers.Find(id);
+            if (customer == null)
+                return HttpNotFound();
+
+            // Xóa các đơn hàng liên quan
+            var orders = db.Orders.Where(o => o.IDCus == id).ToList();
+            foreach (var order in orders)
+            {
+                // Xóa chi tiết đơn hàng trước
+                var details = db.OrderDetails.Where(d => d.IDOrder == order.IDOrder).ToList();
+                db.OrderDetails.RemoveRange(details);
+                db.Orders.Remove(order);
+            }
+
+            // Xóa giỏ hàng liên quan
+            var carts = db.Carts.Where(c => c.IDCus == id).ToList();
+            db.Carts.RemoveRange(carts);
+
             db.Customers.Remove(customer);
             db.SaveChanges();
-            return RedirectToAction("Index");
+
+            return RedirectToAction("CustomerManagement", "Admin");
         }
 
         public JsonResult GetOrderStatus(int id)

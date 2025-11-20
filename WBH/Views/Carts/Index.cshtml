@@ -50,10 +50,13 @@
         <div id="cart-items">
             @foreach (var item in Model.Items)
             {
-                <div class="cart-item">
-                    <p>@item.Product.ProductName x @item.Quantity</p>
-                    <p>Giá: @(item.Product.Price ?? 0):C</p>
-                </div>
+               <div class="cart-item">
+                   <p>@item.Product.ProductName</p>
+                   <input type="number" class="quantity-input" min="1"
+                          data-cart-id="@item.IDCart"
+                          value="@item.Quantity" />
+                   <p>Giá: @(item.Product.Price ?? 0):C</p>
+               </div>
             }
         </div>
 

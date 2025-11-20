@@ -28,7 +28,7 @@ namespace WBH
                 name: "CatchAll",
                 url: "{*url}",
                 defaults: new { controller = "WBH", action = "Home" },
-                constraints: new { url = @"^(?!Products/Search|Carts).*" } // bỏ qua Products/Search
+                constraints: new { url = @"^(?!Products/Search|Carts|Sales).*" } // bỏ qua Products/Search/Sales
             );
         }
     }

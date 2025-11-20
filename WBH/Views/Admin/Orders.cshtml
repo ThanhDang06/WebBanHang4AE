@@ -3,8 +3,47 @@
 @{
     ViewBag.Title = "OrderDetails";
     Layout = "~/Views/Shared/WBH.cshtml";
+
+    int totalOrder = Model.Count();
 }
-<h2>Quản lý đơn hàng</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <!-- Tiêu đề bên trái -->
+    <h2 class="mb-0">Quản lý đơn hàng</h2>
+
+    <!-- Nhóm lọc bên phải -->
+    <div class="d-flex align-items-center gap-3">
+
+        <!-- Bộ lọc trạng thái -->
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">Trạng thái:</label>
+            <select id="filterStatus" class="form-control">
+                <option value="">Mặc định</option>
+                <option value="Chưa xử lý" @(ViewBag.CurrentStatus == "Chưa xử lý" ? "selected" : "")>Chưa xử lý</option>
+                <option value="Đã hủy" @(ViewBag.CurrentStatus == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                <option value="Đang xử lý" @(ViewBag.CurrentStatus == "Đang xử lý" ? "selected" : "")>Đang xử lý</option>
+                <option value="Hoàn thành" @(ViewBag.CurrentStatus == "Hoàn thành" ? "selected" : "")>Hoàn thành</option>
+            </select>
+        </div>
+
+        <!-- Bộ lọc ngày -->
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">Ngày đặt:</label>
+            <select id="sortDate" class="form-control">
+                <option value="">Mặc định</option>
+                <option value="date_desc" @(ViewBag.CurrentSort == "date_desc" ? "selected" : "")>Mới nhất</option>
+                <option value="date_asc" @(ViewBag.CurrentSort == "date_asc" ? "selected" : "")>Cũ nhất</option>
+            </select>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="mb-3">
+    <span class="badge bg-primary me-2">Tổng đơn hàng: @totalOrder</span>
+</div>
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
@@ -13,28 +52,9 @@
             <th>Điện thoại</th>
             <th>Địa chỉ</th>
             <th>Thanh toán</th>
-            <th>
-            Ngày đặt
-                <select id="sortDate" class="form-control">
-                    <option value="">Mặc định</option>
-                    <option value="date_desc" @(ViewBag.CurrentSort == "date_desc" ? "selected" : "")>Mới nhấtt</option>
-                    <option value="date_asc" @(ViewBag.CurrentSort == "date_asc" ? "selected" : "")>Cũ nhất</option>
-                </select></th>
+            <th>Ngày đặt </th>
             <th>Tổng tiền</th>
-            <th>
-                Trạng thái
-                <div class="dropdown d-inline ms-2">
-                    <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        @ViewBag.CurrentStatus ?? "Mặc định"
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                        <li><a class="dropdown-item status-filter" href="#" data-status="">Mặc định</a></li>
-                        <li><a class="dropdown-item status-filter" href="#" data-status="Đã hủy">Đã hủy</a></li>
-                        <li><a class="dropdown-item status-filter" href="#" data-status="Đang xử lý">Đang xử lý</a></li>
-                        <li><a class="dropdown-item status-filter" href="#" data-status="Hoàn thành">Hoàn thành</a></li>
-                    </ul>
-                </div>
-            </th>
+            <th>Trạng thái</th>
             <th>Chi tiết</th>
         </tr>
     </thead>
@@ -62,6 +82,7 @@
                         <select class="order-status @statusClass"
                                 data-order-id="@order.IDOrder"
                                 data-update-url="@Url.Action("UpdateOrderStatus", "Admin")">
+                            <option value="Chưa xử lý" @(order.Status == "Chưa xử lý" ? "selected" : "")>Chưa xử lý</option>
                             <option value="Đang xử lý" @(order.Status == "Đang xử lý" ? "selected" : "")>Đang xử lý</option>
                             <option value="Hoàn thành" @(order.Status == "Hoàn thành" ? "selected" : "")>Hoàn thành</option>
                             <option value="Đã hủy" @(order.Status == "Đã hủy" ? "selected" : "")>Đã hủy</option>
@@ -88,26 +109,23 @@
 <script>
    $(document).ready(function(){
 
-    $('.status-filter').click(function(e){
-        e.preventDefault();
-        var status = $(this).data('status'); // giá trị trạng thái chọn
-        var dateSort = $('#sortDate').val(); // lấy giá trị sort theo ngày
-        var url = '@Url.Action("Orders","Admin")';
-        var qs = [];
-        if(status) qs.push('statusFilter=' + encodeURIComponent(status));
-        if(dateSort) qs.push('sortOrder=' + dateSort);
-        window.location.href = url + (qs.length ? '?' + qs.join('&') : '');
-    });
+       $('#filterStatus').change(function () {
+           var status = $(this).val();
+           var dateSort = $('#sortDate').val();
+           var url = '@Url.Action("Orders","Admin")';
+           var qs = []; if (status) qs.push('statusFilter=' + encodeURIComponent(status));
+           if (dateSort) qs.push('sortOrder=' + dateSort);
+           window.location.href = url + (qs.length ? '?' + qs.join('&') : '');
+       });
 
-    $('#sortDate').change(function(){
-        var status = $('#statusDropdown').text().trim(); // lấy trạng thái hiện tại từ button
-        var dateSort = $(this).val();
-        var url = '@Url.Action("Orders","Admin")';
-        var qs = [];
-        if(status && status !== "Mặc định") qs.push('statusFilter=' + encodeURIComponent(status));
-        if(dateSort) qs.push('sortOrder=' + dateSort);
-        window.location.href = url + (qs.length ? '?' + qs.join('&') : '');
-    });
+       $('#sortDate').change(function () {
+           var status = $('#filterStatus').val();
+           var dateSort = $(this).val();
+           var url = '@Url.Action("Orders","Admin")';
+           var qs = []; if (status) qs.push('statusFilter=' + encodeURIComponent(status));
+           if (dateSort) qs.push('sortOrder=' + dateSort);
+           window.location.href = url + (qs.length ? '?' + qs.join('&') : '');
+       });
 
     // AJAX update status
     $('.order-status').change(function () {
@@ -124,7 +142,8 @@
                 if(response.success){
                     var color = 'secondary';
                     if(status==="Hoàn thành") color='success';
-                    else if(status==="Đang xử lý") color='warning';
+                    else if (status === "Đang xử lý") color = 'warning';
+                    else if (status === "Chưa xử lý") color = 'null';
                     else if(status==="Đã hủy") color='danger';
 
                     select.removeClass('bg-success bg-warning bg-danger bg-secondary')

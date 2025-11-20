@@ -133,6 +133,7 @@
             decimal discount = 0;
             if (voucher.Type == "PERCENT")
                 discount = totalAmount * voucher.Value / 100;
+           
             else
                 discount = voucher.Value;
 

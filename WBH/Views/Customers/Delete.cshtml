@@ -12,7 +12,7 @@
         <p><strong>Email:</strong> @Model.Email</p>
         <p><strong>Số điện thoại:</strong> @Model.Phone</p>
 
-        @using (Html.BeginForm("DeleteConfirmed", "Customers", FormMethod.Post))
+        @using (Html.BeginForm("Delete", "Customers", FormMethod.Post))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.IDCus)

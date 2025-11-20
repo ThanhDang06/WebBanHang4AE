@@ -130,13 +130,41 @@ namespace WBH.Controllers
         public JsonResult UpdateOrderStatus(int id, string status)
         {
             var order = db.Orders.Find(id);
-            if (order != null)
+
+            if (order == null)
+                return Json(new { success = false });
+
+            // Lấy trạng thái cũ
+            string oldStatus = order.Status;
+
+            // Cập nhật trạng thái mới
+            order.Status = status;
+            db.SaveChanges();
+
+            // Chỉ trừ tồn kho nếu chuyển từ trạng thái khác → Hoàn thành
+            if (oldStatus != "Hoàn thành" && status == "Hoàn thành")
             {
-                order.Status = status;
+                var orderDetails = db.OrderDetails.Where(x => x.IDOrder == id).ToList();
+
+                foreach (var item in orderDetails)
+                {
+                    var product = db.Products.FirstOrDefault(p => p.IDProduct == item.IDProduct);
+                    if (product != null)
+                    {
+                        product.Quantity -= item.Quantity;
+
+                        // Không để âm
+                        if (product.Quantity < 0)
+                            product.Quantity = 0;
+
+                        db.Entry(product).State = EntityState.Modified;
+                    }
+                }
+
                 db.SaveChanges();
-                return Json(new { success = true, status = order.Status });
             }
-            return Json(new { success = false });
+
+            return Json(new { success = true, status = status });
         }
     }
 }

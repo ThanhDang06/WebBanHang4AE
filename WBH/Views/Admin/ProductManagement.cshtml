@@ -2,35 +2,54 @@
 @{
     ViewBag.Title = "ProductManagement";
     Layout = "~/Views/Shared/WBH.cshtml";
+    int totalProduct = Model.Count();
 }
-<h2>Quản lý sản phẩm</h2>
-<a href="@Url.Action("Create", "Products")" class="btn btn-primary">+ Thêm sản phẩm</a>
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Quản lý sản phẩm</h2>
 
-<table class="table table-bordered mt-3">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Tồn kho</th>
-            <th>Danh mục</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.IDProduct</td>
-                <td>@item.ProductName</td>
-                <td>@String.Format("{0:N0} đ", item.Price)</td>
-                <td>@item.Quantity</td>
-                <td>@item.Category</td>
-                <td>
-                    <a href="@Url.Action("Edit", "Products", new { id = item.IDProduct })" class="btn btn-warning btn-sm">Sửa</a>
-                    <a href="@Url.Action("Delete", "Products", new { id = item.IDProduct })" class="btn btn-danger btn-sm">Xóa</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <a href="@Url.Action("Create", "Products")" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-lg"></i> Thêm sản phẩm
+        </a>
+    </div>
+    <div class="mb-3">
+        <span class="badge bg-primary me-2">Tổng sản phẩm: @totalProduct</span>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle bg-white">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Tồn kho</th>
+                    <th>Danh mục</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="text-center">
+                        <td>@item.IDProduct</td>
+                        <td class="text-start">@item.ProductName</td>
+                        <td class="text-end">@String.Format("{0:N0} đ", item.Price)</td>
+                        <td>@item.Quantity</td>
+                        <td>
+                            <span class="badge bg-info text-dark">@item.Category</span>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Products", new { id = item.IDProduct })" class="btn btn-warning btn-sm me-1">
+                                <i class="bi bi-pencil-square"></i> Sửa
+                            </a>
+                            <a href="@Url.Action("Delete", "Products", new { id = item.IDProduct })" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>  

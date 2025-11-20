@@ -92,13 +92,17 @@ namespace WBH.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                TempData["Error"] = "ID voucher không hợp lệ.";
+                return RedirectToAction("Index");
             }
+
             Voucher voucher = db.Vouchers.Find(id);
             if (voucher == null)
             {
-                return HttpNotFound();
+                TempData["Error"] = "Voucher không tồn tại.";
+                return RedirectToAction("Index");
             }
+
             return View(voucher);
         }
 
@@ -111,12 +115,30 @@ namespace WBH.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(voucher).State = EntityState.Modified;
+                // Load bản ghi từ DB
+                var existingVoucher = db.Vouchers.Find(voucher.IDVoucher);
+                if (existingVoucher == null)
+                {
+                    return HttpNotFound(); // Hoặc báo lỗi
+                }
+
+                // Cập nhật các trường
+                existingVoucher.Code = voucher.Code;
+                existingVoucher.Type = voucher.Type;
+                existingVoucher.Value = voucher.Value;
+                existingVoucher.MinOrderAmount = voucher.MinOrderAmount;
+                existingVoucher.StartDate = voucher.StartDate;
+                existingVoucher.EndDate = voucher.EndDate;
+                existingVoucher.RemainingUses = voucher.RemainingUses;
+                existingVoucher.IsActive = voucher.IsActive;
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(voucher);
         }
+
 
         // GET: AdminVouchers/Delete/5
         public ActionResult Delete(int? id)

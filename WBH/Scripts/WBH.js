@@ -140,10 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>Màu: ${item.ColorName} | Size: ${item.SizeName}</p>
         <p>Giá: ${item.Price.toLocaleString()}đ</p>
         <div class="quantity">
-            <button class="decrease">-</button>
-            <span>${item.Quantity}</span>
-            <button class="increase">+</button>
-        </div>
+    <button class="decrease">-</button>
+    <input type="number" class="quantity-input" min="1" value="${item.Quantity}" data-id="${item.IDCart}">
+    <button class="increase">+</button>
+</div>
         <p>Thành tiền: ${(item.Price * item.Quantity).toLocaleString()}đ</p>
     </div>
     <button class="remove">Xóa</button>
@@ -165,6 +165,46 @@ document.addEventListener("DOMContentLoaded", () => {
         renderCartPopup();
         renderCartPage();
     }
+    // Cập nhật số lượng trên trang cart
+    cartPageItemsDiv?.addEventListener("change", async e => {
+        if (!e.target.classList.contains("quantity-input")) return;
+        const input = e.target;
+        const id = input.dataset.id;
+        const quantity = parseInt(input.value);
+
+        if (!id || quantity < 1) return;
+
+        try {
+            await fetch("/Carts/UpdateQuantity", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `id=${id}&quantity=${quantity}`
+            });
+            await loadCart(); // reload cart mới từ server
+        } catch {
+            alert("Lỗi khi cập nhật số lượng");
+        }
+    });
+    // Tăng giảm số lượng trên trang cart
+    cartPageItemsDiv?.addEventListener("click", async e => {
+        const input = e.target.closest(".cart-item")?.querySelector(".quantity-input");
+        if (!input) return;
+        let quantity = parseInt(input.value);
+
+        if (e.target.classList.contains("increase")) quantity++;
+        if (e.target.classList.contains("decrease")) quantity = Math.max(1, quantity - 1);
+
+        input.value = quantity;
+
+        // Gọi server để update
+        const id = input.dataset.id;
+        await fetch("/Carts/UpdateQuantity", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `id=${id}&quantity=${quantity}`
+        });
+        await loadCart();
+    });
 
     // Thêm sản phẩm
     document.body.addEventListener("click", async e => {

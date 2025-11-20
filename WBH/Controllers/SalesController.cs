@@ -70,6 +70,50 @@ namespace WBH.Controllers
 
             return View(sale);
         }
+        // GET: Sales/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var sale = db.Sales.Find(id);
+            if (sale == null) return HttpNotFound();
+
+            ViewBag.IDProduct = new SelectList(db.Products, "IDProduct", "ProductName", sale.IDProduct);
+            return View("Edit", sale);
+        }
+
+        // POST: Sales/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "IDSale,IDProduct,DiscountPercent,StartDate,EndDate")] Sale sale)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.IDProduct = new SelectList(db.Products, "IDProduct", "ProductName", sale.IDProduct);
+                return View(sale);
+            }
+
+            var saleInDb = db.Sales.Find(sale.IDSale);
+            if (saleInDb == null) return HttpNotFound();
+
+            // Chỉ cập nhật những trường hợp hợp lệ
+            saleInDb.DiscountPercent = sale.DiscountPercent;
+            saleInDb.StartDate = sale.StartDate;
+            saleInDb.EndDate = sale.EndDate;
+
+            if (saleInDb.IDProduct != null)
+            {
+                var product = db.Products.Find(saleInDb.IDProduct);
+                if (product != null)
+                {
+                    product.Price = SaleHelper.GetSalePrice(product, saleInDb.DiscountPercent);
+                    product.IsSale = true;
+                    db.Entry(product).State = EntityState.Modified;
+                }
+            }
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
         // POST: Sales/Delete/5
         [HttpPost, ActionName("Delete")]

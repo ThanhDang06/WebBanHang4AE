@@ -3,54 +3,59 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/WBH.cshtml";
+    int totalSale = Model.Count();
 }
-<h2>Danh sách Sale</h2>
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Danh sách Sale</h2>
+        @Html.ActionLink("Thêm Sale mới", "Create", "Sales", null, new { @class = "btn btn-success btn-lg" })
+    </div>
 
-<p>
-    @Html.ActionLink("Thêm Sale mới", "Create", "Sales", null, new { @class = "btn btn-success" })
-</p>
+    <div class="mb-3">
+        <span class="badge bg-primary">Tổng sản phẩm sale: @totalSale</span>
+    </div>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Sản phẩm</th>
-            <th>Giá gốc</th>
-            <th>Giá sale</th>
-            <th>% Giảm</th>
-            <th>Thời gian</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            int stt = 1;
-        }
-        @foreach (var item in Model)
-        {
-            var product = item.Product; // cần include Product trong controller
-            <tr>
-                <td>@(item.Product != null ? item.Product.ProductName : "Không có sản phẩm")</td>
-
-                <td>@stt</td>
-                <td>@product.ProductName</td>
-                <td>@WBH.Helpers.SaleHelper.DisplayPrice(product.OldPrice ?? product.Price)</td>
-                <td>@WBH.Helpers.SaleHelper.DisplayPrice(product.Price)</td>
-                <td>@item.DiscountPercent %</td>
-                <td>
-                    @(item.StartDate?.ToString("dd/MM/yyyy") ?? "-") - @(item.EndDate?.ToString("dd/MM/yyyy") ?? "-")
-                </td>
-
-                <td>
-                    @Html.ActionLink("Edit", "Sales", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm" }) |
-                    @using (Html.BeginForm("Delete", "Sales", new { id = item.IDSale }, FormMethod.Post, new { onsubmit = "return confirm('Bạn có chắc muốn xóa?');" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    }
-                </td>
-            </tr>
-            stt++;
-        }
-    </tbody>
-</table>
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle bg-white">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>STT</th>
+                    <th>Sản phẩm</th>
+                    <th>Giá gốc</th>
+                    <th>Giá sale</th>
+                    <th>% Giảm</th>
+                    <th>Thời gian</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int stt = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    var product = item.Product;
+                    <tr class="text-center">
+                        <td>@stt</td>
+                        <td class="text-start">@((product != null) ? product.ProductName : "Không có sản phẩm")</td>
+                        <td>@((product != null) ? WBH.Helpers.SaleHelper.DisplayPrice(product.OldPrice ?? product.Price) : "-")</td>
+                        <td>@((product != null) ? WBH.Helpers.SaleHelper.DisplayPrice(product.Price) : "-")</td>
+                        <td>@item.DiscountPercent %</td>
+                        <td>
+                            @(item.StartDate?.ToString("dd/MM/yyyy") ?? "-") - @(item.EndDate?.ToString("dd/MM/yyyy") ?? "-")
+                        </td>
+                        <td>
+                            @Html.ActionLink("Sửa", "Edit", "Sales", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm me-1" })
+                            @using (Html.BeginForm("Delete", "Sales", new { id = item.IDSale }, FormMethod.Post, new { onsubmit = "return confirm('Bạn có chắc muốn xóa?');", @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            }
+                        </td>
+                    </tr>
+                    stt++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
