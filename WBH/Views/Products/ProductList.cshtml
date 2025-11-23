@@ -46,7 +46,7 @@
 
                                     <div class="product-actions">
                                         <a class="ri-eye-fill" href="@Url.Action("Details", "Products", new { id = item.IDProduct })"></a>
-                                        <button class="add-to-cart" data-id="@item.IDProduct">
+                                        <button class="add-to-cart" data-id="@item.IDProduct" @(item.IsOutOfStock ? "disabled" : "")>
                                             <i class="ri-shopping-cart-2-fill"></i>
                                         </button>
                                     </div>
@@ -59,6 +59,14 @@
                                     @if (ViewBag.IsAdmin == true)
                                     {
                                         <p class="product-quantity">Số lượng: @item.Quantity</p>
+                                    }
+                                    @if (item.IsOutOfStock)
+                                    {
+                                        <p class="text-danger fw-bold">Hết hàng</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-success">Còn hàng</p>
                                     }
 
                                     <!-- Phần chọn màu -->

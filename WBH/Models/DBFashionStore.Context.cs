@@ -72,5 +72,18 @@ namespace WBH.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("AdminCreateVoucher", typeParameter, valueParameter, minOrderAmountParameter, startDateParameter, endDateParameter, remainingUsesParameter, iDCusParameter);
         }
+    
+        public virtual ObjectResult<CheckVoucher_Result> CheckVoucher(string code, Nullable<int> userID)
+        {
+            var codeParameter = code != null ?
+                new ObjectParameter("Code", code) :
+                new ObjectParameter("Code", typeof(string));
+    
+            var userIDParameter = userID.HasValue ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CheckVoucher_Result>("CheckVoucher", codeParameter, userIDParameter);
+        }
     }
 }

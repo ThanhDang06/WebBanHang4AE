@@ -9,12 +9,14 @@
         <div class="card-header bg-danger text-white">
             <h3 class="mb-0">Xóa sản phẩm</h3>
         </div>
+
         <div class="card-body">
             <p class="fs-5 text-center text-danger mb-4">
                 Bạn có chắc chắn muốn xóa sản phẩm này không?
             </p>
 
             <dl class="row mb-4">
+
                 <dt class="col-sm-3 fw-bold">Tên sản phẩm</dt>
                 <dd class="col-sm-9">@Model.ProductName</dd>
 
@@ -29,23 +31,64 @@
 
                 <dt class="col-sm-3 fw-bold">Hình ảnh</dt>
                 <dd class="col-sm-9">
-
                     @if (!string.IsNullOrEmpty(Model.Image))
                     {
-                        <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" class="img-thumbnail" style="max-width:150px;" />
+                        <img src="@Url.Content("~/Content/Img/" + Model.Image)"
+                             alt="@Model.ProductName"
+                             class="img-thumbnail"
+                             style="max-width:150px;" />
                     }
                 </dd>
 
                 <dt class="col-sm-3 fw-bold">Danh mục</dt>
                 <dd class="col-sm-9">@Model.Category</dd>
+
+                <!-- ⭐ HIỂN THỊ MÀU -->
+                <dt class="col-sm-3 fw-bold">Màu</dt>
+                <dd class="col-sm-9">
+                    @if (Model.ProductColors != null && Model.ProductColors.Any())
+                    {
+                        foreach (var color in Model.ProductColors)
+                        {
+                            <span class="badge bg-secondary me-1">@color.ColorName</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có</span>
+                    }
+                </dd>
+
+                <!-- ⭐ HIỂN THỊ SIZE -->
+                <dt class="col-sm-3 fw-bold">Size</dt>
+                <dd class="col-sm-9">
+                    @if (Model.ProductSizes != null && Model.ProductSizes.Any())
+                    {
+                        foreach (var size in Model.ProductSizes)
+                        {
+                            <span class="badge bg-dark me-1">@size.SizeName</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có</span>
+                    }
+                </dd>
+
             </dl>
 
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Delete", "Products", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.IDProduct)
                 <div class="d-flex justify-content-center gap-3">
                     <input type="submit" value="Xóa" class="btn btn-danger btn-lg" />
-                    @Html.ActionLink("Quay lại danh sách", "ProductManagement", "Admin", null, new { @class = "btn btn-secondary btn-lg" })
+                    @Html.ActionLink(
+                        "Quay lại danh sách",
+                        "ProductManagement",
+                        "Admin",
+                        null,
+                        new { @class = "btn btn-secondary btn-lg" })
                 </div>
             }
         </div>

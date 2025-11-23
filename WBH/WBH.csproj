@@ -145,6 +145,7 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AddToCartModel.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\ApplyVoucherViewModel.cs" />
     <Compile Include="Models\Cart.cs">
@@ -152,6 +153,9 @@
     </Compile>
     <Compile Include="Models\CartItem.cs" />
     <Compile Include="Models\CartViewModel.cs" />
+    <Compile Include="Models\CheckVoucher_Result.cs">
+      <DependentUpon>DBFashionStore.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CreateVoucherViewModel.cs" />
     <Compile Include="Models\Customer.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
@@ -286,6 +290,7 @@
       <DependentUpon>DBFashionStore.edmx</DependentUpon>
       <LastGenOutput>DBFashionStore.Context.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\DBFashionStore.edmx.sql" />
     <Content Include="Models\DBFashionStore.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DBFashionStore.edmx</DependentUpon>

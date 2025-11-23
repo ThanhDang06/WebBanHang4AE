@@ -62,46 +62,85 @@
 
         //Thêm sản phẩm vào giỏ
         [HttpPost]
-        public ActionResult AddToCart(int id, int? colorId, int? sizeId, int quantity = 1, string image = null)
+        public ActionResult AddToCart(int id, int? colorId, int? sizeId, int quantity = 1)
         {
-            if (Session["IDCus"] == null)
-                return Json(new { success = false, message = "Vui lòng đăng nhập" });
-
-            int userId = Convert.ToInt32(Session["IDCus"]);
-
-            // Kiểm tra sản phẩm cùng màu + size (cho null nếu không có)
-            var existing = db.Carts.FirstOrDefault(c =>
-                c.IDProduct == id &&
-                c.IDCus == userId &&
-                (c.IDColor == colorId || colorId == null) &&
-                (c.IDSize == sizeId || sizeId == null)
-            );
-
-            if (existing != null)
-                existing.Quantity += quantity;
-            else
+            try
             {
-                string img = (colorId.HasValue && colorId.Value != 0
-               ? db.ProductColors.Find(colorId)?.Image
-               : null)
-              ?? db.Products.Find(id)?.Image;
+                // Kiểm tra đăng nhập
+                if (Session["IDCus"] == null)
+                    return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
+                int userId;
+                if (!int.TryParse(Session["IDCus"].ToString(), out userId))
+                    return Json(new { success = false, message = "Thông tin đăng nhập không hợp lệ" });
 
-                db.Carts.Add(new Cart
+                // Kiểm tra quantity
+                if (quantity <= 0)
+                    return Json(new { success = false, message = "Số lượng phải lớn hơn 0" });
+
+                // Kiểm tra sản phẩm
+                var product = db.Products.Find(id);
+                if (product == null)
+                    return Json(new { success = false, message = "Sản phẩm không tồn tại" });
+
+                // Kiểm tra color 
+                if (colorId.HasValue && colorId.Value != 0)
                 {
-                    IDCus = userId,
-                    IDProduct = id,
-                    Quantity = quantity,
-                    IDColor = colorId,
-                    IDSize = sizeId,
-                    Image = img,
-                    DateAdded = DateTime.Now
-                });
-            }
+                    var color = db.ProductColors.Find(colorId.Value);
+                    if (color == null)
+                        return Json(new { success = false, message = "Màu sắc không tồn tại" });
+                }
 
-            db.SaveChanges();
-            return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
+                //Kiểm tra size
+                if (sizeId.HasValue && sizeId.Value != 0)
+                {
+                    var size = db.ProductSizes.Find(sizeId.Value);
+                    if (size == null)
+                        return Json(new { success = false, message = "Size không tồn tại" });
+                }
+
+                // iểm tra giỏ hàng đã có sản phẩm cùng color + size chưa
+                var existing = db.Carts.FirstOrDefault(c =>
+                    c.IDProduct == id &&
+                    c.IDCus == userId &&
+                    (c.IDColor == colorId || (c.IDColor == null && colorId == null)) &&
+                    (c.IDSize == sizeId || (c.IDSize == null && sizeId == null))
+                );
+
+                if (existing != null)
+                {
+                    existing.Quantity += quantity;
+                }
+                else
+                {
+                    // Lấy ảnh ưu tiên theo color, nếu không có dùng ảnh product
+                    string img = (colorId.HasValue && colorId.Value != 0
+                                    ? db.ProductColors.Find(colorId)?.Image
+                                    : null) ?? product.Image;
+
+                    db.Carts.Add(new Cart
+                    {
+                        IDCus = userId,
+                        IDProduct = id,
+                        Quantity = quantity,
+                        IDColor = colorId,
+                        IDSize = sizeId,
+                        Image = img,
+                        DateAdded = DateTime.Now
+                    });
+                }
+
+                db.SaveChanges();
+                int cartCount = db.Carts.Count(c => c.IDCus == userId);
+                return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
+            }
+            catch (Exception ex)
+            {
+                // Bắt tất cả lỗi, trả JSON luôn
+                return Json(new { success = false, message = "Lỗi server: " + ex.Message });
+            }
         }
+
 
 
         [HttpPost]
@@ -202,6 +241,11 @@
                     discount = voucher.Type == "PERCENT"
                                ? cartItems.Sum(x => (x.Product.Price ?? 0) * x.Quantity) * voucher.Value / 100
                                : voucher.Value;
+                    if (voucher.RemainingUses > 0)
+                    {
+                        voucher.RemainingUses -= 1;
+                        db.Entry(voucher).State = EntityState.Modified;
+                    }
                 }
             }
 

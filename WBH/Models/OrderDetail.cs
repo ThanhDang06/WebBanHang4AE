@@ -22,9 +22,11 @@ namespace WBH.Models
         public Nullable<int> IDSize { get; set; }
         public Nullable<int> IDColor { get; set; }
     
+        public virtual ProductColor ProductColor { get; set; }
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
-        public virtual ProductColor ProductColor { get; set; }
         public virtual ProductSize ProductSize { get; set; }
+        public virtual ProductColor ProductColor1 { get; set; }
+        public virtual ProductSize ProductSize1 { get; set; }
     }
 }

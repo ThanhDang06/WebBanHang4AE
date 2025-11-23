@@ -12,8 +12,6 @@
             @using (Html.BeginForm("Edit", "Sales", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
             {
                 @Html.AntiForgeryToken()
-
-                <!-- Hidden IDSale và IDProduct -->
                 @Html.HiddenFor(m => m.IDSale)
                 @Html.HiddenFor(m => m.IDProduct)
 

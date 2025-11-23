@@ -94,6 +94,9 @@
             if (product == null)
                 return HttpNotFound();
 
+            // Gắn cờ hết hàng
+            product.IsOutOfStock = product.Quantity <= 0;
+
             if (product.IsSale && product.OldPrice.HasValue && product.Price.HasValue)
             {
                 ViewBag.OldPrice = product.OldPrice.Value;
@@ -122,139 +125,312 @@
         // GET: Products/Create
         public ActionResult Create()
             {
-                return View();
-            }
+            ViewBag.Colors = db.ProductColors.ToList();          // Lấy dữ liệu bảng Colors
+            ViewBag.Sizes = db.ProductSizes.ToList();            // Nếu có bảng Sizes
+            ViewBag.Categories = db.Products
+                           .Select(p => p.Category)
+                           .Distinct()
+                           .ToList();
 
-            // POST: Products/Create
-            // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-            // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IDProduct,ProductName,Description,Price,Quantity,Image,Category")] Product product)
+            return View();
+        }
+
+        // POST: Products/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(
+    [Bind(Include = "IDProduct,ProductName,Description,Price,Quantity,Category")] Product product,
+    HttpPostedFileBase ImageFile,
+    string CustomColors,
+    HttpPostedFileBase[] ImageFiles, // Ảnh cho từng màu
+    int[] SelectedSizes,
+    string CustomSizes
+)
         {
-            if (!product.Price.HasValue || product.Price <= 0)
-                product.Price = 1000m;
+            // Giá mặc định
+            if (!product.Price.HasValue || product.Price <= 0) product.Price = 1000m;
+            if (!product.OldPrice.HasValue || product.OldPrice <= 0) product.OldPrice = product.Price;
 
-            if (!product.OldPrice.HasValue || product.OldPrice <= 0)
-                product.OldPrice = product.Price;
+            // Upload ảnh chung
+            if (ImageFile != null && ImageFile.ContentLength > 0)
+            {
+                string fileName = DateTime.Now.Ticks + "_" + System.IO.Path.GetFileName(ImageFile.FileName);
+                string path = Server.MapPath("~/Content/Img/" + fileName);
+                ImageFile.SaveAs(path);
+                product.Image = fileName;
+            }
 
             if (ModelState.IsValid)
             {
                 db.Products.Add(product);
                 db.SaveChanges();
-                return RedirectToAction("ProductList");
+
+                // Xử lý màu
+                if (!string.IsNullOrEmpty(CustomColors))
+                {
+                    var colors = CustomColors.Split(',').Select(c => c.Trim()).ToList();
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        string colorImage = null;
+                        if (ImageFiles != null && ImageFiles.Length > i && ImageFiles[i] != null && ImageFiles[i].ContentLength > 0)
+                        {
+                            string fName = DateTime.Now.Ticks + "_" + System.IO.Path.GetFileName(ImageFiles[i].FileName);
+                            string path = Server.MapPath("~/Content/Img/" + fName);
+                            ImageFiles[i].SaveAs(path);
+                            colorImage = fName;
+                        }
+
+                        db.ProductColors.Add(new ProductColor
+                        {
+                            IDProduct = product.IDProduct,
+                            ColorName = colors[i],
+                            Image = colorImage ?? product.Image
+                        });
+                    }
+                    db.SaveChanges();
+                }
+
+                // Xử lý size
+                if (!string.IsNullOrEmpty(CustomSizes))
+                {
+                    var sizes = CustomSizes.Split(',').Select(s => s.Trim()).ToList();
+                    foreach (var sizeName in sizes)
+                    {
+                        db.ProductSizes.Add(new ProductSize
+                        {
+                            IDProduct = product.IDProduct,
+                            SizeName = sizeName
+                        });
+                    }
+                    db.SaveChanges();
+                }
+
+                // Luôn redirect sau khi lưu xong
+                return RedirectToAction("ProductManagement", "Admin");
             }
+
+            // Nếu ModelState không hợp lệ, trả về view với dữ liệu cũ
+            return View(product);
+        }
+        // GET: Products/Edit/5
+        public ActionResult Edit(int? id)
+            {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var product = db.Products
+                            .Include("ProductColors")
+                            .Include("ProductSizes")
+                            .FirstOrDefault(p => p.IDProduct == id);
+
+            if (product == null)
+                return HttpNotFound();
+
+            // Danh sách màu & size
+            ViewBag.Colors = db.ProductColors.ToList();
+            ViewBag.Sizes = db.ProductSizes.ToList();
+
+            // Lưu mảng màu và size đã chọn để hiển thị pre-selected
+            ViewBag.SelectedColors = product.ProductColors.Select(pc => pc.IDColor).ToArray();
+            ViewBag.SelectedSizes = product.ProductSizes.Select(ps => ps.IDSize).ToArray();
 
             return View(product);
         }
 
-        // GET: Products/Edit/5
-        public ActionResult Edit(int? id)
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                Product product = db.Products.Find(id);
-                if (product == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(product);
-            }
-
             // POST: Products/Edit/5
-            // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-            // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
             [HttpPost]
             [ValidateAntiForgeryToken]
-            public ActionResult Edit([Bind(Include = "IDProduct,ProductName,Description,Price,Quantity,Image,Category")] Product product)
+        public ActionResult Edit(
+    [Bind(Include = "IDProduct,ProductName,Description,Price,Quantity,Category")] Product product,
+    HttpPostedFileBase ImageFile,
+    string CustomColors,
+    HttpPostedFileBase[] ImageFiles,
+    string CustomSizes
+)
+        {
+            var productInDb = db.Products
+                .Include("ProductColors")
+                .Include("ProductSizes")
+                .FirstOrDefault(p => p.IDProduct == product.IDProduct);
+
+            if (productInDb == null) return HttpNotFound();
+
+            // Cập nhật thông tin cơ bản
+            productInDb.ProductName = product.ProductName;
+            productInDb.Description = product.Description;
+            productInDb.Price = product.Price;
+            productInDb.Quantity = product.Quantity;
+            productInDb.Category = product.Category;
+
+            // Cập nhật ảnh chung
+            if (ImageFile != null && ImageFile.ContentLength > 0)
             {
-
-            if (!product.Price.HasValue || product.Price <= 0)
-                product.Price = 1000m;
-
-            if (!product.OldPrice.HasValue || product.OldPrice <= 0)
-                product.OldPrice = product.Price;
-
-            if (ModelState.IsValid)
-            {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("ProductList");
+                string fName = DateTime.Now.Ticks + "_" + System.IO.Path.GetFileName(ImageFile.FileName);
+                string path = Server.MapPath("~/Content/Img/" + fName);
+                ImageFile.SaveAs(path);
+                productInDb.Image = fName;
             }
+
+            // Xử lý màu sản phẩm
+            string[] colors = !string.IsNullOrEmpty(CustomColors)
+                ? CustomColors.Split(',').Select(c => c.Trim()).Where(c => !string.IsNullOrEmpty(c)).ToArray()
+                : new string[0];
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                string colorName = colors[i];
+                string colorImage = (ImageFiles != null && ImageFiles.Length > i && ImageFiles[i] != null && ImageFiles[i].ContentLength > 0)
+                                    ? SaveFileAndReturnName(ImageFiles[i])
+                                    : productInDb.Image; // fallback ảnh chung
+
+                var existingColor = productInDb.ProductColors.FirstOrDefault(c => c.ColorName == colorName);
+                if (existingColor != null)
+                {
+                    existingColor.Image = colorImage; // cập nhật ảnh nếu có
+                }
+                else
+                {
+                    db.ProductColors.Add(new ProductColor
+                    {
+                        IDProduct = product.IDProduct,
+                        ColorName = colorName,
+                        Image = colorImage
+                    });
+                }
+            }
+
+            // Xử lý size sản phẩm
+            string[] sizes = !string.IsNullOrEmpty(CustomSizes)
+                ? CustomSizes.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray()
+                : new string[0];
+
+            foreach (var sizeName in sizes)
+            {
+                int sizeId = GetSizeIdByName(sizeName); // Bạn cần implement mapping từ tên size -> IDSize
+                if (!productInDb.ProductSizes.Any(s => s.IDSize == sizeId))
+                {
+                    db.ProductSizes.Add(new ProductSize
+                    {
+                        IDProduct = product.IDProduct,
+                        IDSize = sizeId
+                    });
+                }
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("ProductManagement", "Admin");
+        }
+
+        private string SaveFileAndReturnName(HttpPostedFileBase file)
+        {
+            if (file == null || file.ContentLength == 0) return null;
+            string fName = DateTime.Now.Ticks + "_" + System.IO.Path.GetFileName(file.FileName);
+            string path = Server.MapPath("~/Content/Img/" + fName);
+            file.SaveAs(path);
+            return fName;
+        }
+
+        private int GetSizeIdByName(string sizeName)
+        {
+            var size = db.ProductSizes.FirstOrDefault(s => s.SizeName == sizeName.Trim());
+            if (size != null) return size.IDSize;
+
+            var newSize = new ProductSize { SizeName = sizeName.Trim() };
+            db.ProductSizes.Add(newSize);
+            db.SaveChanges();
+            return newSize.IDSize;
+        }
+
+        // GET: Products/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var product = db.Products
+                            .Include("ProductColors")
+                            .Include("ProductSizes")
+                            .FirstOrDefault(p => p.IDProduct == id);
+
+            if (product == null)
+                return HttpNotFound();
 
             return View(product);
-            }
-
-            // GET: Products/Delete/5
-            public ActionResult Delete(int? id)
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                Product product = db.Products.Find(id);
-                if (product == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(product);
-            }
-
-            // POST: Products/Delete/5
-            [HttpPost, ActionName("Delete")]
+        }
+        // POST: Products/Delete/5
+        [HttpPost, ActionName("Delete")]
             [ValidateAntiForgeryToken]
-            public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
+        {
+            var product = db.Products
+                            .Include("ProductColors")
+                            .Include("ProductSizes")
+                            .FirstOrDefault(p => p.IDProduct == id);
+
+            if (product != null)
             {
-                Product product = db.Products.Find(id);
-                if (product != null)
-                {
-                    db.Products.Remove(product);
-                    db.SaveChanges();
-                }
-                return RedirectToAction("Index");
+                // Xóa cả màu và size liên kết (nếu muốn)
+                db.ProductColors.RemoveRange(product.ProductColors);
+                db.ProductSizes.RemoveRange(product.ProductSizes);
+
+                // Xóa sản phẩm
+                db.Products.Remove(product);
+                db.SaveChanges();
             }
+
+            return RedirectToAction("ProductManagement", "Admin");
+        }
 
         // Lấy danh sách sản phẩm cho Admin / ProductList / Details
         public ActionResult ProductList(string sortOrder)
         {
             var today = DateTime.Today;
 
+            // 1️⃣ Lấy sản phẩm không đang sale
             var products = db.Products
-                .Include(p => p.ProductColors)
-                .Where(p => !db.Sales.Any(s =>
-                    s.IDProduct == p.IDProduct &&
-                    s.StartDate <= today &&
-                    s.EndDate >= today))
+                .Where(p => db.Sales
+                    .Where(s => s.IDProduct == p.IDProduct)
+                    .All(s => s.StartDate > today || s.EndDate < today))
                 .ToList();
 
-
-            // Tính giá hiển thị tạm thời (không lưu DB)
+            // 2️⃣ Lấy danh sách màu cho từng sản phẩm
             var displayProducts = products.Select(p => new Product
             {
                 IDProduct = p.IDProduct,
                 ProductName = p.ProductName,
-                Price = p.IsSale && p.OldPrice.HasValue
-                        ? p.Price // đã giảm rồi
-                        : p.Price, // giá gốc
+                Price = p.Price,
                 OldPrice = p.OldPrice,
                 IsSale = p.IsSale,
                 Category = p.Category,
                 Image = p.Image,
                 Description = p.Description,
                 Quantity = p.Quantity,
-                ProductColors = p.ProductColors
+                ProductColors = db.ProductColors
+                    .Where(pc => pc.IDProduct == p.IDProduct)
+                    .ToList(),
+                IsOutOfStock = p.Quantity <= 0
+
             }).ToList();
 
-            // Sắp xếp
+            // 3️⃣ Sắp xếp
             switch (sortOrder)
             {
-                case "price_asc": displayProducts = displayProducts.OrderBy(p => p.Price ?? 0).ToList(); break;
-                case "price_desc": displayProducts = displayProducts.OrderByDescending(p => p.Price ?? 0).ToList(); break;
-                case "name_asc": displayProducts = displayProducts.OrderBy(p => p.ProductName).ToList(); break;
-                case "name_desc": displayProducts = displayProducts.OrderByDescending(p => p.ProductName).ToList(); break;
-                default: displayProducts = displayProducts.OrderBy(p => p.IDProduct).ToList(); break;
+                case "price_asc":
+                    displayProducts = displayProducts.OrderBy(p => p.Price ?? 0).ToList();
+                    break;
+                case "price_desc":
+                    displayProducts = displayProducts.OrderByDescending(p => p.Price ?? 0).ToList();
+                    break;
+                case "name_asc":
+                    displayProducts = displayProducts.OrderBy(p => p.ProductName).ToList();
+                    break;
+                case "name_desc":
+                    displayProducts = displayProducts.OrderByDescending(p => p.ProductName).ToList();
+                    break;
+                default:
+                    displayProducts = displayProducts.OrderBy(p => p.IDProduct).ToList();
+                    break;
             }
 
             ViewBag.IsAdmin = Session["Role"] != null && Session["Role"].ToString() == "Admin";

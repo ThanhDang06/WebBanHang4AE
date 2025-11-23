@@ -4,13 +4,14 @@
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/WBH.cshtml";
 }
+
 <div class="container my-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h3 class="mb-0">Chỉnh sửa sản phẩm</h3>
         </div>
         <div class="card-body">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Edit", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(model => model.IDProduct)
@@ -20,41 +21,62 @@
                 <div class="mb-3">
                     @Html.LabelFor(model => model.ProductName, new { @class = "form-label fw-bold" })
                     @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="mb-3">
                     @Html.LabelFor(model => model.Description, new { @class = "form-label fw-bold" })
-                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", rows = 4 } })
-                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = 4 })
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         @Html.LabelFor(model => model.Price, new { @class = "form-label fw-bold" })
                         @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-6">
                         @Html.LabelFor(model => model.Quantity, new { @class = "form-label fw-bold" })
                         @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    @Html.LabelFor(model => model.Image, new { @class = "form-label fw-bold" })
-                    @Html.EditorFor(model => model.Image, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
-                </div>
-
                 <div class="mb-3">
                     @Html.LabelFor(model => model.Category, new { @class = "form-label fw-bold" })
                     @Html.EditorFor(model => model.Category, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                </div>
+                <!-- ẢNH SẢN PHẨM CHUNG -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Hình sản phẩm chung</label>
+                    <input type="file" name="ImageFile" class="form-control" />
+                    @if (!string.IsNullOrEmpty(Model.Image))
+                    {
+                        <div class="mt-2">
+                            <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" class="img-thumbnail" style="max-width:150px;" />
+                            <small class="text-muted d-block">Hình hiện tại</small>
+                        </div>
+                    }
                 </div>
 
-                <div class="d-flex justify-content-between">
+                <!-- MÀU SẢN PHẨM -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Màu sản phẩm</label>
+                    <input type="text" name="CustomColors" class="form-control" placeholder="Nhập màu, phân tách bằng dấu phẩy" />
+                    <small class="text-muted">Ví dụ: Đỏ, Xanh, Vàng</small>
+                </div>
+
+                <!-- ẢNH THEO MÀU -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ảnh theo màu</label>
+                    <input type="file" name="ImageFiles" multiple class="form-control" />
+                    <small class="text-muted">Upload ảnh theo thứ tự màu đã chọn, 1 ảnh mỗi màu</small>
+                </div>
+
+                <!-- SIZE SẢN PHẨM -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Size sản phẩm</label>
+                    <input type="text" name="CustomSizes" class="form-control" placeholder="Nhập size, phân tách bằng dấu phẩy" />
+                    <small class="text-muted">Ví dụ: S, M, L</small>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
                     <input type="submit" value="Lưu" class="btn btn-success" />
                     @Html.ActionLink("Quay lại danh sách", "ProductManagement", "Admin", null, new { @class = "btn btn-secondary" })
                 </div>

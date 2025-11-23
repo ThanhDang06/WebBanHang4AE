@@ -144,13 +144,56 @@
         .opt-btn.selected, .color-btn.selected {
             border: 2px solid #000;
         }
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .quantity-input {
+        width: 80px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .btn-add-cart {
+        padding: 12px 24px;
+        background: #111;
+        color: #fff;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+
+        .btn-add-cart:hover {
+            opacity: 0.85;
+        }
+
+    .back {
+        padding: 12px 20px;
+        border: 1px solid #aaa;
+        border-radius: 12px;
+        color: #333;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+        .back:hover {
+            background: #f5f5f5;
+        }
+
 </style>
 
 <div class="product-page">
     <div class="product-wrapper">
         <!-- Ảnh sản phẩm -->
         <div class="product-image">
-            <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" />
+            <img src="@Url.Content("~/Content/Img/" + Model.Image)" alt="@Model.ProductName" id="mainProductImage" />
+
             @if (ViewBag.SalePercent != null)
             {
                 <div class="sale-badge">-@ViewBag.SalePercent%</div>
@@ -176,7 +219,7 @@
                 <div class="option-group">
                     @foreach (var size in Model.ProductSizes)
                     {
-                        <button class="opt-btn" data-size-id="@size.IDSize" data-size="@size.SizeName">@size.SizeName</button>
+                        <button class="opt-btn" data-size-id="@size.IDSize" data-size="@size.SizeName" @(Model.IsOutOfStock ? "disabled" : "")>@size.SizeName</button>
                     }
                 </div>
 
@@ -191,95 +234,108 @@
                                     style="background:@color.ColorName"
                                     data-color-id="@color.IDColor"
                                     data-color-name="@color.ColorName"
-                                    data-img="@Url.Content("~/Content/Img/" + color.Image)">
+                                    data-img="@Url.Content("~/Content/Img/" + color.Image)"
+                                    @(Model.IsOutOfStock ? "disabled" : "")>
                             </button>
                         }
                     </div>
                 }
             </div>
 
-            <div class="actions">
-                <a href="javascript:void(0);" class="add-cart" data-id="@Model.IDProduct">🛒 Thêm vào giỏ hàng</a>
-                <a href="@Url.Action("ProductList","Products")" class="back">← Quay lại cửa hàng</a>
+            <div class="actions d-flex align-items-center">
+                @if (Model.IsOutOfStock)
+                {
+                    <span class="text-danger fw-bold px-4 py-2 rounded border">Hết hàng</span>
+                }
+                else
+                {
+                    <!-- Số lượng -->
+                    <input type="number" id="quantityInput" min="1" value="1" class="quantity-input me-2" />
+
+                    <!-- Thêm vào giỏ hàng -->
+                    <a href="javascript:void(0);" class="add-cart btn-add-cart" data-id="@Model.IDProduct">🛒 Thêm vào giỏ hàng</a>
+                }
+
+                <a href="@Url.Action("ProductList","Products")" class="back ms-3">← Quay lại cửa hàng</a>
             </div>
+
         </div>
     </div>
 </div>
 
 <script>
-const colorButtons = document.querySelectorAll('.color-btn');
-const sizeButtons = document.querySelectorAll('.opt-btn');
-const mainImage = document.querySelector('.product-image img');
+document.addEventListener('DOMContentLoaded', function() {
+    const mainImage = document.getElementById('mainProductImage');
+    const colorButtons = document.querySelectorAll('.color-btn');
+    const sizeButtons = document.querySelectorAll('.opt-btn');
 
-colorButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const newImg = btn.getAttribute('data-img');
-        if (newImg) mainImage.src = newImg;
+    colorButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newImg = btn.getAttribute('data-img');
+            if (newImg && mainImage) mainImage.src = newImg;
 
-        colorButtons.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+            colorButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        });
     });
-});
 
-sizeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        sizeButtons.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+    sizeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            sizeButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        });
     });
-});
 
-document.querySelectorAll('.add-cart').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const productId = btn.getAttribute('data-id');
-        const selectedSize = document.querySelector('.opt-btn.selected');
+    const addCartBtn = document.querySelector('.add-cart');
+    if (addCartBtn) { // chỉ thêm event listener nếu nút tồn tại
+        addCartBtn.addEventListener('click', () => {
+            const productId = parseInt(addCartBtn.getAttribute('data-id'));
+            if (isNaN(productId)) { alert('ID sản phẩm không hợp lệ!'); return; }
 
-        // Kiểm tra size
-        if (!selectedSize) {
-            alert('Vui lòng chọn kích thước!');
-            return;
-        }
+            const selectedSize = document.querySelector('.opt-btn.selected');
+            if (!selectedSize) { alert('Vui lòng chọn kích thước!'); return; }
+            const sizeId = parseInt(selectedSize.getAttribute('data-size-id'));
 
-        // Kiểm tra màu nếu có
-        let selectedColor = null;
-        if (colorButtons.length > 0) {
-            selectedColor = document.querySelector('.color-btn.selected');
-            if (!selectedColor) {
-                alert('Vui lòng chọn màu sản phẩm!');
-                return;
+            let colorId = null;
+            if (colorButtons.length > 0) {
+                const selectedColor = document.querySelector('.color-btn.selected');
+                if (!selectedColor) { alert('Vui lòng chọn màu!'); return; }
+                colorId = parseInt(selectedColor.getAttribute('data-color-id'));
             }
-        }
 
-        const colorId = selectedColor ? parseInt(selectedColor.getAttribute('data-color-id')) : null;
-        const colorName = selectedColor ? selectedColor.getAttribute('data-color-name') : null;
-        const sizeId = parseInt(selectedSize.getAttribute('data-size-id'));
-        const sizeName = selectedSize.getAttribute('data-size');
+            let quantity = parseInt(document.getElementById('quantityInput').value);
+            if (isNaN(quantity) || quantity < 1) { alert('Số lượng không hợp lệ!'); return; }
 
-        fetch('@Url.Action("AddToCart", "Carts")', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                id: parseInt(productId),
-                colorId: colorId,
-                colorName: colorName,
-                sizeId: sizeId,
-                sizeName: sizeName,
-                quantity: 1
+            fetch('@Url.Action("AddToCart", "Carts")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    id: productId,
+                    colorId: colorId,
+                    sizeId: sizeId,
+                    quantity: quantity
+                })
             })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                alert(data.message);
-                if(typeof updateCartCount === "function") updateCartCount();
-                if(typeof renderMiniCart === "function") renderMiniCart();
-            } else {
-                alert(data.message || 'Lỗi thêm giỏ hàng!');
-            }
-        })
-        .catch(err => console.error(err));
-    });
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    alert(data.message);
+                    if(typeof updateCartCount === "function") updateCartCount();
+                    if(typeof renderMiniCart === "function") renderMiniCart();
+                } else {
+                    alert(data.message || 'Lỗi thêm giỏ hàng!');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Lỗi server, vui lòng thử lại!');
+            });
+        });
+    }
 });
+
+
 </script>
