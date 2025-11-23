@@ -190,6 +190,7 @@
     <Compile Include="Models\Product.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Product.Partial.cs" />
     <Compile Include="Models\ProductColor.cs">
       <DependentUpon>DBFashionStore.tt</DependentUpon>
     </Compile>
@@ -210,8 +211,11 @@
   <ItemGroup>
     <Content Include="App_Data\DBFashionStore.ldf">
       <DependentUpon>DBFashionStore.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\DBFashionStore.mdf" />
+    <None Include="App_Data\DBFashionStore.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Content\Admin.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
