@@ -94,9 +94,6 @@
             if (product == null)
                 return HttpNotFound();
 
-            // Gắn cờ hết hàng
-            product.IsOutOfStock = product.Quantity <= 0;
-
             if (product.IsSale && product.OldPrice.HasValue && product.Price.HasValue)
             {
                 ViewBag.OldPrice = product.OldPrice.Value;
@@ -387,14 +384,14 @@
         {
             var today = DateTime.Today;
 
-            // 1️⃣ Lấy sản phẩm không đang sale
+            // Lấy sản phẩm không đang sale
             var products = db.Products
                 .Where(p => db.Sales
                     .Where(s => s.IDProduct == p.IDProduct)
                     .All(s => s.StartDate > today || s.EndDate < today))
                 .ToList();
 
-            // 2️⃣ Lấy danh sách màu cho từng sản phẩm
+            // Lấy danh sách màu cho từng sản phẩm
             var displayProducts = products.Select(p => new Product
             {
                 IDProduct = p.IDProduct,
@@ -408,12 +405,11 @@
                 Quantity = p.Quantity,
                 ProductColors = db.ProductColors
                     .Where(pc => pc.IDProduct == p.IDProduct)
-                    .ToList(),
-                IsOutOfStock = p.Quantity <= 0
+                    .ToList()
 
             }).ToList();
 
-            // 3️⃣ Sắp xếp
+            //Sắp xếp
             switch (sortOrder)
             {
                 case "price_asc":

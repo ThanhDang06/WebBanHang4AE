@@ -28,7 +28,6 @@ namespace WBH.Controllers
 
             return View(orders.ToList());
         }
-
         // GET: Orders/Details/5
         public ActionResult Details(int? id)
         {

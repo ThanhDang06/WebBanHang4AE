@@ -61,3 +61,14 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+# CSS, JS, HTML, LESS, SCSS, SVG → giữ LF
+*.css text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.less text eol=lf
+*.scss text eol=lf
+*.svg text eol=lf
+
+# Drawio files
+*.drawio text eol=lf
+

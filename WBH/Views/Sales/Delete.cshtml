@@ -5,42 +5,52 @@
     Layout = "~/Views/Shared/WBH.cshtml";
 }
 <div class="container my-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-danger text-white">
+    <div class="card shadow border-0">
+        <div class="card-header bg-danger text-white text-center py-3">
             <h3 class="mb-0">Xóa Sale</h3>
         </div>
+
         <div class="card-body">
-            <p class="fs-5 text-center text-danger mb-4">
-                Bạn có chắc chắn muốn xóa Sale này không?
-            </p>
+
+            <div class="alert alert-danger text-center fs-5">
+                <strong>Cảnh báo!</strong> Hành động này không thể khôi phục.
+            </div>
 
             <ul class="list-group mb-4">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><strong>Sản phẩm:</strong></span>
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Sản phẩm:</strong>
                     <span>@(Model.Product?.ProductName ?? "Không có sản phẩm")</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><strong>Giảm giá:</strong></span>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Giảm giá:</strong>
                     <span>@Model.DiscountPercent %</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><strong>Ngày bắt đầu:</strong></span>
-                    <span>@(Model.StartDate?.ToString("dd/MM/yyyy") ?? "-")</span>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Ngày bắt đầu:</strong>
+                    <span>@(Model.StartDate?.ToString("dd/MM/yyyy"))</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><strong>Ngày kết thúc:</strong></span>
-                    <span>@(Model.EndDate?.ToString("dd/MM/yyyy") ?? "-")</span>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Ngày kết thúc:</strong>
+                    <span>@(Model.EndDate?.ToString("dd/MM/yyyy"))</span>
                 </li>
             </ul>
 
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Delete", "Sales", new { id = Model.IDSale }, FormMethod.Post, new { id = "deleteForm" }))
             {
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.IDSale)
+
                 <div class="d-flex justify-content-center gap-3">
-                    <button type="submit" class="btn btn-danger btn-lg">
-                        <i class="bi bi-trash me-1"></i> Xóa
+                    <button type="submit" class="btn btn-danger btn-lg px-4">
+                        Xóa ngay
                     </button>
-                    @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary btn-lg" })
+
+                    <a href="@Url.Action("Index")" class="btn btn-secondary btn-lg px-4">
+                        Hủy
+                    </a>
                 </div>
             }
         </div>

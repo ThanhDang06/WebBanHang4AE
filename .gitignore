@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Bỏ ignore database của project
+!App_Data/DBFashionStore.mdf
+!App_Data/DBFashionStore.ldf

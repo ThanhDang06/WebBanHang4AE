@@ -93,7 +93,7 @@ namespace WBH.Controllers
         }
 
         [HttpPost]
-        public ActionResult DangKy(string username, string password, string email, string fullname, string phone)
+        public ActionResult DangKy(string username, string password, string email, string fullname, string phone, string address)
         {
             // Validate dữ liệu
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
@@ -130,7 +130,8 @@ namespace WBH.Controllers
                 IDAcc = account.IDAcc,
                 FullName = fullname,
                 Email = email,
-                Phone = phone
+                Phone = phone,
+                Address = address
             };
             db.Customers.Add(customer);
             db.SaveChanges();

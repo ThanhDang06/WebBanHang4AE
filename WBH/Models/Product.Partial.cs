@@ -9,11 +9,7 @@ namespace WBH.Models
     {
         public bool IsOutOfStock
         {
-            get
-            {
-                // Dùng Quantity trong DB để xác định
-                return !this.Quantity.HasValue || this.Quantity.Value <= 0;
-            }
+            get { return Quantity.HasValue && Quantity.Value <= 0; }
         }
     }
 }

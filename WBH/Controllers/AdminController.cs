@@ -111,26 +111,13 @@ namespace WBH.Controllers
 
         public ActionResult ProductList()
         {
-            var products = db.Products.ToList();
-
-            // Gắn flag hết hàng
-            foreach (var p in products)
-            {
-                p.IsOutOfStock = p.Quantity <= 0;
-            }
-
+            var products = db.Products.ToList();      
             ViewBag.IsAdmin = true;
             return View(products);
         }
         public ActionResult ProductManagement()
         {
             var products = db.Products.ToList();
-
-            foreach (var p in products)
-            {
-                p.IsOutOfStock = p.Quantity <= 0;
-            }
-
             return View(products);
         }
 

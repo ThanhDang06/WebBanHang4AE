@@ -46,11 +46,8 @@
                         </td>
                         <td>
                             @Html.ActionLink("Sửa", "Edit", "Sales", new { id = item.IDSale }, new { @class = "btn btn-primary btn-sm me-1" })
-                            @using (Html.BeginForm("Delete", "Sales", new { id = item.IDSale }, FormMethod.Post, new { onsubmit = "return confirm('Bạn có chắc muốn xóa?');", @class = "d-inline" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            }
+                            @Html.ActionLink("Delete", "Delete", "Sales", new { id = item.IDSale }, new { @class = "btn btn-danger btn-sm" })
+
                         </td>
                     </tr>
                     stt++;
