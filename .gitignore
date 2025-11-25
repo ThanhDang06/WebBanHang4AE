@@ -362,6 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Bỏ ignore database của project
+# Ignore tất cả file log SQL Server
+App_Data/*.ldf
+
+# Giữ lại file MDF để clone project
 !App_Data/DBFashionStore.mdf
-!App_Data/DBFashionStore.ldf
