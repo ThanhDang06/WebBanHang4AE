@@ -209,13 +209,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DBFashionStore.ldf">
-      <DependentUpon>DBFashionStore.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="App_Data\DBFashionStore.mdf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <None Include="App_Data\DBFashionStore.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="App_Data\DBFashionStore.sql" />
     <Content Include="Content\Admin.css" />
     <Content Include="Content\bootstrap-grid.css" />
