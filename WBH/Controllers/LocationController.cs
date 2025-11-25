@@ -23,7 +23,7 @@ namespace WBH.Controllers
                 var content = await response.Content.ReadAsStringAsync();
                 return Content(content, "application/json");
             }
-            catch (Exception ex)
+            catch
             {
                 // Log ex.Message nếu muốn
                 return new HttpStatusCodeResult(500, "Lỗi khi lấy dữ liệu Tỉnh/Thành phố");
@@ -41,7 +41,7 @@ namespace WBH.Controllers
                 var content = await response.Content.ReadAsStringAsync();
                 return Content(content, "application/json");
             }
-            catch (Exception ex)
+            catch
             {
                 return new HttpStatusCodeResult(500, "Lỗi khi lấy dữ liệu Quận/Huyện");
             }
@@ -58,7 +58,7 @@ namespace WBH.Controllers
                 var content = await response.Content.ReadAsStringAsync();
                 return Content(content, "application/json");
             }
-            catch (Exception ex)
+            catch
             {
                 return new HttpStatusCodeResult(500, "Lỗi khi lấy dữ liệu Phường/Xã");
             }
