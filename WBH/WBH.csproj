@@ -216,6 +216,7 @@
     <None Include="App_Data\DBFashionStore.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="App_Data\DBFashionStore.sql" />
     <Content Include="Content\Admin.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
